@@ -1,0 +1,134 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .group-buying-list {
+    min-height: 100vh;
+    padding-top: 1rpx;
+    background: @faintWhite;
+    box-sizing: border-box;
+
+    .item {
+      display: flex;
+      align-items: center;
+      padding: 20rpx 30rpx;
+      margin-bottom: 15rpx;
+      background: @solidWhite;
+
+      image {
+        width: 74rpx;
+        height: 74rpx;
+        background: @faintWhite;
+        border-radius: 50%;
+        flex: none;
+      }
+
+      .info {
+        margin: 0 20rpx;
+        flex: auto;
+
+        .name {
+          font-size: 24rpx;
+          color: @textColor1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin-bottom: 5rpx;
+
+          text {
+            margin-left: 10rpx;
+            color: @textColor4;
+          }
+        }
+
+        .intro {
+          font-size: 23rpx;
+          color: @textColor4;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+
+          text {
+            color: @primaryColor;
+          }
+        }
+      }
+
+      .button {
+        width: 120rpx;
+        height: 60rpx;
+        line-height: 60rpx;
+        background: @primaryColor;
+        border-radius: 8rpx;
+        color: @solidWhite;
+        font-size: 24rpx;
+        text-align: center;
+        flex: none;
+      }
+    }
+
+    .footer {
+      padding: 20rpx 0 40rpx;
+      text-align: center;
+      font-size: 24rpx;
+      color: @textColor4;
+    }
+  }
+</style>
+
+<template>
+  <view class="group-buying-list">
+    <block wx:if="{{productDetail._groupsInfo && productDetail._groupsInfo.length}}">
+
+    </block>
+    <view class="item" wx:key="index" wx:for="{{productDetail._groupsInfo}}">
+      <image src="{{item.owner.avatar_url || '../../assets/img/me/avatar.png'}}"></image>
+      <view class="info">
+        <view class="name">
+          {{item.owner.nickname}}<text>发起拼团</text>
+        </view>
+        <view class="intro">
+          <text>{{item.partake_count}}</text>人已买{{item.goods_count}}件，剩余<text> {{timer[item.ptgroup_no] || '00:00:00'}} </text>结束
+        </view>
+      </view>
+      <view class="button" @tap="bindJoinGrouping({{item.id}})">
+        去参团
+      </view>
+    </view>
+    <view class="footer">
+      已经到底咯~
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as OthersActions} from '../../store/others';
+
+
+  @connect({
+    productDetail(state) { return state.product.detail },
+    timer(state) { return state.timer.results },
+  }, {
+    ...OthersActions,
+  })
+
+
+  export default class GroupBuyingList extends wepy.page {
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindJoinGrouping: (id) => {
+        this.methods.setOrderGroup(id);
+        this.go2page().back();
+        // this.go2page().redirect('/pages/all/detail?gid=' + id);
+      },
+    };
+
+    onLoad() {
+      this.setTitle('更多拼团');
+    }
+  }
+</script>

@@ -1,0 +1,262 @@
+<style lang="less">
+  @import (reference) "../../../config/variables";
+
+  view.landingPage-periodBlock {
+    width: 100vw;
+    border-bottom: 15rpx solid @faintWhite;
+
+    & > .title {
+      padding: 50rpx 0 40rpx;
+      text-align: right;
+    }
+
+    .ellipsis {
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    scroll-view {
+      width: calc(~"100% - 60rpx");
+      padding: 0 30rpx 50rpx;
+
+      .padding {
+        width: 30rpx;
+        height: 260rpx;
+      }
+
+      .container {
+        height: 280rpx;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+
+        .item {
+          width: 380rpx;
+          height: 130rpx;
+          margin-right: 18rpx;
+          border-radius: 8rpx;
+          border: 2rpx solid @dimWhite;
+          display: flex;
+
+          &:nth-of-type(even) {
+            margin-bottom: 10rpx;
+          }
+
+          &:first-of-type {
+            width: 270rpx;
+            height: 272rpx;
+            margin: 0 18rpx 0 0;
+            position: relative;
+            overflow: hidden;
+
+            view.left {
+              width: 270rpx;
+              height: 270rpx;
+
+              image {
+                width: 270rpx;
+                height: 270rpx;
+              }
+            }
+
+            view.right {
+              width: calc(~"100% - 20rpx");
+              height: 80rpx;
+              padding: 0 12rpx;
+              background: @primaryColor;
+              position: absolute;
+              bottom: 0;
+              opacity: .9;
+
+              .title {
+                padding-bottom: 0;
+                color: @solidWhite;
+                font-size: 24rpx;
+              }
+
+              .price {
+                view {
+                  color: @solidWhite;
+                }
+              }
+            }
+          }
+
+          &.more {
+            width: 160rpx;
+            height: 272rpx;
+            margin-bottom: 0;
+            font-size: 28rpx;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            view {
+              width: 100%;
+              height: 10px;
+              padding-top: 14rpx;
+              display: inline-flex;
+              justify-content: center;
+
+              .dot {
+                width: 8rpx;
+                height: 8rpx;
+                margin: 0 3rpx;
+                padding: 0;
+                border-radius: 50%;
+                background-color: #A0A0A0;
+              }
+            }
+          }
+
+          .left {
+            width: 130rpx;
+            height: 130rpx;
+            border-radius: 8rpx;
+            overflow: hidden;
+
+            image {
+              width: 130rpx;
+              height: 130rpx;
+            }
+          }
+
+          .right {
+            width: calc(~"250rpx - 28rpx");
+            height: 130rpx;
+            padding: 0 14rpx;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .title {
+              padding-bottom: 4rpx;
+              color: @textColor1;
+              font-size: 28rpx;
+            }
+
+            .price {
+              display: flex;
+              align-items: baseline;
+
+              view:first-of-type {
+                font-size: 24rpx;
+                color: @primaryColor;
+              }
+
+              view:last-of-type {
+                padding-left: 6rpx;
+                font-size: 22rpx;
+                color: @textColor5;
+                text-decoration: line-through;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view
+    wx:if="{{product && product.length}}"
+    class="landingPage-periodBlock">
+    <!--标题-->
+    <view class="title">
+      <title
+        title="周期购"
+        icon="../../assets/img/explore/calendar.png"></title>
+    </view>
+
+    <!--内容-->
+    <scroll-view scroll-x>
+      <view class="container">
+        <view
+          class="item"
+          wx:key="id"
+          wx:for="{{_product}}"
+          @tap="bindGetDetail({{item.url}})">
+          <view class="left">
+            <image src="{{item._image + '?imageView2/2/w/130'}}"></image>
+          </view>
+          <view class="right">
+            <view class="title ellipsis">{{item.name}}</view>
+            <view class="price">
+              <view>￥{{item._sellPrice}}</view>
+              <view>￥{{item._marketPrice}}</view>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{product && product.length > 9}}" class="item more" @tap="bindMore">
+          查看更多
+          <view>
+            <view class="dot"></view>
+            <view class="dot"></view>
+            <view class="dot"></view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../../mixins/utils';
+  import Title from './title';
+  import {actions as ProductActions} from '../../../store/product';
+
+
+  @connect({
+    product(state) { return state.home.periods },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class PeriodBlock extends wepy.component {
+    // 首页周期购模块
+
+    components = {
+      title: Title,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      _product: () => {
+        let _ = [];
+        if (this.product)
+          _ = this.product.slice(0, 9);
+        return _;
+      },
+    };
+
+    methods = {
+      bindMore: () => {
+        this.methods.getPeriodsProductListService({
+          store: this.store,
+          callback: () => {
+            this.go2page().navigate('/pages/all/list?view=periodic');
+          },
+        });
+      },
+
+      bindGetDetail: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+    };
+  }
+</script>

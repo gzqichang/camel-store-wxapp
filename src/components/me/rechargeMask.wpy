@@ -1,0 +1,109 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.me-recharge-mask {
+    width: 100vw;
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    .mask-right {
+      display: flex;
+      justify-content: flex-end;
+
+      .mask-btn {
+        width: 150rpx;
+        height: 60rpx;
+        margin: 312rpx 54rpx 22rpx 0;
+        color: @solidWhite;
+        font-size: 28rpx;
+        text-align: center;
+        line-height: 60rpx;
+        background: @primaryColor;
+        border: 2rpx solid @solidWhite;
+        border-radius: 8rpx;
+        visibility: hidden;
+      }
+    }
+
+    .mask-arrow {
+      margin-bottom: 10rpx;
+      margin-right: 128rpx;
+      display: flex;
+      justify-content: flex-end;
+
+      image {
+        width: 190rpx;
+        height: 145rpx;
+      }
+    }
+
+    .mask-img {
+      text-align: center;
+
+      image {
+        width: 509rpx;
+        height: 59rpx;
+      }
+    }
+
+    .mask-bottom {
+      width: 144rpx;
+      height: 64rpx;
+      margin: 60rpx auto;
+      color: @solidWhite;
+      font-size: 28rpx;
+      text-align: center;
+      line-height: 64rpx;
+      border: 2rpx solid @solidWhite;
+      border-radius: 8rpx;
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showMask"></mask>
+  <view class="me-recharge-mask" wx:if="{{showMask}}">
+    <view class="mask-right">
+      <view class="mask-btn" @tap="bindHide">优惠充值</view>
+    </view>
+    <view class="mask-arrow">
+      <image src="../../assets/img/me/arrowMax.png"></image>
+    </view>
+    <view class="mask-img">
+      <image src="../../assets/img/me/rechargeText.png"></image>
+    </view>
+    <view class="mask-bottom" @tap="bindHide">知道了</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import Mask from '../utils/mask';
+
+
+  export default class RechargeMask extends wepy.component {
+    // 我的 充值引导遮罩
+
+    props = {
+      showMask: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      bindHide: () => {
+        this.$emit('hideMask');
+      },
+    };
+  }
+</script>

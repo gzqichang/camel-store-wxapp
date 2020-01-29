@@ -1,0 +1,98 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .cart-credit-unavailable-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .modal {
+      width: 484rpx;
+      height: 320rpx;
+      margin: 29vh auto 0;
+      background: @solidWhite;
+      border-radius: 8rpx;
+
+      & > view {
+        image {
+          width: 80rpx;
+          height: 80rpx;
+          margin: 0 auto 36rpx;
+          padding-top: 54rpx;
+          display: block;
+        }
+
+        view {
+          width: 416rpx;
+          margin: auto;
+          color: @textColor0;
+          font-size: 32rpx;
+          text-align: center;
+          display: block;
+        }
+      }
+    }
+
+    .close-modal {
+      margin-top: 76rpx;
+      display: flex;
+      justify-content: center;
+
+      image {
+        width: 56rpx;
+        height: 56rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="show"></mask>
+
+  <view class="{{show ? 'cart-credit-unavailable-mask' : 'cart-credit-unavailable-mask hide'}}">
+    <view class="modal">
+      <view>
+        <image src="../../assets/img/me/memberNone.png"></image>
+        <view>您的积分不足，无法完成支付</view>
+      </view>
+    </view>
+    <view class="close-modal" @tap="bindToggleMask">
+      <image src="../../assets/img/detail/close.png"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import Mask from '../utils/mask';
+
+
+  export default class CreditUnavailableMask extends wepy.component {
+    // 积分不足 弹窗组件
+
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      bindToggleMask: () => {
+        this.$emit('toggleCreditUnavailableMask');
+      },
+    };
+  }
+</script>

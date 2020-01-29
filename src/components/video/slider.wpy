@@ -1,0 +1,98 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.video-slider {
+    width: 100%;
+    height: 100%;
+
+    .tab {
+      color: #444;
+      font-size: 26rpx;
+
+      .name{
+        height: 100rpx;
+        padding-left: 38rpx;
+        line-height: 100rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &.active {
+          font-weight: bold;
+          font-size: 30rpx;
+          color: #222;
+          background: #eee;
+          position: relative;
+          &:before {
+            position: absolute;
+            left: 20rpx;
+            top: 34rpx;
+            content: '';
+            width: 5rpx;
+            height: 32rpx;
+            border-radius: 3rpx;
+            background: @primaryColor;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="video-slider">
+    <view
+      class="tab"
+      wx:key="url"
+      wx:for="{{category}}">
+      <view class="name {{item.id === activeTab ? 'active' : ''}}" @tap="bindCategory({{item.id}})">
+        {{item.name}}
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import {actions as ProductActions} from '../../store/product';
+
+
+  @connect({
+    category(state) { return state.video.category },
+    store(state) { return state.store.id },
+    storeVideo(state) { return state.video.store },
+    nextURL(state) { return state.others.nextURL },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class Slider extends wepy.component {
+    // 写组件用的模板
+
+    props = {
+      activeTab: {
+        type: Number,
+        default: 0,
+        twoWay: true,
+      },
+    };
+
+    onLoad() {
+    };
+
+    methods = {
+      bindCategory: (id) => {
+        this.activeTab = parseInt(id);
+        this.methods.getProductListService({
+          storeID: this.storeVideo.id || this.store,
+          video: true,
+          category: parseInt(id) || '',
+        });
+        this.$emit('changeCategory', parseInt(id));
+      },
+    };
+  }
+</script>

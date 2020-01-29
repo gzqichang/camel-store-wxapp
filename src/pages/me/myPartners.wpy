@@ -1,0 +1,199 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.my-partners {
+    .top {
+      width: 100vw;
+      height: 400rpx;
+      color: @solidWhite;
+      text-align: center;
+      background: linear-gradient(@primaryColor, lighten(desaturate(spin(#f44939, 1.6845), 6.9737), 9.6078));
+
+      .top_text {
+        padding-top: 84rpx;
+        font-size: 32rpx;
+        text-indent: 1.5rem;
+      }
+
+      .top_num {
+        font-size: 120rpx;
+      }
+
+      .top_btn {
+        width: 140rpx;
+        height: 60rpx;
+        margin: 20rpx auto;
+        border: 2rpx solid @solidWhite;
+        border-radius: 8rpx;
+        font-size: 28rpx;
+        line-height: 60rpx;
+      }
+    }
+
+    .content {
+      text-align: center;
+
+      .content-text {
+        margin: 130rpx auto 90rpx;
+        color: @textColor3;
+        font-size: 30rpx;
+      }
+
+      .content-share {
+        width: 564rpx;
+        height: 100rpx;
+        margin: 0 auto;
+        color: @solidWhite;
+        font-size: 34rpx;
+        line-height: 100rpx;
+        background: @primaryColor;
+        border-radius: 10rpx;
+      }
+
+      .content-item {
+        height: 140rpx;
+        margin: 10rpx 30rpx 0;
+        border-bottom: 1rpx solid @dimWhite;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .item-left {
+          display: inline-flex;
+          align-items: center;
+
+          .item-img {
+            margin-right: 28rpx;
+            display:inherit;
+
+            image {
+              width: 98rpx;
+              height: 98rpx;
+              border-radius: 16rpx;
+            }
+          }
+
+          .item-name {
+            width: 50vw;
+            color: @textColor1;
+            font-size: 34rpx;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        .item-time {
+          color: @textColor3;
+          font-size: 26rpx;
+        }
+      }
+
+      .content-bottom {
+        margin-top: 28rpx;
+        margin-bottom: 28rpx;
+        color: @textColor4;
+        font-size: 24rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="my-partners">
+    <view class="top">
+      <view class="top_text">我的小伙伴（个）</view>
+      <view class="top_num">
+        {{partners && partners.length}}
+      </view>
+      <navigator hover-class='none' url='/pages/me/share'>
+        <view class="top_btn">去分享</view>
+      </navigator>
+    </view>
+    <view class="content">
+      <block wx:if="{{partners && !partners.length}}">
+        <view class="content-text">
+          快去分享让更多的小伙伴享受小店的品质与优惠吧~
+        </view>
+        <navigator hover-class='none' url='/pages/me/share'>
+          <view class="content-share">
+            马上去分享
+          </view>
+        </navigator>
+      </block>
+      <block wx:else>
+        <block wx:key="id" wx:for="{{partners}}">
+          <view class="content-item">
+            <view class="item-left">
+              <view class="item-img">
+                <image src="{{item.avatar}}"></image>
+              </view>
+              <view class="item-name">{{item.nickname}}</view>
+            </view>
+            <view class="item-time">{{item.time}}</view>
+          </view>
+        </block>
+        <view class="content-bottom">已经到底咯~</view>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as UserActions} from '../../store/user';
+
+
+  @connect({
+    user(state) { return state.user },
+  }, {
+    ...UserActions,
+  })
+
+
+  export default class MyPartners extends wepy.page {
+    // 我的小伙伴 主页
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      partners: () => {
+        let _ = [];
+        if (this.user && this.user.partners)
+          _ = this.user.partners;
+        return _.map(
+          (item) => ({
+            avatar: item.avatar_url,
+            nickname: item.nickname,
+            time: this.parseTime(
+              new Date(item.create_time)
+            ).slice(0, 10),
+          })
+        );
+      },
+    };
+
+    onShow() {
+      this.methods.getPartnersService();
+    }
+
+    onLoad() {
+      this.setTitle('我的小伙伴');
+    }
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

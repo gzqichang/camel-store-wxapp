@@ -1,0 +1,222 @@
+<style lang="less">
+  @import (reference) "../../../config/variables";
+
+  view.explore-header-shadow {
+    width: 100vw;
+    height: 80rpx;
+    background-color: #a0a0a0;
+    opacity: .4;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+  }
+
+  view.explore-header {
+    width: 100vw;
+    height: 80rpx;
+    background-color: transparent;
+    display: flex;
+    position: absolute;
+    z-index: 2;
+
+    .item {
+      display: inline-flex;
+      flex-grow: 1;
+      align-items: center;
+
+      &.search {
+        width: 445rpx;
+        padding-right: 18rpx;
+
+        .box {
+          width: 100%;
+          height: 60rpx;
+          background: @solidWhite;
+          border-radius: 30rpx;
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .icon {
+            height: 24rpx;
+            width: 24rpx;
+            position: absolute;
+            left: 20rpx;
+          }
+
+          input {
+            width: 80%;
+            color: @textColor3;
+            font-size: 24rpx;
+            position: absolute;
+            left: 60rpx;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+
+      &.store {
+        .icon {
+          height: 38rpx;
+          width: 30rpx;
+          margin: 0 16rpx;
+        }
+
+        view {
+          max-width: 7em;
+          font-size: 24rpx;
+          color: @solidWhite;
+          text-align: left;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .arrow {
+          height: 10rpx;
+          width: 17rpx;
+          margin-left: 12rpx;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view
+    class="explore-header"
+    style="{{(storeStatus === 'locating' || storeStatus === 'available') ? '' : 'background: #ccc'}}"
+  >
+    <view class="item store" @tap="bindRedirectStore">
+      <image
+        class="icon"
+        src="../../../assets/img/location/location.png"></image>
+      <block wx:if="{{storeStatus === 'locating'}}">
+        <view>定位中...</view>
+      </block>
+      <block wx:elif="{{storeStatus === 'available'}}">
+        <view>{{storeName}}</view>
+      </block>
+      <block wx:else>
+        <view>当前位置暂无门店</view>
+      </block>
+      <image
+        class="arrow"
+        src="../../../assets/img/explore/arrow2.png"></image>
+    </view>
+
+    <view class="item search">
+      <view class="box">
+        <image
+          class="icon"
+          src="../../../assets/img/explore/magnifier2.png"></image>
+        <input
+          placeholder="请输入商品名称搜索"
+          confirm-type="search"
+          @input="bindSearchInput"
+          @confirm="bindSearchQuery"
+          value="{{queryString}}"/>
+      </view>
+    </view>
+  </view>
+  <view class="explore-header-shadow"></view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../../mixins/utils';
+  import {actions as SearchActions} from '../../../store/search/index';
+
+
+  @connect({
+    store(state) { return state.store.id },
+    storeName(state) { return state.store.current.name },
+    storeStatus(state) { return state.store.status },
+    queryString(state) { return state.search.query },
+    history(state) { return state.search.history },
+  }, {
+    ...SearchActions,
+  })
+
+
+  export default class Header extends wepy.page {
+    // 新首页 头部
+
+    data = {
+      latitude: '',
+      longitude: '',
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindSearchInput: (e) => {
+        const {value} = e.detail;
+        this.methods.setSearchQuery(value);
+      },
+
+      bindSearchQuery: () => {
+        if (!this.queryString.trim()) return;
+
+        /* eslint-disable no-undef */
+        const route = getCurrentPages().concat().pop().route;
+        if (route !== 'pages/explore/search')
+          this.go2page().navigate('/pages/explore/search');
+
+        this.methods.getSearchProductService({
+          store: this.store,
+          query: this.queryString.trim(),
+          latitude: this.latitude,
+          longitude: this.longitude,
+        });
+        this.methods.setSearchHistory([
+          ...new Set([
+            this.queryString.trim(),
+            ...this.history,
+          ])]);
+      },
+
+      bindRedirectStore: () => {
+        this.go2page().navigate('/pages/explore/switchStore');
+      },
+    };
+
+    events = {
+      tryLocating: (reload) => {
+        if (reload)
+          this.tryLocating();
+        else {
+          if (this.latitude && this.longitude)
+            return;
+          this.tryLocating();
+        }
+      },
+    };
+
+    tryLocating = () => {
+      const onSuccess = () => {
+        wepy.getLocation({
+          complete: (res) => {
+            const {latitude = '', longitude = ''} = res;
+            this.latitude = latitude;
+            this.longitude = longitude;
+          },
+        });
+      };
+
+      wepy.getSetting({
+        success: (res) => {
+          if (res.authSetting['scope.userLocation'])
+            onSuccess();
+        },
+        fail: () => {
+          this.latitude = '';
+          this.longitude = '';
+        },
+      });
+    };
+  }
+</script>

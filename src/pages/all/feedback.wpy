@@ -1,0 +1,270 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-feedback {
+    min-height: 95vh;
+
+    .item {
+      background-color: @solidWhite;
+
+      textarea {
+        width: 624rpx;
+        height: 398rpx;
+        margin: 20rpx auto 0;
+        padding: 28rpx 15rpx 70rpx;
+        border: 1rpx solid @dimWhite;
+        border-radius: 8rpx;
+        color: @textColor3;
+        font-size: 30rpx;
+        background-color: @faintWhite;
+        position: relative;
+        overflow: hidden;
+
+        & view {
+          position: absolute;
+          bottom: 28rpx;
+          right: 24rpx;
+        }
+      }
+
+      .border {
+        width: 655rpx;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+
+        image {
+          width: 54rpx;
+          height: 54rpx;
+          padding-right: 12rpx;
+        }
+
+        .text {
+          color: @textColor1;
+          font-size: 30rpx;
+
+          &.red {
+            color: @primaryColor;
+            font-size: 32rpx;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+
+    .hint {
+      margin-bottom: 36rpx;
+      color: @textColor1;
+      font-size: 24rpx;
+      text-align: center;
+      position: absolute;
+      bottom: 95rpx;
+      left: 0;
+      right: 0;
+    }
+
+    button {
+      width: 100%;
+      height: 95rpx;
+      color: @solidWhite;
+      font-size: 34rpx;
+      border: none;
+      border-radius: 0;
+      background-color: @primaryColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      bottom: 0;
+
+      &::before,
+      &::after {
+        border: 0;
+      }
+
+      &.disabled {
+        background-color: @textColor5;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-feedback">
+    <view class="item">
+      <textarea
+        value="{{value}}"
+        placeholder="请输入反馈内容要求"
+        maxlength="500"
+        @input="bindOnChange"
+        @confirm="bindOnChange">
+        <view>{{value.length}}/500</view>
+      </textarea>
+      <view style="height: 1px;"></view>
+    </view>
+
+    <block wx:if="{{store && store.service_phone}}">
+      <view class="item" style="margin-top: 24rpx;" @tap="bindCall">
+        <view class="border">
+          <image src="../../assets/img/detail/tel.png"></image>
+          <view class="text">客服电话：</view>
+          <view class="text red">{{store.service_phone}}</view>
+        </view>
+      </view>
+    </block>
+
+    <view class="hint">提交反馈时将获取您的手机号码，方便客服联系反馈~</view>
+
+    <block wx:if="{{user && user.phone}}">
+      <button @tap="bindSend({{user.phone}})" class="{{!enable && 'disabled'}}">
+        提交
+      </button>
+    </block>
+    <block wx:else>
+      <button
+        class="{{!enable && 'disabled'}}"
+        open-type="getPhoneNumber"
+        bindgetphonenumber="bindUpdatePhone">
+        提交
+      </button>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as UserActions} from '../../store/user';
+  import {actions as StoreActions} from '../../store/store';
+  import {actions as OthersActions} from '../../store/others';
+
+
+  @connect({
+    user(state) { return state.user },
+    store(state) { return state.store.current },
+    productDetail(state) { return state.product.detail },
+  }, {
+    ...UserActions,
+    ...StoreActions,
+    ...OthersActions,
+  })
+
+
+  export default class Feedback extends wepy.page {
+    // 反馈 页面
+
+    data = {
+      order: null,
+      value: '',
+      enable: true,
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      // Handle the value changes
+      bindOnChange: ({detail: {value}}) => {
+        this.value = value;
+      },
+
+      // Make Call
+      bindCall: () => {
+        wepy.makePhoneCall({
+          phoneNumber: this.store.service_phone,
+          success: () => {
+            this.go2page().back();
+          },
+        });
+      },
+
+      // Send feedback
+      bindSend: (phone) => {
+        if (this.value.trim().length < 1)
+          return this.showToast('请输入反馈内容');
+
+        if (!this.enable) return;
+
+        this.enable = !this.enable;
+
+        const data = this.order
+          ? {
+            order: this.order,
+          } : {
+            goods: this.productDetail.id,
+          };
+
+        this.methods.sendFeedbackMessageService({
+          data: {
+            user: this.user.id,
+            shop: this.store.id,
+            phone,
+            content: this.value,
+            ...data,
+          },
+          callback: () => {
+            this.showToast('反馈己收到，客服人员将在 24 小时内联系您，请耐心等候');
+            setTimeout(() => {
+              this.go2page().back();
+            }, 1000);
+          },
+        });
+      },
+
+      bindUpdatePhone: (e) => {
+        const {detail: {encryptedData, iv}} = e;
+
+        if (this.value.trim().length < 1)
+          return this.showToast('请输入反馈内容');
+
+        if (!this.enable) return;
+
+        this.enable = !this.enable;
+
+        const data = this.order
+          ? {
+            order: this.order,
+          } : {
+            goods: this.productDetail.id,
+          };
+
+        if (encryptedData)
+          this.methods.updateUserPhoneService({
+            data: {
+              iv,
+              encrypted_data: encryptedData,
+            },
+            callback: (phone) => {
+              this.methods.sendFeedbackMessageService({
+                data: {
+                  user: this.user.id,
+                  shop: this.store.id,
+                  phone,
+                  content: this.value,
+                  ...data,
+                },
+                callback: () => {
+                  this.showToast('反馈己收到，客服人员将在 24 小时内联系您，请耐心等候');
+                  setTimeout(() => {
+                    this.go2page().back();
+                  }, 1000);
+                },
+              });
+            },
+          });
+      },
+    };
+
+    onLoad({order}) {
+      this.setTitle('用户反馈');
+
+      if (order)
+        this.order = order;
+    };
+
+    onHide() {
+      this.order = null;
+    }
+  }
+</script>

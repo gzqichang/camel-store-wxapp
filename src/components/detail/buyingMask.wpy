@@ -1,0 +1,1406 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  @panelHeight: 1000rpx;
+
+  .detail-buying-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .close {
+      width: 56rpx;
+      height: 56rpx;
+      margin-bottom: 35rpx;
+      margin-right: 26rpx;
+      background: transparent;
+      display: block;
+      position: absolute;
+      bottom: @panelHeight;
+      right: 0;
+
+      image {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    .panel {
+      width: 100%;
+      height: @panelHeight;
+      background-color: @solidWhite;
+      position: absolute;
+      bottom: 0;
+
+      .head {
+        height: 230rpx;
+        background-color: @solidWhite;
+        display: flex;
+        bottom: calc(@panelHeight - 230rpx);
+        left: 0;
+        right: 0;
+
+        image {
+          width: 175rpx;
+          height: 175rpx;
+          margin: 22rpx 18rpx 30rpx 30rpx;
+          border: 1rpx solid @dimWhite;
+        }
+
+        & > view {
+          margin-top: 58rpx;
+          display: inline-block;
+
+          .text.title {
+            margin-bottom: 20rpx;
+            color: @textColor0;
+            font-size: 30rpx;
+            display: block;
+          }
+
+          .text.price {
+            margin-right: 22rpx;
+            color: @primaryColor;
+            font-size: 32rpx;
+            display: inline-block;
+          }
+
+          .text.market {
+            text-decoration: line-through;
+            color: @textColor5;
+            font-size: 28rpx;
+            display: inline-block;
+          }
+        }
+      }
+
+      .specification {
+        background-color: @solidWhite;
+        left: 0;
+        right: 0;
+
+        & > .label {
+          margin-bottom: 20rpx;
+          padding-left: 30rpx;
+          color: @textColor1;
+          font-size: 28rpx;
+          display: block;
+        }
+
+        .selection {
+          padding: 10rpx 12rpx 10rpx 30rpx;
+          overflow-y: auto;
+          display: flex;
+          flex-wrap: wrap;
+
+          .selected {
+            color: @primaryColor;
+            border-color: @primaryColor;
+          }
+
+          view {
+            min-height: 50rpx;
+            max-width: calc(~"100% - 46rpx");
+            margin: 0 14rpx 12rpx 0;
+            padding: 8rpx 12rpx;
+            color: @textColor0;
+            font-size: 24rpx;
+            background: @solidWhite;
+            border: 1rpx solid @textColor2;
+            border-radius: 4rpx;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            image {
+              width: 50rpx;
+              height: 50rpx;
+              border-radius: 4rpx;
+              margin-right: 12rpx;
+              flex-shrink: 0;
+            }
+          }
+        }
+      }
+
+      .number {
+        padding: 20rpx 0;
+        background: @solidWhite;
+        bottom: 136rpx;
+        left: 0;
+        right: 0;
+
+        & > .label {
+          margin-bottom: 20rpx;
+          padding-left: 30rpx;
+          color: @textColor1;
+          font-size: 28rpx;
+          display: block;
+        }
+
+        .action {
+          padding-left: 30rpx;
+          display: flex;
+          align-items: center;
+
+          .button {
+            width: 60rpx;
+            height: 60rpx;
+            background: @solidWhite;
+            border: 1rpx solid @textColor2;
+            border-radius: 4rpx;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            image {
+              width: 26rpx;
+              height: 26rpx;
+            }
+          }
+
+          .button.disabled {
+            border-color: @textColor4;
+          }
+
+          .label {
+            margin: 0 12rpx;
+            display: inline-flex;
+
+            input {
+              width: 75rpx;
+              height: 60rpx;
+              font-size: 28rpx;
+              text-align: center;
+              color: @textColor1;
+              border: 1rpx solid @textColor2;
+              border-radius: 4rpx;
+            }
+          }
+
+          .stock {
+            margin-left: 20rpx;
+            color: @textColor2;
+            font-size: 28rpx;
+          }
+        }
+      }
+
+      .time {
+        background: @solidWhite;
+        left: 0;
+        right: 0;
+
+        & > .label {
+          margin: 20rpx 0;
+          padding-left: 30rpx;
+          color: @textColor1;
+          font-size: 28rpx;
+          display: block;
+        }
+
+        .selection {
+          padding: 10rpx 0 10rpx 30rpx;
+          overflow-y: auto;
+
+          .selected {
+            color: @primaryColor;
+            border-color: @primaryColor;
+          }
+
+          view, picker {
+            height: 60rpx;
+            margin: 0 14rpx 12rpx 0;
+            padding: 0 22rpx;
+            color: @textColor0;
+            font-size: 24rpx;
+            background: @solidWhite;
+            border: 1rpx solid @textColor2;
+            border-radius: 4rpx;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+
+      .customized-fields {
+        border-top: 12rpx solid @faintWhite;
+
+        .item {
+          width: 698rpx;
+          height: 96rpx;
+          margin: 0 auto;
+          border-bottom: 2rpx solid @dimWhite;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          &:last-of-type {
+            border-bottom: none;
+          }
+
+          & > view:first-of-type {
+            color: @textColor1;
+          }
+
+          & > view:last-of-type {
+            padding-left: 1rem;
+            color: @textColor3;
+            text-align: right;
+            flex-grow: 1;
+          }
+
+          & > view {
+            font-size: 28rpx;
+            display: flex;
+            align-items: center;
+
+            input, picker {
+              width: 100%;
+            }
+          }
+
+          &.vertical {
+            height: auto;
+            display: block;
+
+            & > view:first-of-type {
+              margin: 24rpx 0;
+            }
+
+            & > view:last-of-type {
+              margin-bottom: 20rpx;
+              padding-left: 0;
+            }
+
+            .options {
+              width: 100%;
+              text-align: left;
+
+              .selected {
+                color: @primaryColor;
+                border-color: @primaryColor;
+              }
+
+              view {
+                height: 60rpx;
+                margin: 0 14rpx 12rpx 0;
+                padding: 0 22rpx;
+                color: @textColor0;
+                font-size: 24rpx;
+                background: @solidWhite;
+                border: 1rpx solid @textColor2;
+                border-radius: 4rpx;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              }
+            }
+          }
+        }
+      }
+
+      .foot {
+        height: 136rpx;
+        padding: 0 10rpx;
+        background-color: @solidWhite;
+        border-top: 1rpx solid @faintWhite;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .buttons {
+          height: 92rpx;
+          display: flex;
+          flex-grow: 1;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        &.wider {
+          height: 95rpx;
+          padding: 0;
+          align-items: flex-end;
+
+          .buy {
+            width: 100%;
+            height: 95rpx;
+            margin: 0;
+            border-radius: 0;
+          }
+        }
+
+        .buy.group,
+        .cart.group {
+          font-size: 28rpx;
+          flex-direction: column;
+
+          view {
+            font-size: 24rpx;
+            line-height: 24rpx;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+
+            view {
+              padding-left: 4rpx;
+              font-size: 18rpx;
+              display: inline;
+            }
+          }
+        }
+
+        .services,
+        .cart,
+        .buy,
+        .share {
+          height: 88rpx;
+          color: @solidWhite;
+          font-size: 30rpx;
+          border-radius: 10rpx;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .services {
+          margin: 0;
+          border: 0;
+          background: @solidWhite;
+          flex-direction: column;
+
+          &::before,
+          &::after {
+            border: 0;
+          }
+
+          image {
+            width: 40rpx;
+            height: 40rpx;
+          }
+
+          view {
+            color: @textColor1;
+            font-size: 26rpx;
+            line-height: 40rpx;
+          }
+        }
+
+        .cart {
+          margin: 0 5rpx;
+          background: @secondaryColor;
+          flex-grow: 1;
+          flex-basis: 5rem;
+        }
+
+        .buy {
+          margin: 0 5rpx;
+          background: @primaryColor;
+          flex-grow: 1;
+          flex-basis: 5rem;
+        }
+
+        .share {
+          margin-left: 5rpx;
+          color: @primaryColor;
+          background: @solidWhite;
+          border: 2rpx solid @primaryColor;
+          flex-grow: 1;
+          flex-basis: 5rem;
+
+          view {
+            font-size: 24rpx;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showMask"></mask>
+
+  <view class="{{showMask ? 'detail-buying-mask' : 'detail-buying-mask hide'}}">
+    <button
+      class="close"
+      @tap="bindToggleMask"
+      hover-class="none"
+      hidden="{{showDateMask}}">
+      <image
+        mode="scaleToFill"
+        src="../../assets/img/detail/close.png">
+      </image>
+    </button>
+
+    <view class="panel">
+      <view class="head">
+        <image src="{{productDetail.banner[0].image}}"></image>
+        <view>
+          <view class="text title">
+            {{productDetail.name}}
+          </view>
+          <view class="text price">
+            <block wx:if="{{productDetail._model === 'credits'}}">
+              {{selectedItem ? selectedItem.credit + '积分 + ¥' + selectedItem.price : productDetail._product.price_range}}
+            </block>
+            <block wx:else>
+              ￥{{selectedItem ? (isGroup ? selectedItem.groupPrice : selectedItem.price) : productDetail._product.price_range}}
+            </block>
+          </view>
+          <view wx:if="{{selectedItem && selectedItem.market_price * 1}}" class="text market">
+            ￥{{selectedItem ? selectedItem.market_price : 0}}
+          </view>
+        </view>
+      </view>
+
+      <scroll-view scroll-y style="height: 620rpx;">
+        <view class="specification">
+          <label class="label">规格</label>
+            <view class="selection">
+              <view
+                wx:key="url"
+                wx:for="{{productDetail._product.gtypes}}"
+                class="{{selectedItem.id === item.id && 'selected'}}"
+                style="{{!item.is_sell && 'color: lightgrey; border-color: lightgrey;'}}"
+                @tap="bindOnSelectItem({{item.id}})"
+              >
+                <image
+                  wx:if="{{item.icon}}"
+                  src="{{item.icon.file + '?imageView2/2/w/50'}}"
+                ></image>
+                {{item.content}}
+              </view>
+            </view>
+        </view>
+
+        <block wx:if="{{productDetail._model === 'subscription'}}">
+          <view class="time">
+            <label class="label">首次送货时间</label>
+            <view class="selection">
+              <block wx:key="index" wx:for="{{optionalDate}}">
+                <view
+                  wx:if="{{(index + 1) < 4}}"
+                  class="{{selectedDate === item.date && 'selected'}}"
+                  @tap="bindDateChange({{item.date}})">
+                  {{item.text}}
+                </view>
+              </block>
+              <block wx:if="{{optionalDate.length >= 4}}">
+                <view @tap="bindToggleDateMask">更多选择</view>
+              </block>
+            </view>
+          </view>
+        </block>
+
+        <block wx:else>
+          <view class="number">
+            <label class="label">数量</label>
+            <view class="action">
+              <label
+                class="{{canMinus ? 'button' : 'button disabled'}}"
+                @tap="bindOnCountChange(-1)">
+                <image src="{{canMinus ? '../../assets/img/detail/minus.png' : '../../assets/img/detail/minus_disabled.png'}}"></image>
+              </label>
+              <label class="label">
+                <input
+                  type="number"
+                  value="{{count}}"
+                  @input="bindOnCountInput"
+                  @confirm="bindOnCountInput"
+                  @blur="bindOnCountInput"/>
+              </label>
+              <label
+                class="{{canAdd ? 'button' : 'button disabled'}}"
+                @tap="bindOnCountChange(1)">
+                <image src="{{canAdd ? '../../assets/img/detail/add.png' : '../../assets/img/detail/add_disabled.png'}}"></image>
+              </label>
+              <label class="stock">
+                {{selectedItem ? '库存' + selectedItem.stock + '件' : '未选择规格'}}
+              </label>
+            </view>
+          </view>
+        </block>
+
+        <view
+          wx:if="{{customizedData.length}}"
+          class="customized-fields"
+        >
+          <block
+            wx:key="{{field.name}}"
+            wx:for="{{customizedData}}"
+            wx:for-item="field"
+          >
+            <view class="{{field.type === 'radio' || field.type === 'checkbox' ? 'item vertical' : 'item'}}">
+              <view>
+                {{field.name}}
+                <view
+                  wx:if="{{field.type === 'radio' || field.type === 'checkbox'}}"
+                  style="padding-left: 10rpx; color: #CCCCCC; font-size: 24rpx">
+                  {{field.placeholder + (field.type === 'checkbox' ? '（可多选）' : '')}}
+                </view>
+              </view>
+              <view>
+                <!--字符串类型-->
+                <block wx:if="{{field.type === 'string'}}">
+                  <input
+                    type="text"
+                    value="{{field.value}}"
+                    placeholder="{{field.placeholder}}"
+                    @input="bindCustomizedInput({{field.type}}, {{field.name}})"
+                  />
+                </block>
+
+                <!--数字类型-->
+                <block wx:if="{{field.type === 'number'}}">
+                  <input
+                    type="digit"
+                    value="{{field.value}}"
+                    placeholder="{{field.placeholder}}"
+                    @input="bindCustomizedInput({{field.type}}, {{field.name}})"
+                  />
+                </block>
+
+                <!--日期类型-->
+                <block wx:if="{{field.type === 'date'}}">
+                  <picker
+                    mode="date"
+                    value="{{field.value}}"
+                    start="{{field.minimum}}"
+                    end="{{field.maximum}}"
+                    @change="bindCustomizedInput({{field.type}}, {{field.name}})">
+                    {{field.value || field.placeholder || '选择日期'}}
+                  </picker>
+                </block>
+
+                <!--单选框-->
+                <block wx:if="{{field.type === 'radio'}}">
+                  <view class="options">
+                    <view
+                      wx:key="index"
+                      wx:for="{{field.options}}"
+                      class="{{field.value === item ? 'selected' : ''}}"
+                      @tap="bindCustomizedInput({{field.type}}, {{field.name}}, {{item}})"
+                    >
+                      {{item}}
+                    </view>
+                  </view>
+                </block>
+
+                <!--复选框-->
+                <block wx:if="{{field.type === 'checkbox'}}">
+                  <view class="options">
+                    <view
+                      wx:key="index"
+                      wx:for="{{field.options}}"
+                      class="{{field.isChecked[item] ? 'selected' : ''}}"
+                      @tap="bindCustomizedInput({{field.type}}, {{field.name}}, {{item}})"
+                    >
+                      {{item}}
+                    </view>
+                  </view>
+                </block>
+              </view>
+            </view>
+          </block>
+        </view>
+      </scroll-view>
+
+      <!--按钮-->
+      <block wx:if="{{productDetail._grouping || productDetail._model === 'credits'}}">
+        <view class="foot wider">
+          <view class="buy" @tap="bindBuyNow">
+            确定
+          </view>
+        </view>
+      </block>
+
+      <block wx:else>
+        <view class="foot">
+          <block wx:if="{{showFeedback}}">
+            <button class="services" @tap="bindGo2Feedback">
+              <image src="../../assets/img/detail/customServices.png"></image>
+              <view>客服</view>
+            </button>
+          </block>
+          <block wx:else>
+            <button open-type="contact" class="services">
+              <image src="../../assets/img/detail/customServices.png"></image>
+              <view>客服</view>
+            </button>
+          </block>
+
+          <view class="buttons">
+            <block wx:if="{{productDetail._model === 'regular'}}">
+              <view
+                wx:if="{{!productDetail.fictitious}}"
+                class="cart"
+                style="max-width: 180rpx"
+                @tap="bindAdd2Cart">
+                加入购物车
+              </view>
+
+              <view
+                class="buy"
+                style="{{productDetail.fictitious ? '' : 'max-width: 150rpx'}}"
+                @tap="bindBuyNow">
+                立即购买
+              </view>
+            </block>
+
+            <block wx:if="{{productDetail._model === 'subscription'}}">
+              <view class="buy wider" @tap="bindBuyNow">
+                立即购买
+              </view>
+            </block>
+
+            <view
+              wx:if="{{enableShare}}"
+              class="share"
+              @tap="bindToggleShare"
+              style="{{productDetail._grouping && !sharedGroup ? 'max-width: 140rpx;' : 'flex-direction: column'}}">
+              分享
+              <view wx:if="{{productDetail._product.max_rebate && enableSharingProfit && !productDetail._grouping}}" style="font-size: 20rpx">
+                {{'(最高得' + productDetail._product.max_rebate + '积分)'}}
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <dateSelecter
+      :show.sync="showDateMask"
+      :selectedDate.sync="selectedDate"
+      :selectedStart.sync="selectedStart"
+      :selectedEnd.sync="selectedEnd"
+      :availableDays.sync="availableDays"
+      :availableType.sync="availableType">
+    </dateSelecter>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import {actions as OthersActions} from '../../store/others';
+  import {actions as OrderActions} from '../../store/order';
+  import {
+    verifyCustomizedData,
+    calculateEstimateDeliveryTime,
+  } from '../../store/order/helper';
+  import Mask from '../utils/mask';
+  import DateSelecter from './dateSelecter';
+
+
+  @connect({
+    productDetail(state) { return state.product.detail },
+    cart(state) { return state.order.cart },
+    orderGroup(state) { return state.others.orderGroup },
+    sharedGroup(state) { return state.order.sharedGroup },
+    enableShare(state) { return state.config.enableShare },
+    enableSharingProfit(state) { return state.config.enableSharingProfit },
+    showFeedback(state) { return state.config.showFeedback },
+  }, {
+    ...ProductActions,
+    ...OrderActions,
+    ...OthersActions,
+  })
+
+
+  export default class BuyingMask extends wepy.component {
+    // 详情页 - 购买遮罩组件
+
+    data = {
+      count: 1,
+      showDateMask: false,
+      selectedItem: null,
+      canMinus: false,
+      canAdd: false,
+      selectedDate: new Date(),
+      selectedStart: '',
+      selectedEnd: '',
+      availableType: 'range',
+      availableDays: [],
+      customizedData: [],
+    };
+
+    props = {
+      showMask: {
+        type: Boolean,
+        default: false,
+      },
+      isGroup: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+      dateSelecter: DateSelecter,
+    };
+
+    mixins = [UtilsMixin];
+
+    /* eslint-disable camelcase */
+    computed = {
+      optionalDate: () => {
+        const parse = (x) => String(x)[1] ? x : (`00${x}`).slice(-2);
+        let dates = [];
+        let firstDate = new Date();
+        let lastDate = new Date();
+        let _dayType = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+        this.availableType = 'range';
+
+        // 当没有详情或不是订阅商品时直接返回
+        if (
+          !this.productDetail
+          || this.productDetail._model !== 'subscription'
+        )
+          return dates;
+
+        if (this.isGroup) {
+          const {groupbuy_info, _groupsInfo} = this.productDetail;
+          const {period} = groupbuy_info;
+
+          if (groupbuy_info) {
+            // 如果是拼团商品，往后移开始时间
+            firstDate.setHours(firstDate.getHours() + parseInt(period));
+
+            if (this.orderGroup && _groupsInfo.length) {
+              const currentGroup = _groupsInfo
+                .find((x) => (x.id === this.orderGroup));
+
+              if (currentGroup) {
+                const {end_time} = currentGroup;
+                const offset = new Date(end_time).getTime() - new Date().getTime();
+                firstDate.setTime(firstDate.getTime() + offset);
+              }
+            }
+          }
+        }
+
+        if (this.productDetail._product) {
+          const {
+            duration,
+            duration_start,
+            duration_end,
+            interval,
+            delivery_setup,
+            date_setup,
+            delivery_data_set,
+          } = this.productDetail._product;
+
+          // 当前的期数
+          let period = this.selectedItem && this.selectedItem.cycle_num
+            ? this.selectedItem.cycle_num
+            : null;
+
+          let days = [];
+
+          // days 可能是 [new Date(), ...] 或者 [1, 2, ...]
+          if (date_setup === 'weekly')
+            days = Array.from(delivery_data_set).map((x) => parseInt(x));
+          else if (date_setup === 'specific')
+            days = Array.from(delivery_data_set)
+              .map((x) => new Date(x.replace(/-/g, '/')))
+              .filter((x) => (x > new Date()))
+              .sort((a, b) => (a < b ? 1 : -1));
+
+          // 具体日期 & 设置基本的时间区间
+          if (duration === 'time_frame') {
+            if (duration_start) {
+              let _firstDate = null;
+              try {
+                _firstDate = new Date(duration_start);
+              } catch (e) {
+                console.error('duration_start parsing error: ', e);
+              } finally {
+                // 将时间设置为起始日或者今天次日
+                if (_firstDate && _firstDate > firstDate)
+                  firstDate = _firstDate;
+                else
+                  firstDate.setDate(firstDate.getDate() + 1);
+              }
+            }
+
+            if (duration_end) {
+              let _lastDate = null;
+              try {
+                _lastDate = new Date(duration_end);
+              } catch (e) {
+                console.error('duration_end parsing error: ', e);
+              } finally {
+                if (_lastDate)
+                  lastDate = _lastDate;
+              }
+            }
+          } else if (duration === 'long_term') {
+            // 长期
+            // % 将开始时间设置在次日
+            // % 将结束时间设置在三年后
+            firstDate.setDate(firstDate.getDate() + 1);
+            lastDate.setFullYear(lastDate.getFullYear() + 3);
+          }
+
+          if (period) {
+            switch (delivery_setup) {
+              // 固定间隔
+              // 设置可选的最后的时间
+              case 'interval':
+                if (interval)
+                  lastDate.setDate(lastDate.getDate() - (period - 1) * interval);
+                break;
+
+              // 具体日期
+              case 'date':
+                let now = null;
+                let count = 0;
+                let _first = null;
+
+                // 设置可选的最早的时间
+                switch (date_setup) {
+                  // 每周几 % 取第一个可选周
+                  case 'weekly':
+                    for (let i = 0; _first === null; i++) {
+                      const d = new Date(firstDate);
+                      d.setDate(firstDate.getDate() + i);
+                      if (days.includes(d.getDay()))
+                        _first = d;
+                      if (i > 1000)
+                        break;
+                    }
+                    break;
+
+                  // 具体日期 % 取最早的一个日期
+                  case 'specific':
+                    this.availableType = 'docs'; // <--- Set it to DOCs Based
+                    _first = days[days.length - 1];
+                    break;
+                }
+
+                if (_first && _first > firstDate)
+                  firstDate = _first;
+
+                // 设置可选的最后的时间
+                for (let i = 0; count < period; i++) {
+                  switch (date_setup) {
+                    // 每周几
+                    case 'weekly':
+                      now = new Date(lastDate);
+                      now.setDate(lastDate.getDate() - i);
+                      if (days.includes(now.getDay()))
+                        count += 1;
+                      break;
+
+                    // 具体日期
+                    case 'specific':
+                      now = days[i];
+                      if (now <= lastDate)
+                        count += 1;
+                      break;
+                  }
+
+                  if (now <= firstDate)
+                    count = period;
+                }
+
+                if (now)
+                  lastDate = now;
+                break;
+            }
+          }
+
+          // 最早及最晚时间
+          this.selectedStart = [
+            firstDate.getFullYear(),
+            firstDate.getMonth() + 1,
+            firstDate.getDate(),
+          ].map(parse).join('-');
+
+          this.selectedEnd = [
+            lastDate.getFullYear(),
+            lastDate.getMonth() + 1,
+            lastDate.getDate(),
+          ].map(parse).join('-');
+
+          days = days.filter((x) => (x <= lastDate));
+
+          this.availableDays = days;
+
+          let availables = [];
+
+          switch (delivery_setup) {
+            // 配送日期
+            case 'date':
+              for (let i = 0; availables.length < 4; i++) {
+                switch (date_setup) {
+                  // 每周
+                  case 'weekly':
+                    const d = new Date(firstDate);
+                    d.setDate(firstDate.getDate() + i);
+                    if (days.includes(d.getDay()))
+                      availables.push(d);
+                    break;
+
+                  // 具体日期
+                  case 'specific':
+                    availables = days.reverse().slice(0, 4);
+                    break;
+                }
+                if (i > 1000)
+                  break;
+              }
+              break;
+
+            case 'interval': // 固定间隔
+              for (let i = 0; availables.length < 4; i++) {
+                const d = new Date(firstDate);
+                d.setDate(firstDate.getDate() + i);
+                availables.push(d);
+              }
+              break;
+          }
+
+          dates = availables
+            .sort((a, b) => (a > b ? 1 : -1))
+            .map((item) => ({
+              text: `${item.getMonth() + 1}-${item.getDate()} （${_dayType[item.getDay()]}）`,
+              date: item <= lastDate
+                ? [
+                  item.getFullYear(),
+                  item.getMonth() + 1,
+                  item.getDate(),
+                ].map(parse).join('-')
+                : null,
+            }));
+        }
+
+        if (this.selectedDate) {
+          const start = new Date(this.selectedStart);
+          const now = new Date(this.selectedDate);
+          const end = new Date(this.selectedEnd);
+
+          if (start > now || end < now)
+            this.methods.bindDateChange(this.selectedStart);
+        }
+
+        return dates.filter((item) => (item.date));
+      },
+    };
+
+    methods = {
+      // Change the number of how much you wanna get
+      bindOnCountChange: (num) => {
+        const _num = parseInt(num);
+
+        if (this.selectedItem) {
+          if (
+            (_num > 0 && this.canAdd)
+            || (_num < 0 && this.canMinus)
+          ) {
+            const value = this.count + parseInt(num);
+            const {buy_limit} = this.selectedItem;
+            if (buy_limit && value > buy_limit) {
+              this.showModal({
+                title: '抱歉',
+                content: `该商品最多限购${buy_limit}件`,
+                showCancel: false,
+              });
+              this.count = buy_limit;
+              return this.checkCanDo();
+            }
+            this.count = value;
+            return this.checkCanDo();
+          }
+        }
+      },
+
+      // Check if the input number is valid
+      bindOnCountInput: (e) => {
+        let {value} = e.detail;
+        value = parseInt(value);
+
+        if (value && this.selectedItem) {
+          const {buy_limit, stock} = this.selectedItem;
+          if (buy_limit && value > buy_limit) {
+            // 如果这里不延时的话返回的数量将不能更新到输入框的显示中
+            setTimeout(() => {
+              this.showModal({
+                title: '抱歉',
+                content: `该商品最多限购${buy_limit}件`,
+                showCancel: false,
+              });
+            }, 100);
+            this.count = buy_limit;
+            this.checkCanDo();
+            return this.count;
+          }
+          if (value <= stock) {
+            this.count = value;
+            this.checkCanDo();
+          } else if (value > stock) {
+            this.count = stock;
+            this.checkCanDo();
+            return this.count;
+          }
+        } else {
+          this.count = value;
+          this.checkCanDo();
+        }
+      },
+
+      // Customized fields on input
+      bindCustomizedInput: (type, field, e) => {
+        const value = e
+          ? (
+            e.detail && e.detail.value !== undefined
+              ? e.detail.value
+              : e
+          )
+          : undefined;
+
+        if (value === undefined) return;
+        if (
+          !(
+            this.productDetail
+            && this.productDetail._customizedFields
+          )
+        ) return;
+
+        let data = this.customizedData.length
+          ? [...this.customizedData]
+          : [...this.productDetail._customizedFields];
+
+        // string, number, date, radio
+        if ([
+          'string',
+          'number',
+          'date',
+          'radio',
+        ].includes(type)) {
+          data = data.map((item) => {
+            let obj = {...item};
+            if (item.name === field)
+              obj = {...obj, value};
+            return obj;
+          });
+        }
+
+        // checkbox
+        if (type === 'checkbox') {
+          data = data.map((item) => {
+            let obj = {...item};
+
+            if (item.name === field) {
+              if (!obj.value)
+                obj.value = [];
+
+              obj = {
+                ...obj,
+                value: obj.value.includes(value)
+                  ? obj.value.filter((x) => (x !== value))
+                  : [...obj.value, value],
+              };
+
+              let formatedValue = obj.value.join(' / ');
+
+              let isChecked = {};
+
+              let {options = []} = obj || {};
+
+              Array.from(options).map(
+                (x) => {
+                  isChecked[x] = obj.value.includes(x);
+                }
+              );
+
+              obj = {...obj, isChecked, formatedValue};
+            }
+
+            return obj;
+          });
+        }
+
+        this.customizedData = data;
+      },
+
+      // Change selected product specification
+      bindOnSelectItem: (id) => {
+        let item = null;
+
+        if (
+          id
+          && this.productDetail
+          && this.productDetail._product
+          && this.productDetail._product.gtypes.length
+        )
+          item = this.productDetail._product.gtypes.find(
+            (x) => (x.id === parseInt(id))
+          );
+
+        if (!item.is_sell) return;
+
+        this.selectedItem = item;
+
+        if (item) {
+          if (this.count > item.stock)
+            this.count = item.stock;
+          if (item.buy_limit
+            && this.count > item.buy_limit)
+            this.count = item.buy_limit;
+
+          this.checkCanDo();
+
+          // Update Calendar
+          this.$broadcast('onSelectItem', item);
+        }
+      },
+
+      // Add to Cart
+      bindAdd2Cart: () => {
+        if (!(this.selectedItem && this.selectedItem.id))
+          return this.showToast('请选择规格');
+        if (!this.count || this.count <= 0)
+          return this.showToast('请输入有效的商品数量');
+
+        if (this.customizedData.length) {
+          for (let f of this.customizedData) {
+            const r = verifyCustomizedData(f);
+            if (r !== false) return this.showToast(r);
+          }
+        }
+
+        const product = this.productDetail.id;
+        const attach = this.productDetail.attach;
+        const url = this.productDetail.url;
+        const count = this.count;
+        const type = this.selectedItem.id;
+        const customizedData = this.customizedData;
+
+        this.methods.updateCartItem({
+          product,
+          type,
+          count,
+          url,
+          customizedData,
+          attach,
+        });
+
+        if (
+          this.productDetail._customizedFields
+          && this.productDetail._customizedFields.length
+        ) {
+          this.customizedData = [...this.productDetail._customizedFields];
+        }
+
+        this.$emit('toggleBuyingMask');
+        return this.showToast('已添加到购物车');
+      },
+
+      // Buy now
+      bindBuyNow: () => {
+        if (!(this.selectedItem && this.selectedItem.id))
+          return this.showToast('请选择规格');
+        if (!this.count || this.count <= 0)
+          return this.showToast('请输入有效的商品数量');
+
+        if (this.customizedData.length) {
+          for (let f of this.customizedData) {
+            const r = verifyCustomizedData(f);
+            if (r !== false) return this.showToast(r);
+          }
+        }
+
+        if (!this.checkUserInfo(this.methods.bindBuyNow))
+          return;
+
+        const orderType = this.productDetail._model;
+        const product = this.productDetail.id;
+        const attach = this.productDetail.attach;
+        const fictitious = this.productDetail.fictitious;
+        const count = this.count;
+        const type = this.selectedItem.id;
+        const customizedData = this.customizedData;
+        const {estimate_time} = this.productDetail._product || {};
+        const dayType = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+        let startTime = new Date();
+
+        if (this.isGroup) {
+          const {groupbuy_info, _groupsInfo} = this.productDetail;
+          const {period} = groupbuy_info;
+
+          if (groupbuy_info) {
+            // 如果是拼团商品，往后移开始时间
+            startTime.setHours(startTime.getHours() + parseInt(period));
+
+            if (this.orderGroup && _groupsInfo.length) {
+              const currentGroup = _groupsInfo
+                .find((x) => (x.id === this.orderGroup));
+
+              if (currentGroup) {
+                const {end_time} = currentGroup;
+                const offset = new Date(end_time).getTime() - new Date().getTime();
+                startTime.setTime(startTime.getTime() + offset);
+              }
+            }
+          }
+        }
+
+        let sendTime = '';
+
+        if (estimate_time)
+          sendTime = calculateEstimateDeliveryTime({
+            estimate_time,        // 后台配置的时间
+            add_time: startTime, // 订单添加时间
+          });
+
+        let _shippingMethod = '';
+
+        if (
+          this.productDetail._shipping
+          && this.productDetail._shipping.length
+        )
+          _shippingMethod = this.productDetail._shipping[0];
+
+        this.methods.setOrderContent({
+          orderContent: [{
+            product,
+            type,
+            count,
+            hash: `${product}${type}`,
+            sendTime,
+            is_pt: this.isGroup,
+            fictitious,
+            customizedData,
+            attach,
+            _shippingMethod,
+            credit: orderType === 'credits' ? this.selectedItem.credit : null,
+          }],
+          orderType,
+        });
+
+        if (orderType === 'subscription')
+          this.methods.setOrderTime({
+            now: this.selectedDate
+              + ' '
+              + dayType[new Date(this.selectedDate.replace(/-/g, '/')).getDay()],
+            selected: this.selectedDate,
+            start: this.selectedStart,
+            end: this.selectedEnd,
+            availableType: this.availableType,
+            availableDays: this.availableDays,
+          });
+
+        return this.go2page().redirect('/pages/cart/confirmOrder');
+      },
+
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleBuyingMask');
+      },
+
+      // Fire The parent event to open the Share Mask
+      bindToggleShare: () => {
+        if (!this.checkUserInfo(this.methods.bindToggleShare))
+          return;
+
+        this.$emit('toggleShareMask');
+      },
+
+      bindDateChange: (event) => {
+        this.selectedDate = event.detail
+          ? event.detail.value
+          : event;
+        // Update Calendar Date
+        this.$broadcast('onDateChange', this.selectedDate);
+      },
+
+      bindToggleDateMask: () => {
+        this.showDateMask = !this.showDateMask;
+        // Update Calendar Date
+        this.$broadcast('onDateChange', this.selectedDate);
+      },
+
+      bindGo2Feedback: () => {
+        if (!this.checkUserInfo(this.methods.bindGo2Feedback))
+          return;
+
+        this.go2page().navigate('/pages/all/feedback');
+      },
+    };
+
+    events = {
+      // Check if has default specification selected
+      checkSelectedItem: () => {
+        if (!this.productDetail) return;
+
+        const {_product, _customizedFields} = this.productDetail;
+
+        if (
+          !this.selectedItem
+          && _product
+          && _product.gtypes.length
+        ) {
+          const item = this.productDetail._product.gtypes[0] || {};
+          if (item)
+            this.methods.bindOnSelectItem(item.id);
+        }
+
+        if (!this.selectedDate)
+          if (new Date(this.selectedStart) < new Date(this.selectedEnd))
+            this.methods.bindDateChange(this.selectedStart);
+
+        if (
+          _customizedFields
+          && _customizedFields.length
+          && !this.customizedData.length
+        ) {
+          this.customizedData = [..._customizedFields];
+        }
+      },
+
+      toggleDateMask: () => {
+        this.methods.bindToggleDateMask();
+      },
+
+      handleDateChange: (date) => {
+        this.methods.bindDateChange(date);
+      },
+    };
+
+    // Controls the Minus & Add buttons disabled property
+    checkCanDo = () => {
+      if (this.selectedItem) {
+        this.canMinus = this.count > 1;
+        this.canAdd = this.selectedItem.stock > this.count;
+      } else {
+        this.canMinus = false;
+        this.canAdd = false;
+      }
+    };
+  };
+</script>

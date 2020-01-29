@@ -1,0 +1,108 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-auth {
+    .auth {
+      width: 377rpx;
+      height: 336rpx;
+      margin: 170rpx auto 88rpx;
+      display: block;
+    }
+
+    .title {
+      color: @textColor0;
+      font-size: 36rpx;
+      text-align: center;
+      display: block;
+    }
+
+    .desp {
+      margin-top: 30rpx;
+      color: @textColor4;
+      font-size: 28rpx;
+      text-align: center;
+      display: block;
+    }
+
+    button {
+      height: 80rpx;
+      width: 600rpx;
+      margin-top: 206rpx;
+      color: @solidWhite;
+      font-size: 36rpx;
+      line-height: 80rpx;
+      background: @primaryColor;
+      border-radius: 40rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-auth">
+    <image
+      class="auth"
+      src="../../assets/img/authLogo.png"></image>
+    <text class="title">
+      访问小程序需要获取你的个人信息
+    </text>
+    <text class="desp">
+      用户头像、昵称、位置信息等
+    </text>
+    <button
+      hover-class="none"
+      lang="zh_CN"
+      open-type="getUserInfo"
+      bindgetuserinfo="bindOnAuth">
+      授权
+    </button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as UserActions} from '../../store/user';
+  import {PERMISSION_SCOPE} from '../../store/properties';
+
+
+  @connect({}, {
+    ...UserActions,
+  })
+
+
+  export default class Permissions extends wepy.page {
+    // 授权 页面
+
+    data = {
+      op: {},
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindOnAuth: () => {
+        wepy.getSetting({
+          success: (res) => {
+            if (!res.authSetting[PERMISSION_SCOPE.userInfo])
+              return;
+            this.loading().show();
+            this.methods.authService({
+              scene: '',
+              callback: () => {
+                this.loading().hide();
+                this.go2page().back();
+                this.permissionCallback().run().set();
+              },
+            });
+          },
+        });
+      },
+    };
+
+    onLoad(option) {
+      this.op = option;
+    }
+  }
+</script>

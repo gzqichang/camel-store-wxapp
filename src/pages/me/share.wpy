@@ -1,0 +1,220 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  page {
+    background: @faintWhite;
+  };
+
+  view.page-share {
+    .picture {
+      width: 100vw;
+      height: 88vh;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      canvas {
+        box-shadow: 1rpx 24rpx 30rpx @dimWhite;
+        border-radius: 16rpx;
+        overflow: hidden;
+      }
+    }
+
+    view.share {
+      height: 136rpx;
+      background-color: @solidWhite;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+
+      button {
+        width: 360rpx;
+        height: 103rpx;
+        color: @primaryColor;
+        background: @solidWhite;
+        border: 1rpx solid @primaryColor;
+        line-height: 103rpx;
+        font-size: 32rpx;
+        border-radius: 10rpx;
+
+        &:last-of-type {
+          color: @solidWhite;
+          background: @primaryColor;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-share">
+    <view class="picture">
+      <canvas style="width: {{_w}}px; height: {{_h}}px; margin: auto; display: flex;" canvas-id="canvas"></canvas>
+    </view>
+    <view class="share">
+      <button
+        open-type='share'
+        hover-class='none'>
+        分享给好友
+      </button>
+      <button @tap="bindExportCanvas">
+        保存海报分享
+      </button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+
+
+  @connect({
+    user(state) { return state.user },
+    distributionPoster(state) { return state.config.distributionPoster },
+  }, {})
+
+
+  export default class Share extends wepy.page {
+    // 我的 分享页面
+
+    data = {
+      _w: 680 / 2,
+      _h: 1026 / 2,
+      _bh: 886,
+      pictureAddress: '',
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindExportCanvas: () => {
+        const self = this;
+
+        wepy.canvasToTempFilePath({
+          x: 0,
+          y: 0,
+          width: 680 >> 1,
+          height: 1026 >> 1,
+          destWidth: 680 * 2,
+          destHeight: 1026 * 2,
+          canvasId: 'canvas',
+          fileType: 'png',
+          quality: 1,
+          success(res) {
+            const {tempFilePath} = res;
+            self.savePhoto2Album(tempFilePath);
+          },
+          fail() {
+            this.showToast('保存失败');
+          },
+        });
+      },
+    };
+
+    onLoad() {
+      const {windowWidth, windowHeight} = wepy.getSystemInfoSync();
+      this._w = Math.min((windowWidth - 10) * 2, 680) / 2;
+      this._h = Math.min((windowHeight - 100) * 2, 1026) / 2;
+      this._bh = Math.min(this._h * 2 - 160, 866);
+
+      this.drawCanvas();
+    }
+
+    drawCanvas = async () => {
+      this.loading().show();
+
+      const ctx = wepy.createCanvasContext('canvas');
+      const c = {
+        width: this._w * 2,
+        height: this._h * 2,
+        padding: 12 << 1,
+        backgroundHeight: this._bh,
+        avatarRadius: 98 >> 1,
+        qrcodeSize: 110,
+      };
+
+      // Scale down
+      ctx.scale(0.5, 0.5);
+
+      let image = await Promise.all([
+        new Promise((resolve) => {
+          wepy.getImageInfo({
+            src: this.user.avatar_url,
+            success: (res) => resolve(res.path),
+          });
+        }),
+        new Promise((resolve) => {
+          wepy.getImageInfo({
+            src: this.user.qrcode_url,
+            success: (res) => resolve(res.path),
+          });
+        }),
+        new Promise((resolve) => {
+          wepy.getImageInfo({
+            src: this.distributionPoster,
+            success: (res) => resolve(res.path),
+          });
+        }),
+      ]);
+
+      this.pictureAddress = image[2];
+
+      // Background
+      ctx.save();
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.restore();
+
+      // Top Image
+      ctx.drawImage(image[2], 0, 0, c.width, c.backgroundHeight);
+
+      // Avatar
+      const y = c.backgroundHeight + ((c.height - c.backgroundHeight - (c.avatarRadius * 2)) / 2);
+      ctx.save();
+      ctx.arc(c.padding + c.avatarRadius, y + c.avatarRadius, c.avatarRadius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.clip();
+      ctx.drawImage(image[0], c.padding, y, c.avatarRadius << 1, c.avatarRadius << 1);
+      ctx.restore();
+
+      // QR-Code
+      ctx.drawImage(image[1], c.width - c.padding - c.qrcodeSize, c.backgroundHeight + (((c.height - c.backgroundHeight) - c.qrcodeSize) / 2), c.qrcodeSize, c.qrcodeSize);
+
+      // Text
+      ctx.setTextAlign('left');
+      ctx.setFillStyle('#1c1c1c');
+      ctx.setFontSize(34);
+      ctx.fillText(this.user.nickname, c.avatarRadius * 2 + c.padding * 1.5, c.backgroundHeight + c.padding * 3);
+      ctx.setFillStyle('#888888');
+      ctx.setFontSize(26);
+      ctx.fillText('我已经加入分享赚钱，邀你一起！', c.avatarRadius * 2 + c.padding * 1.5, c.backgroundHeight + c.padding * 4.5);
+
+      // Paint out
+      ctx.draw();
+
+      this.loading().hide();
+    };
+
+    onShareAppMessage() {
+      /* eslint-disable camelcase */
+      const {wx_app_openid} = this.user;
+      const title = this.$parent.globalData.appName || '';
+
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}`,
+        imageUrl: this.pictureAddress,
+      };
+    };
+  }
+</script>

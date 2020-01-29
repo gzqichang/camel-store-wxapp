@@ -1,0 +1,128 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .me-info-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .close {
+      width: 56rpx;
+      height: 56rpx;
+      background: transparent;
+      display: block;
+      position: absolute;
+      left: 0;
+      right: 0;
+
+      image {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    .panel {
+      width: 600rpx;
+      height: 380rpx;
+      margin: 0 auto;
+      padding: 40rpx 0;
+      text-align: center;
+      background-color: @solidWhite;
+      border-radius: 10rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: absolute;
+      top: 22vh;
+      left: 0;
+      right: 0;
+
+      .title {
+        color: @textColor0;
+        font-size: 34rpx;
+      }
+
+      .text {
+        padding: 0 50rpx;
+        color: @textColor1;
+        font-size: 30rpx;
+        text-align: left;
+      }
+
+      .sub {
+        color: @textColor3;
+        font-size: 28rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showInfo"></mask>
+
+  <view class="{{showInfo ? 'me-info-mask' : 'me-info-mask hide'}}">
+    <button
+      class="close"
+      @tap="bindToggleMask"
+      hover-class="none"
+      style="top: calc(22vh + 540rpx);">
+      <image
+        mode="scaleToFill"
+        src="../../assets/img/detail/close.png"></image>
+    </button>
+
+    <view class="panel">
+      <view class="title">
+        亲爱的用户
+      </view>
+      <view class="text">
+        为了保证您的收益权利，在用户确认订单后的3天内，该订单产生的收益将累计到您的会员钱包-奖励收益中。您的提现申请我们的客服人员会通过加您微信好友转账的方式打款到您的账号。
+      </view>
+      <view class="sub">
+        （收益不包括已取消订单，退款订单）
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import Mask from '../utils/mask';
+
+
+  export default class InfoMask extends wepy.component {
+    // 收益页 - 信息组件
+
+    props = {
+      showInfo: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleInfo');
+      },
+    };
+  };
+</script>

@@ -1,0 +1,694 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  page {
+    background-color: @faintWhite;
+  }
+
+  view.page-search {
+    .top {
+      height: 80rpx;
+      padding-bottom: 10rpx;
+      background: @solidWhite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .input {
+        width: 614rpx;
+        height: 60rpx;
+
+        .box {
+          width: 100%;
+          height: 60rpx;
+          background: @faintWhite;
+          border-radius: 30rpx;
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .icon {
+            height: 24rpx;
+            width: 24rpx;
+            position: absolute;
+            left: 20rpx;
+          }
+
+          input {
+            width: 80%;
+            color: @textColor3;
+            font-size: 24rpx;
+            position: absolute;
+            left: 60rpx;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+
+      .cancel {
+        padding-left: 18rpx;
+        color: @textColor3;
+        font-size: 28rpx;
+      }
+    }
+
+    .bottom {
+      .hot,
+      .history {
+        border-bottom: 15rpx solid @faintWhite;
+        display: flex;
+        flex-direction: column;
+
+        .head {
+          display: flex;
+          justify-content: space-between;
+
+          view {
+            margin: 28rpx 0 35rpx 30rpx;
+            color: @textColor3;
+            font-size: 28rpx;
+          }
+
+          image {
+            width: 35rpx;
+            height: 35rpx;
+            margin: 22rpx 40rpx 0 0;
+          }
+        }
+
+        .body {
+          padding: 0 30rpx;
+
+          .chip {
+            height: 48rpx;
+            padding: 0 14rpx;
+            margin: 0 36rpx 30rpx 0;
+            color: @textColor1;
+            font-size: 26rpx;
+            border: 2rpx solid @textColor5;
+            border-radius: 24rpx;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+
+      .hot {
+        border-bottom: none;
+
+        .head {
+          view {
+            margin-top: 35rpx;
+          }
+        }
+
+        .body {
+          .chip {
+            color: @primaryColor;
+            border-color: @primaryColor;
+          }
+        }
+      }
+
+      .empty {
+        height: 236rpx;
+
+        image {
+          width: 118rpx;
+          height: 108rpx;
+          margin: 100rpx auto 28rpx;
+          display: block;
+        }
+
+        view {
+          color: @textColor5;
+          font-size: 28rpx;
+          text-align: center;
+        }
+      }
+
+      .others {
+        .header {
+          width: 710rpx;
+          height: 94rpx;
+          margin: 0 auto 2rpx;
+          background-color: @solidWhite;
+          border-top-left-radius: 10rpx;
+          border-top-right-radius: 10rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          image {
+            width: 72rpx;
+            height: 6rpx;
+            margin: 0 20rpx;
+          }
+
+          view {
+            font-size: 24rpx;
+            color: @textColor3;
+          }
+        }
+
+        .body {
+          width: 710rpx;
+          margin: 0 auto 20rpx;
+          background-color: @solidWhite;
+
+          .body-top {
+            padding: 46rpx 0 38rpx;
+            display: flex;
+
+            .left {
+              padding: 0 26rpx;
+              display: flex;
+              flex-grow: 1;
+              flex-direction: column;
+
+              & > view:first-of-type {
+                margin-bottom: 14rpx;
+                display: flex;
+                align-items: center;
+
+                image {
+                  width: 28rpx;
+                  height: 28rpx;
+                  margin-right: 8rpx;
+                  flex-shrink: 0;
+                }
+
+                view {
+                  color: @textColor1;
+                  font-size: 28rpx;
+                  font-weight: bold;
+
+                  display: -webkit-box;
+                  -webkit-box-orient: vertical;
+                  -webkit-line-clamp: 1;
+                  overflow: hidden;
+                }
+              }
+
+              & > view:last-of-type {
+                color: @textColor3;
+                font-size: 28rpx;
+
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 1;
+                overflow: hidden;
+              }
+            }
+
+            .right {
+              width: 120rpx;
+              display: flex;
+              flex-shrink: 0;
+              flex-direction: column;
+              align-items: center;
+
+              image {
+                width: 26rpx;
+                height: 32rpx;
+                margin-bottom: 12rpx;
+              }
+
+              view {
+                color: @textColor3;
+                font-size: 22rpx;
+              }
+            }
+          }
+
+          .body-middle {
+            display: flex;
+
+            & > view {
+              padding: 0 10rpx;
+              display: flex;
+              flex-direction: column;
+
+              image {
+                width: 216rpx;
+                height: 216rpx;
+                border-radius: 8rpx;
+              }
+
+              .title {
+                width: 216rpx;
+                margin: 18rpx 0;
+                color: @textColor1;
+                font-size: 24rpx;
+
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 1;
+                overflow: hidden;
+              }
+
+              .price {
+                width: 216rpx;
+                display: flex;
+                align-items: baseline;
+
+                view:first-of-type {
+                  font-size: 24rpx;
+                  color: @primaryColor;
+                }
+
+                view:last-of-type {
+                  padding-left: 6rpx;
+                  font-size: 22rpx;
+                  color: @textColor5;
+                  text-decoration: line-through;
+                }
+              }
+            }
+          }
+
+          .body-bottom {
+            padding: 50rpx 0 30rpx;
+            color: @textColor1;
+            font-size: 24rpx;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            image {
+              width: 13rpx;
+              height: 18rpx;
+              padding-left: 10rpx;
+            }
+          }
+        }
+      }
+
+      .result {
+        .hint {
+          padding: 0 10rpx;
+          height: 44rpx;
+          color: @solidWhite;
+          font-size: 28rpx;
+          background-color: @secondaryColor;
+          border-radius: 0 6rpx 6rpx 0;
+          line-height: 28rpx;
+          display: flex;
+          align-items: center;
+          position: absolute;
+        }
+
+        .pill {
+          width: 80rpx;
+          height: 30rpx;
+          margin: 0;
+          padding: 0;
+          color: @primaryColor;
+          font-size: 20rpx;
+          line-height: 20rpx;
+          border: 2rpx solid @primaryColor;
+          border-radius: 4rpx;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .ellipsis {
+          max-width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .item {
+          width: 100vw;
+          margin: 2rpx 0 14rpx;
+          background-color: @solidWhite;
+          display: flex;
+
+          .left {
+            padding: 26rpx 28rpx;
+            display: inline-flex;
+            flex-shrink: 0;
+            position: relative;
+
+            image {
+              width: 216rpx;
+              height: 216rpx;
+              border-radius: 8rpx;
+            }
+          }
+
+          .right {
+            width: calc(~"100vw - 28rpx - 216rpx - 28rpx - 28rpx");
+            padding-right: 28rpx;
+            display: inline-flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+
+            .title {
+              font-size: 28rpx;
+              color: @textColor1;
+            }
+
+            .desp {
+              padding-top: 20rpx;
+              padding-bottom: 28rpx;
+              font-size: 24rpx;
+              color: @textColor3;
+            }
+
+            .price {
+              padding-top: 14rpx;
+              display: flex;
+              align-items: baseline;
+
+              view:first-of-type {
+                font-size: 28rpx;
+                color: @primaryColor;
+              }
+
+              view:last-of-type {
+                padding-left: 6rpx;
+                font-size: 22rpx;
+                color: @textColor5;
+                text-decoration: line-through;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-search">
+    <view class="top">
+      <view class="input">
+        <view class="box">
+          <image
+            class="icon"
+            src="../../assets/img/explore/magnifier2.png"></image>
+          <input
+            placeholder="请输入商品名称搜索"
+            confirm-type="search"
+            @input="bindSearchInput"
+            @confirm="bindSearchQuery"
+            value="{{queryString}}"/>
+        </view>
+      </view>
+      <view class="cancel" @tap="bindCancel">
+        取消
+      </view>
+    </view>
+
+    <view class="bottom" style="{{!queryString ? 'background-color: #fff' : ''}}">
+      <view wx:if="{{!queryString}}" class="history">
+        <view class="head">
+          <view>历史记录</view>
+          <image
+            @tap="bindClearHistory"
+            src="../../assets/img/explore/delete.png"></image>
+        </view>
+        <view class="body">
+          <view
+            wx:key="index"
+            wx:for="{{history}}"
+            class="chip"
+            @tap="bindQuery({{item}})">
+            {{item}}
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{!queryString}}" class="hot">
+        <view class="head">
+          <view>热门搜索</view>
+        </view>
+        <view class="body">
+          <view
+            wx:key="id"
+            wx:for="{{hottest}}"
+            class="chip"
+            @tap="bindQuery({{item.word}})">
+            {{item.word}}
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{queryString && !onLoading && !result.length}}" class="empty">
+        <image src="../../assets/img/explore/empty.png"></image>
+        <view>本店暂无相应商品</view>
+      </view>
+
+      <view
+        wx:if="{{queryString && !onLoading && !result.length && others.length}}"
+        class="others">
+        <view class="header">
+          <image src="../../assets/img/explore/lineLeftGrey.png"></image>
+          <view>为您推荐其他门店的对应商品</view>
+          <image src="../../assets/img/explore/lineRightGrey.png"></image>
+        </view>
+
+        <view wx:key="id" wx:for="{{others}}" class="body">
+          <view class="body-top">
+            <view class="left">
+              <view>
+                <image src="../../assets/img/cart/store_black.png"></image>
+                <view>{{item.name}}</view>
+              </view>
+              <view>{{item.address}}</view>
+            </view>
+            <view class="right" style="{{item.distance === null && 'display: none'}}">
+              <image src="../../assets/img/location/spot_black.png"></image>
+              <view>{{item.distance}}km</view>
+            </view>
+          </view>
+
+          <view class="body-middle">
+            <view
+              wx:key="id"
+              wx:for="{{item.goods}}"
+              wx:for-item="i"
+              @tap="bindSwitchStore({{item.id}}, {{i.url}})">
+              <image src="{{i._image + '?imageView2/2/w/216'}}"></image>
+              <view class="title">{{i.name}}</view>
+              <view class="price">
+                <view>￥{{i._sellPrice}}</view>
+                <view>￥{{i._marketPrice}}</view>
+              </view>
+            </view>
+          </view>
+
+          <view class="body-bottom" @tap="bindSwitchStore({{item.id}})">
+            进店浏览更多
+            <image src="../../assets/img/explore/arrow3.png"></image>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{queryString && !onLoading && result.length}}" class="result">
+        <block wx:key="id" wx:for="{{result}}">
+          <view class="item" @tap="bindGetDetail({{item.url}})">
+            <view class="left">
+              <block wx:if="{{item.groupbuy}}">
+                <view class="hint">{{item._groupType}}</view>
+              </block>
+              <image src="{{item._image + '?imageView2/2/w/216'}}"></image>
+            </view>
+            <view class="right">
+              <view class="title ellipsis">{{item.name}}</view>
+              <view class="desp ellipsis">{{item.goods_brief}}</view>
+              <view class="pill" style="{{item.groupbuy ? '' : 'visibility: hidden'}}">
+                拼团价
+              </view>
+              <view class="price">
+                <view>￥{{item._sellPrice}}</view>
+                <view>￥{{item._marketPrice}}</view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import {actions as SearchActions} from '../../store/search';
+  import {actions as StoreActions} from '../../store/store';
+  import SearchBar from '../../components/explore/searchBar';
+
+
+  @connect({
+    queryString(state) { return state.search.query },
+    history(state) { return state.search.history },
+    result(state) { return state.search.list },
+    others(state) { return state.search.others },
+    hottest(state) { return state.search.hottest },
+    onLoading(state) { return state.search.loading },
+    nextURL(state) { return state.others.nextURL },
+    userID(state) { return state.user.id },
+    user(state) { return state.user },
+    store(state) { return state.store.id },
+  }, {
+    ...SearchActions,
+    ...StoreActions,
+    ...ProductActions,
+  })
+
+
+  export default class Search extends wepy.page {
+    // 搜索页
+
+    data = {
+      latitude: '',
+      longitude: '',
+    };
+
+    components = {
+      searchBar: SearchBar,
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindSearchInput: (e) => {
+        const {value} = e.detail;
+        if (!value.length)
+          this.methods.clearSearchProduct();
+        this.methods.setSearchQuery(value);
+      },
+
+      bindSearchQuery: () => {
+        if (!this.queryString.trim()) return;
+
+        this.methods.getSearchProductService({
+          store: this.store,
+          query: this.queryString.trim(),
+          latitude: this.latitude,
+          longitude: this.longitude,
+        });
+        this.methods.setSearchHistory([
+          ...new Set([
+            this.queryString.trim(),
+            ...this.history,
+          ])]);
+      },
+
+      bindGetDetail: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+
+      bindSwitchStore: (store, url) => {
+        if (typeof store === 'number')
+          this.methods.getCurrentStoreService({
+            storeID: store,
+            callback: () => {
+              if (typeof url === 'string') {
+                this.methods.getDetailService({
+                  url,
+                  callback: () => {
+                    this.go2page().redirect('/pages/all/detail');
+                  },
+                });
+              } else {
+                this.go2page().back();
+              }
+            },
+          });
+      },
+
+      bindCancel: () => {
+        this.methods.setSearchQuery('');
+        this.go2page().back();
+      },
+
+      bindClearHistory: () => {
+        this.methods.setSearchHistory([]);
+      },
+
+      bindQuery: (query) => {
+        if (typeof query === 'string') {
+          this.methods.setSearchQuery(query);
+          this.methods.bindSearchQuery();
+        }
+      },
+    };
+
+    onShow() {
+      this.methods.getHottestService();
+
+      this.tryLocating();
+    }
+
+    onLoad() {
+      this.setTitle('商品搜索');
+    };
+
+    onUnload() {
+      this.methods.setSearchQuery('');
+    }
+
+    onReachBottom() {
+      this.getNextPageData();
+    }
+
+    getNextPageData = () => {
+      let next = this.nextURL.searchList;
+      if (next !== null)
+        this.methods.getSearchProductService({
+          next,
+          store: this.store,
+        });
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+
+    tryLocating = () => {
+      const onSuccess = () => {
+        wepy.getLocation({
+          complete: (res) => {
+            const {latitude = '', longitude = ''} = res;
+            this.latitude = latitude;
+            this.longitude = longitude;
+          },
+        });
+      };
+
+      wepy.getSetting({
+        success: (res) => {
+          if (res.authSetting['scope.userLocation'])
+            onSuccess();
+        },
+        fail: () => {
+          this.latitude = '';
+          this.longitude = '';
+        },
+      });
+    };
+  }
+</script>

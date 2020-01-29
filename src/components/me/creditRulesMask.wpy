@@ -1,0 +1,109 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .me-credit-rules-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .modal {
+      width: 570rpx;
+      height: 570rpx;
+      margin: 220rpx auto 0;
+      background: @solidWhite;
+      border-radius: 8rpx;
+
+      .wallet-title {
+        padding-top: 60rpx;
+        padding-bottom: 0;
+        color: @textColor0;
+        font-size: 34rpx;
+        text-align: center;
+      }
+
+      .wallet-content {
+        width: 460rpx;
+        padding: 0 55rpx;
+        color: @textColor3;
+        font-size: 28rpx;
+        line-height: 38rpx;
+
+        view {
+          margin-top: 30rpx;
+        }
+      }
+    }
+
+    .close-modal {
+      margin-top: 80rpx;
+      display: flex;
+      justify-content: center;
+
+      image {
+        width: 56rpx;
+        height: 56rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="show"></mask>
+
+  <view class="{{show ? 'me-credit-rules-mask' : 'me-credit-rules-mask hide'}}">
+    <view class="modal">
+      <view class="wallet-title">
+        积分规则
+      </view>
+      <view class="wallet-content">
+        <view>
+          1、用户分享商品给好友，好友购买并确认收货后可获得对应的积分奖励。
+        </view>
+        <view>
+          2、用户发起拼团成团后，可获得对应的积分奖励。
+        </view>
+        <view>
+          3、用户获得的积分可用来选购积分商品。积分商品不收取运费，是小店提供给各位尊贵会员的优惠福利！
+        </view>
+      </view>
+    </view>
+    <view class="close-modal" @tap="bindToggleMask">
+      <image src="../../assets/img/detail/close.png"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import Mask from '../utils/mask';
+
+
+  export default class CreditRulesMask extends wepy.component {
+    // 积分规则 弹窗组件
+
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      bindToggleMask: () => {
+        this.$emit('toggleCreditRulesMask');
+      },
+    };
+  }
+</script>

@@ -1,0 +1,54 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-update {
+    .pic {
+      width: 100vw;
+      height: 300rpx;
+      padding-top: 20vh;
+    }
+
+    view {
+      &:nth-of-type(1) {
+        padding: 25rpx 0;
+        font-size: 46rpx;
+        color: @textColor1;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      &:nth-of-type(2) {
+        font-size: 28rpx;
+        color: @textColor5;
+        text-align: center;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-update">
+    <image
+      class="pic"
+      src="../../assets/img/update/update.png"></image>
+    <view>发现新版本</view>
+    <view>小店正在升级换装，稍后再来体验更好哦~</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+
+
+  @connect({}, {})
+
+
+  export default class Update extends wepy.page {
+    // 升级中
+
+    mixins = [UtilsMixin];
+  }
+</script>

@@ -1,0 +1,25 @@
+<style lang="less">
+  view.page-my-class {}
+</style>
+
+<template>
+  <view class="page-my-class">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+
+
+  @connect({}, {})
+
+
+  export default class MyClass extends wepy.page {
+    // 写页面用的模板
+
+    mixins = [UtilsMixin];
+  }
+</script>

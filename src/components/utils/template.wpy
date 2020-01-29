@@ -1,0 +1,26 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.utils-my-component {}
+</style>
+
+<template>
+  <view class="utils-my-component">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+
+  @connect({}, {})
+
+
+  export default class MyComponent extends wepy.component {
+    // 写组件用的模板
+
+    onLoad() {
+    }
+  }
+</script>

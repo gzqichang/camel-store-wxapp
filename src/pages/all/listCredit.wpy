@@ -1,0 +1,228 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-list-credit {
+    .top {
+      height: 80rpx;
+      padding-bottom: 10rpx;
+      background: @solidWhite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .input {
+        width: 614rpx;
+        height: 60rpx;
+
+        .box {
+          width: 100%;
+          height: 60rpx;
+          background: @faintWhite;
+          border-radius: 30rpx;
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .icon {
+            height: 24rpx;
+            width: 24rpx;
+            position: absolute;
+            left: 20rpx;
+          }
+
+          input {
+            width: 80%;
+            color: @textColor3;
+            font-size: 24rpx;
+            position: absolute;
+            left: 60rpx;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+
+      .cancel {
+        padding-left: 18rpx;
+        color: @textColor3;
+        font-size: 28rpx;
+      }
+    }
+
+    .buttons {
+      width: 100vw;
+      height: 100rpx;
+      background-color: @solidWhite;
+      border-top: 1rpx solid @faintWhite;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      image {
+        width: 19rpx;
+        height: 28rpx;
+        padding-left: 10rpx;
+      }
+
+      view {
+        width: 50%;
+        font-size: 30rpx;
+        color: @textColor1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.active {
+          color: @primaryColor;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-list-credit">
+    <view class="top">
+      <view class="input">
+        <view class="box">
+          <image
+            class="icon"
+            src="../../assets/img/explore/magnifier2.png"></image>
+          <input
+            placeholder="请输入关键词搜索"
+            confirm-type="search"
+            @input="bindInput"
+            @confirm="bindQuery"
+            value="{{keyword}}"/>
+        </view>
+      </view>
+      <view class="cancel" @tap="bindCancel">
+        取消
+      </view>
+    </view>
+
+    <view class="buttons" style="display: none">
+      <view
+        class="{{filterType === 'hot' ? 'active' : ''}}"
+        @tap="bindSwitchType('hot')">
+        热门
+      </view>
+      <view
+        class="{{filterType === 'creditUp' || filterType === 'creditDown' ? 'active' : ''}}"
+        @tap="bindSwitchType">
+        积分价格
+        <block wx:if="{{filterType === 'creditUp'}}">
+          <image src="../../assets/img/list/arrowRedGrey.png"></image>
+        </block>
+        <block wx:elif="{{filterType === 'creditDown'}}">
+          <image src="../../assets/img/list/arrowGreyRed.png"></image>
+        </block>
+        <block wx:else>
+          <image src="../../assets/img/list/arrowGreyGrey.png"></image>
+        </block>
+      </view>
+    </view>
+
+    <tabView tab="hide" pillTag="hide"></tabView>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import TabView from '../../components/all/tabView';
+
+
+  @connect({
+    product(state) { return state.product.list },
+    nextURL(state) { return state.others.nextURL },
+    user(state) { return state.user },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class ListCredit extends wepy.page {
+    // 列表 页面（积分换购）
+
+    data = {
+      filterType: 'hot',
+      keyword: '',
+    };
+
+    components = {
+      tabView: TabView,
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindSwitchType: (type) => {
+        this.filterType = type === 'hot'
+          ? 'hot'
+          : this.filterType === 'creditUp'
+            ? 'creditDown'
+            : 'creditUp';
+      },
+
+      bindInput: (e) => {
+        const {value} = e.detail;
+        this.keyword = value;
+      },
+
+      bindQuery: () => {
+        // if (!this.keyword.trim()) return;
+        this.methods.getCreditsProductListService({
+          store: this.store,
+          keyword: this.keyword,
+        });
+      },
+
+      bindCancel: () => {
+        this.keyword = '';
+        this.go2page().back();
+      },
+
+      bindGetDetail: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+    };
+
+    onLoad() {
+      this.setTitle('积分换购');
+    };
+
+    onReachBottom() {
+      this.getNextPageData();
+    }
+
+    getNextPageData = () => {
+      let next = this.nextURL.productList;
+      if (next !== null)
+        this.methods.getProductListService({
+          storeID: this.store,
+          next,
+        });
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

@@ -1,0 +1,253 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  page {
+    background-color: @faintWhite;
+  }
+
+  view.page-delivery-method {
+    display: flex;
+    flex-direction: column;
+
+    .item {
+      min-height: 100rpx;
+      margin-top: 2rpx;
+      background-color: @solidWhite;
+      display: flex;
+      align-items: center;
+
+      image {
+        width: 36rpx;
+        height: 36rpx;
+        margin: 0 10rpx 0 40rpx;
+        flex-shrink: 0;
+      }
+
+      .type,
+      .text {
+        color: @textColor0;
+        font-size: 28rpx;
+        display: flex;
+        align-items: center;
+      }
+
+      .type {
+        width: 140rpx;
+        flex-shrink: 0;
+      }
+
+      .text {
+        margin: 30rpx 0;
+        padding-right: 36rpx;
+        flex-grow: 1;
+        align-items: flex-start;
+        justify-content: flex-end;
+      }
+
+      .store {
+        max-width: 29vw;
+        font-size: 26rpx;
+        flex-shrink: 0;
+      }
+
+      .address {
+        font-size: 26rpx;
+        line-height: 36rpx;
+      }
+    }
+
+    .button {
+      width: 100%;
+      height: 95rpx;
+      color: @solidWhite;
+      font-size: 34rpx;
+      border-radius: 0;
+      background-color: @primaryColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      bottom: 0;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-delivery-method">
+    <view wx:if="{{info.shippingKeys.self}}" class="item" @tap="bindSwitch('self')">
+      <image src="{{selected === 'self' ? '../../assets/img/cart/choose_active.png' : '../../assets/img/cart/choose.png'}}"></image>
+      <view class="type">自提</view>
+      <view class="text">
+        <view class="store">{{info.entrust_shop_name || info.shop_name}}：</view>
+        <view class="address">{{info.entrust_shop_address || info.shop_address}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{info.shippingKeys.express}}" class="item" @tap="bindSwitch('express')">
+      <image src="{{selected === 'express' ? '../../assets/img/cart/choose_active.png' : '../../assets/img/cart/choose.png'}}"></image>
+      <view class="type">快递</view>
+    </view>
+
+    <view wx:if="{{info.shippingKeys.merchant}}" class="item" @tap="bindSwitch('merchant')">
+      <image src="{{selected === 'merchant' ? '../../assets/img/cart/choose_active.png' : '../../assets/img/cart/choose.png'}}"></image>
+      <view class="type">商家配送</view>
+      <block wx:if="{{(orderType === 'regular' || orderType === 'credits') && info.sendTime}}">
+        <view class="text">预计时间：{{info.sendTime}}</view>
+      </block>
+      <block wx:if="{{orderType === 'subscription' && orderTime.selected}}">
+        <view class="text">预计时间：{{subscriptionOrderTime}}</view>
+      </block>
+    </view>
+
+    <view class="button" @tap="bindSave">确定</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as OrderActions} from '../../store/order';
+  import {DELIVERY_TYPES_INFO} from '../../store/properties';
+
+
+  @connect({
+    cart(state) { return state.order.orderContent },
+    cartInfo(state) { return state.order.cartInfo },
+    orderType(state) { return state.order.orderType },
+    orderTime(state) { return state.others.orderTime },
+  }, {
+    ...OrderActions,
+  })
+
+
+  export default class DeliveryMethod extends wepy.page {
+    // 选择配送方式页面
+
+    data = {
+      hash: null,
+      selected: '',
+      firstTime: true,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      // All the same as confirmOrder.wpy
+      cartData: () => {
+        let cartData = [];
+        let _cart = {};
+
+        // 'Hash Map' the local Cart
+        if (this.cart)
+          this.cart.map(
+            (item) => {
+              const {product, type} = item;
+              if (product && type)
+                _cart[`${product}${type}`] = item;
+            }
+          );
+
+        // Update the Cart for views
+        if (this.cartInfo)
+          this.cartInfo.map(
+            (item) => {
+              const {goodid, gtypeid} = item;
+
+              // Merge Cart Info
+              if (
+                goodid
+                && gtypeid
+                && _cart[`${goodid}${gtypeid}`]
+              ) {
+                const {_shippingMethod} = _cart[`${goodid}${gtypeid}`];
+                const __shippingMethod = DELIVERY_TYPES_INFO[_shippingMethod];
+
+                cartData.push({
+                  ...item,
+                  ..._cart[`${goodid}${gtypeid}`],
+                  __shippingMethod,
+                });
+              }
+            }
+          );
+
+        return cartData;
+      },
+
+      info: () => {
+        let _ = {};
+        let shippingKeys = {};
+
+        if (this.cartData && this.hash) {
+          _ = this.cartData.find(
+            (item) => (item.hash === this.hash)
+          ) || {};
+
+          const {_shipping} = _;
+          if (_shipping && _shipping.length) {
+            _shipping.map((item) => {
+              shippingKeys[item] = true;
+            });
+          }
+
+          if (this.firstTime)
+            this.selected = _._shippingMethod;
+        }
+
+        _.shippingKeys = shippingKeys;
+
+        return _;
+      },
+
+      subscriptionOrderTime: () => {
+        /* eslint-disable camelcase */
+        let _ = '';
+        if (this.orderTime && this.orderTime.selected)
+          _ += this.orderTime.selected;
+        if (this.info) {
+          _ += ' ';
+          const {send_start, send_end} = this.info;
+          if (send_start && send_end)
+            _ += [
+              send_start.slice(0, 5),
+              send_end.slice(0, 5),
+            ].join('-');
+        }
+        return _;
+      },
+    };
+
+    methods = {
+      bindSwitch: (selected) => {
+        this.firstTime = false;
+        this.selected = selected;
+      },
+
+      bindSave: () => {
+        if (this.hash) {
+          const orderContent = this.cart.map(
+            (item) => {
+              if (item.hash === this.hash)
+                item = {...item, _shippingMethod: this.selected};
+              return item;
+            },
+          );
+          this.methods.setOrderContent({
+            orderContent,
+            orderType: this.orderType,
+          });
+        }
+        this.go2page().back();
+      },
+    };
+
+    onLoad({hash}) {
+      this.setTitle('配送选择');
+
+      if (hash)
+        this.hash = hash;
+    };
+  }
+</script>

@@ -1,0 +1,124 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.explore-search-bar {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+
+    .box {
+      width: 100%;
+      height: 60rpx;
+      background: @faintWhite;
+      border-radius: 30rpx;
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      .icon {
+        height: 40rpx;
+        width: 40rpx;
+        position: absolute;
+        left: 20rpx;
+      }
+
+      input {
+        width: 80%;
+        color: @textColor4;
+        font-size: 28rpx;
+        position: absolute;
+        left: 70rpx;
+      }
+
+      .clear {
+        height: 40rpx;
+        width: 40rpx;
+        position: absolute;
+        right: 10rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="explore-search-bar">
+    <label class="box">
+      <image
+        class="icon"
+        src="../../assets/img/explore/search.png"></image>
+      <input
+        placeholder="搜索内容"
+        confirm-type="search"
+        disabled="{{input === '1'}}"
+        @input="bindSearchInput"
+        @confirm="bindSearchQuery"
+        value="{{queryString}}"/>
+      <image
+        class="clear"
+        @tap="bindSearchClear"
+        src="../../assets/img/explore/close.png"></image>
+    </label>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as SearchActions} from '../../store/search';
+
+
+  @connect({
+    banner(state) { return state.product.banner },
+    queryString(state) { return state.search.query },
+    history(state) { return state.search.history },
+    store(state) { return state.store.id },
+  }, {
+    ...SearchActions,
+  })
+
+
+  export default class SearchBar extends wepy.component {
+    // 发现页 - 搜索组件
+
+    props = {
+      input: {
+        type: String,
+        default: '',
+      },
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindSearchInput: (e) => {
+        const {value} = e.detail;
+        this.methods.setSearchQuery(value);
+      },
+
+      bindSearchClear: () => {
+        this.methods.setSearchQuery('');
+      },
+
+      bindSearchQuery: () => {
+        if (!this.queryString.trim()) return;
+
+        /* eslint-disable no-undef */
+        const route = getCurrentPages().concat().pop().route;
+        if (route !== 'pages/explore/search')
+          this.go2page().navigate('/pages/explore/search');
+
+        this.methods.getSearchProductService({
+          store: this.store,
+          query: this.queryString.trim(),
+        });
+        this.methods.setSearchHistory([
+          ...new Set([
+            this.queryString.trim(),
+            ...this.history,
+          ])]);
+      },
+    };
+  };
+</script>

@@ -1,0 +1,151 @@
+<style lang="less">
+  @import (reference) "../../../config/variables";
+
+  view.landingPage-navigator {
+    width: 100vw;
+    margin-top: -68rpx;
+    border-bottom: 15rpx solid @solidWhite;
+    position: relative;
+    /*top: -68rpx;*/
+
+    & > view {
+      width: calc(~"720rpx - 20rpx - 20rpx");
+      margin: 0 auto;
+      padding: 40rpx 20rpx 60rpx;
+      background-color: @solidWhite;
+      border-radius: 10rpx;
+      box-shadow: 0 0 60rpx rgba(162, 162, 162, 0.5);
+      display: flex;
+      flex-wrap: wrap;
+      /*justify-content: center;*/
+
+      .item {
+        margin: 0 40rpx;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+
+        image {
+          width: 90rpx;
+          height: 90rpx;
+          border-radius: 50%;
+        }
+
+        view {
+          padding: 14rpx 0 0;
+          color: @textColor1;
+          font-size: 22rpx;
+        }
+      }
+
+      .padding {
+        width: 100%;
+        height: 30rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view
+    class="landingPage-navigator"
+    style="{{shortcut && shortcut.length ? '' : 'display: none;'}}"
+  >
+    <view>
+      <block wx:key="index" wx:for="{{shortcut}}">
+        <view class="item" @tap="bindGetDetail({{item}})">
+          <image src="{{item.image + '?imageView2/2/w/90'}}"></image>
+          <view>{{item.label}}</view>
+        </view>
+        <block wx:if="{{index === 3}}">
+          <view class="padding"></view>
+        </block>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../../mixins/utils';
+  import {actions as ProductActions} from '../../../store/product';
+
+
+  @connect({
+    shortcut(state) { return state.home.shortcut },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class Navigator extends wepy.component {
+    // 头导航
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      /* eslint-disable camelcase */
+      bindGetDetail: (item) => {
+        const {
+          jump_type,
+          goods_type,
+          category,
+        } = item;
+
+        const fn = (callback) => ({
+          grouping: () => {
+            this.methods.getGroupingProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+          periodic: () => {
+            this.methods.getPeriodsProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+          recommendation: () => {
+            this.methods.getRecommendedProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+          credit: () => {
+            this.methods.getCreditsProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+        });
+
+        switch (jump_type) {
+          case 'goods_type':
+            fn(() => {
+              this.go2page().navigate('/pages/all/list?view=' + goods_type);
+            })[goods_type]();
+            break;
+
+          case 'category':
+            this.methods.getProductListService({
+              storeID: this.store,
+              category: category.id,
+              callback: () => {
+                this
+                  .go2page()
+                  .navigate('/pages/all/category?id=' + category.id);
+              },
+            });
+            break;
+        }
+      },
+
+      bindSwiperChange: (e) => {
+        this.swiperCurrent = e.detail.current;
+      },
+    };
+  }
+</script>

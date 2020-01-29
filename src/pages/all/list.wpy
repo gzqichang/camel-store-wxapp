@@ -1,0 +1,82 @@
+<style lang="less">
+  view.page-list {}
+</style>
+
+<template>
+  <view class="page-list">
+    <tabView
+      tab="hide"
+      :pillTag.sync="showPillTag">
+    </tabView>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import TabView from '../../components/all/tabView';
+  import {MODULE_NAME} from '../../store/properties';
+
+
+  @connect({
+    user(state) { return state.user },
+    nextURL(state) { return state.others.nextURL },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class List extends wepy.page {
+    // 列表 页面
+
+    data = {
+      view: '',
+    };
+
+    components = {
+      tabView: TabView,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      showPillTag: () => {
+        return this.view === 'grouping'
+          ? 'show'
+          : 'hide';
+      },
+    };
+
+    onLoad({view}) {
+      this.setTitle(MODULE_NAME[view] || '商品列表');
+    };
+
+    onReachBottom() {
+      this.getNextPageData();
+    }
+
+    getNextPageData = () => {
+      let next = this.nextURL.productList;
+      if (next !== null)
+        this.methods.getProductListService({
+          storeID: this.store,
+          next,
+        });
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

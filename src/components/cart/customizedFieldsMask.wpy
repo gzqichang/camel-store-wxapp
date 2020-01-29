@@ -1,0 +1,484 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  @panelHeight: 65vh;
+
+  .cart-customized-fields-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .close {
+      width: 56rpx;
+      height: 56rpx;
+      margin-bottom: 35rpx;
+      margin-right: 26rpx;
+      background: transparent;
+      display: block;
+      position: absolute;
+      bottom: @panelHeight;
+      right: 0;
+
+      image {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    .panel {
+      width: 100%;
+      height: @panelHeight;
+      background-color: @solidWhite;
+      position: absolute;
+      bottom: 0;
+
+      .customized-fields {
+        .item {
+          width: 698rpx;
+          height: 96rpx;
+          margin: 0 auto;
+          border-bottom: 2rpx solid @dimWhite;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          &:last-of-type {
+            border-bottom: none;
+          }
+
+          & > view:first-of-type {
+            color: @textColor1;
+          }
+
+          & > view:last-of-type {
+            padding-left: 1rem;
+            color: @textColor3;
+            text-align: right;
+            flex-grow: 1;
+          }
+
+          & > view {
+            font-size: 28rpx;
+            display: flex;
+            align-items: center;
+
+            input, picker {
+              width: 100%;
+            }
+          }
+
+          &.vertical {
+            height: auto;
+            display: block;
+
+            & > view:first-of-type {
+              margin: 24rpx 0;
+            }
+
+            & > view:last-of-type {
+              margin-bottom: 20rpx;
+              padding-left: 0;
+            }
+
+            .options {
+              width: 100%;
+              text-align: left;
+
+              .selected {
+                color: @primaryColor;
+                border-color: @primaryColor;
+              }
+
+              view {
+                height: 60rpx;
+                margin: 0 14rpx 12rpx 0;
+                padding: 0 22rpx;
+                color: @textColor0;
+                font-size: 24rpx;
+                background: @solidWhite;
+                border: 1rpx solid @textColor2;
+                border-radius: 4rpx;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              }
+            }
+          }
+        }
+      }
+
+      .foot {
+        height: 136rpx;
+        padding: 0 10rpx;
+        background-color: @solidWhite;
+        border-top: 1rpx solid @faintWhite;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .buttons {
+          height: 92rpx;
+          display: flex;
+          flex-grow: 1;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        &.wider {
+          height: 95rpx;
+          padding: 0;
+          align-items: flex-end;
+
+          .buy {
+            width: 100%;
+            height: 95rpx;
+            margin: 0;
+            border-radius: 0;
+          }
+        }
+
+        .buy.group {
+          font-size: 28rpx;
+          flex-direction: column;
+
+          view {
+            font-size: 24rpx;
+            line-height: 24rpx;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+
+            view {
+              padding-left: 4rpx;
+              font-size: 18rpx;
+              display: inline;
+            }
+          }
+        }
+
+        .buy {
+          height: 88rpx;
+          color: @solidWhite;
+          font-size: 30rpx;
+          border-radius: 10rpx;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .buy {
+          margin: 0 5rpx;
+          background: @primaryColor;
+          flex-grow: 1;
+          flex-basis: 5rem;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="show"></mask>
+
+  <view class="{{show ? 'cart-customized-fields-mask' : 'cart-customized-fields-mask hide'}}">
+    <button
+      class="close"
+      @tap="bindToggleMask"
+      hover-class="none">
+      <image src="../../assets/img/detail/close.png"></image>
+    </button>
+
+    <view class="panel">
+      <scroll-view scroll-y style="height: 57vh;">
+        <view wx:if="{{customizedData.length}}" class="customized-fields">
+          <block
+            wx:key="{{field.name}}"
+            wx:for="{{customizedData}}"
+            wx:for-item="field"
+          >
+            <view class="{{field.type === 'radio' || field.type === 'checkbox' ? 'item vertical' : 'item'}}">
+              <view>
+                {{field.name}}
+                <view
+                  wx:if="{{field.type === 'checkbox'}}"
+                  style="color: #CCCCCC; font-size: 24rpx">（可多选）</view>
+              </view>
+              <view>
+                <!--字符串类型-->
+                <block wx:if="{{field.type === 'string'}}">
+                  <input
+                    type="text"
+                    value="{{field.value}}"
+                    placeholder="{{field.placeholder}}"
+                    @input="bindCustomizedInput({{field.type}}, {{field.name}})"
+                  />
+                </block>
+
+                <!--数字类型-->
+                <block wx:if="{{field.type === 'number'}}">
+                  <input
+                    type="digit"
+                    value="{{field.value}}"
+                    placeholder="{{field.placeholder}}"
+                    @input="bindCustomizedInput({{field.type}}, {{field.name}})"
+                  />
+                </block>
+
+                <!--日期类型-->
+                <block wx:if="{{field.type === 'date'}}">
+                  <picker
+                    mode="date"
+                    value="{{field.value}}"
+                    start="{{field.minimum}}"
+                    end="{{field.maximum}}"
+                    @change="bindCustomizedInput({{field.type}}, {{field.name}})">
+                    {{field.value || field.placeholder || '选择日期'}}
+                  </picker>
+                </block>
+
+                <!--单选框-->
+                <block wx:if="{{field.type === 'radio'}}">
+                  <view class="options">
+                    <view
+                      wx:key="index"
+                      wx:for="{{field.options}}"
+                      class="{{field.value === item ? 'selected' : ''}}"
+                      @tap="bindCustomizedInput({{field.type}}, {{field.name}}, {{item}})"
+                    >
+                      {{item}}
+                    </view>
+                  </view>
+                </block>
+
+                <!--复选框-->
+                <block wx:if="{{field.type === 'checkbox'}}">
+                  <view class="options">
+                    <view
+                      wx:key="index"
+                      wx:for="{{field.options}}"
+                      class="{{field.isChecked[item] ? 'selected' : ''}}"
+                      @tap="bindCustomizedInput({{field.type}}, {{field.name}}, {{item}})"
+                    >
+                      {{item}}
+                    </view>
+                  </view>
+                </block>
+              </view>
+            </view>
+          </block>
+        </view>
+      </scroll-view>
+
+      <!--按钮-->
+      <view class="foot wider">
+        <view class="buy" @tap="bindConfirm">
+          确定
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as OrderActions} from '../../store/order';
+  import Mask from '../utils/mask';
+
+
+  @connect({
+    cart(state) { return state.order.orderContent },
+    orderType(state) { return state.order.orderType },
+  }, {
+    ...OrderActions,
+  })
+
+
+  export default class CustomizedFieldsMask extends wepy.component {
+    // 确认订单页 - 自定义字段修改遮罩组件
+
+    data = {
+      hash: null,
+      customizedData: [],
+    };
+
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      // Customized fields on input
+      bindCustomizedInput: (type, field, e) => {
+        const value = e
+          ? (
+            e.detail && e.detail.value !== undefined
+              ? e.detail.value
+              : e
+          )
+          : undefined;
+
+        if (value === undefined) return;
+
+        if (!this.customizedData.length) return;
+
+        let data = [...this.customizedData];
+
+        // string, number, date, radio
+        if ([
+          'string',
+          'number',
+          'date',
+          'radio',
+        ].includes(type)) {
+          data = data.map((item) => {
+            let obj = {...item};
+            if (item.name === field)
+              obj = {...obj, value};
+            return obj;
+          });
+        }
+
+        // checkbox
+        if (type === 'checkbox') {
+          data = data.map((item) => {
+            let obj = {...item};
+
+            if (item.name === field) {
+              if (!obj.value)
+                obj.value = [];
+
+              obj = {
+                ...obj,
+                value: obj.value.includes(value)
+                  ? obj.value.filter((x) => (x !== value))
+                  : [...obj.value, value],
+              };
+
+              let formatedValue = obj.value.join(' / ');
+
+              let isChecked = {};
+
+              let {options = []} = obj || {};
+
+              Array.from(options).map(
+                (x) => {
+                  isChecked[x] = obj.value.includes(x);
+                }
+              );
+
+              obj = {...obj, isChecked, formatedValue};
+            }
+
+            return obj;
+          });
+        }
+
+        this.customizedData = data;
+      },
+
+      // Confirm Data Change
+      bindConfirm: () => {
+        if (this.customizedData.length) {
+          for (let f of this.customizedData) {
+            const {
+              type,
+              name,
+              value,
+              required,
+              length,
+              minimum,
+              maximum,
+            } = f;
+
+            if (required && value === undefined)
+              return this.showToast(`${name} 不能为空`);
+
+            if (type === 'string' && value !== undefined) {
+              if (length && String(value).trim().length > length)
+                return this.showToast(`${name} 长度不能大于 ${length}`);
+            }
+
+            if (type === 'number' && value !== undefined) {
+              if (minimum !== null && parseFloat(value) < minimum)
+                return this.showToast(`${name} 不能小于 ${minimum}`);
+              if (maximum !== null && parseFloat(value) > maximum)
+                return this.showToast(`${name} 不能大于 ${maximum}`);
+            }
+          }
+        }
+
+        let targetItem = this.cart
+          .find((item) => (item.hash === this.hash));
+
+        const orderContent = this.cart.map(
+          (item) => {
+            if (item.hash === this.hash)
+              item = {...targetItem, customizedData: this.customizedData};
+            return item;
+          },
+        );
+
+        this.methods.setOrderContent({
+          orderContent,
+          orderType: this.orderType,
+        });
+
+        this.methods.bindToggleMask();
+      },
+
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleMask');
+      },
+    };
+
+    events = {
+      handleCustomizedFieldsChange: (hash) => {
+        if (!hash) {
+          this.hash = null;
+          this.customizedData = [];
+        } else {
+          let targetItem = this.cart.find(
+            (item) => (item.hash === hash)
+          );
+
+          if (!targetItem) return;
+
+          const {customizedData} = targetItem;
+
+          if (!customizedData.length) return;
+
+          this.hash = hash;
+          this.customizedData = [...customizedData];
+        }
+      },
+    };
+  };
+</script>

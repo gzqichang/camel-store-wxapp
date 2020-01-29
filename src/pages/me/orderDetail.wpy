@@ -1,0 +1,1074 @@
+<style lang="less" xmlns:wx="http://www.w3.org/1999/xhtml" xmlns:wx="http://www.w3.org/1999/xhtml">
+  @import (reference) "../../config/variables";
+
+  page {
+    background-color: @faintWhite;
+  }
+
+  view.page-order-detail {
+    .address {
+      padding: 24rpx 30rpx;
+      background: @solidWhite;
+      border-top: 2rpx solid @dimWhite;
+      border-bottom: 8rpx solid @faintWhite;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+
+      image {
+        width: 26rpx;
+        height: 34rpx;
+        margin-right: 20rpx;
+      }
+
+      .up {
+        color: @textColor1;
+        font-size: 36rpx;
+        display: inline-flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: flex-start;
+      }
+
+      .down {
+          margin-top: 20rpx;
+          font-size: 26rpx;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+      }
+    }
+
+    .details {
+      background-color: @solidWhite;
+      border-bottom: 100rpx solid @faintWhite;
+
+      .head {
+        height: 90rpx;
+        border-bottom: 2rpx solid @dimWhite;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .num {
+          padding-left: 26rpx;
+          color: @textColor0;
+          font-size: 28rpx;
+        }
+
+        .status {
+          padding-right: 26rpx;
+          color: @textColor0;
+          font-size: 26rpx;
+
+          &.red {
+            color: @primaryColor;
+          }
+        }
+      }
+
+      .mid {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .hint {
+          padding: 0 10rpx;
+          height: 44rpx;
+          color: @solidWhite;
+          font-size: 28rpx;
+          background-color: @secondaryColor;
+          border-radius: 0 6rpx 6rpx 0;
+          line-height: 28rpx;
+          display: flex;
+          align-items: center;
+          position: absolute;
+          top: 10rpx;
+        }
+
+        & > view.item-image {
+          display: inline-flex;
+
+          image {
+            width: 160rpx;
+            height: 160rpx;
+            margin: 22rpx 16rpx 22rpx 26rpx;
+            border: 2rpx solid @dimWhite;
+          }
+        }
+
+        & > view.item-names {
+          display: inline-flex;
+          flex-direction: column;
+          flex-grow: 1;
+
+          view {
+            margin-bottom: 20rpx;
+            color: @textColor0;
+            font-size: 28rpx;
+
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+
+            &:first-of-type {
+              padding-top: 20rpx;
+              margin-bottom: 10rpx;
+            }
+
+            &:last-of-type {
+              color: @textColor4;
+              font-size: 24rpx;
+            }
+          }
+        }
+
+        & > view.item-pricing {
+          padding-right: 24rpx;
+          text-align: right;
+          display: inline-flex;
+          flex-direction: column;
+
+          .original {
+            padding-bottom: 22rpx;
+            color: @textColor5;
+            font-size: 28rpx;
+            text-decoration: line-through;
+          }
+
+          .pill {
+            width: 80rpx;
+            height: 34rpx;
+            margin-right: 10rpx;
+            padding: 0;
+            color: @primaryColor;
+            font-size: 22rpx;
+            border: 2rpx solid @primaryColor;
+            border-radius: 4rpx;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .price {
+            padding: 20rpx 0 10rpx 10rpx;
+            color: @textColor0;
+            font-size: 28rpx;
+            display: flex;
+          }
+
+          .count {
+            color: @textColor3;
+            font-size: 24rpx;
+            white-space: nowrap;
+          }
+        }
+      }
+
+      .customized-fields {
+        min-height: 90rpx;
+        margin: 0 15px;
+        color: @textColor2;
+        font-size: 28rpx;
+        background-color: @solidWhite;
+        border-top: 2rpx solid @dimWhite;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        view {
+          display: flex;
+        }
+
+        view:first-of-type {
+          flex-shrink: 0;
+        }
+
+        view:last-of-type {
+          max-width: 60vw;
+          padding: 18rpx 0 18rpx 10rpx;
+          color: @textColor1;
+          text-align: right;
+          justify-content: flex-end;
+          flex-grow: 1;
+        }
+      }
+
+      .action {
+        height: 100rpx;
+        border-top: 2rpx solid @faintWhite;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .button {
+          width: 140rpx;
+          height: 60rpx;
+          margin-right: 24rpx;
+          padding: 0;
+          color: @textColor0;
+          font-size: 26rpx;
+          background: @solidWhite;
+          border: 2rpx solid @textColor2;
+          border-radius: 4rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &::before,
+          &::after {
+            border: 0;
+          }
+
+          &.red {
+            color: @primaryColor;
+            border-color: @primaryColor;
+          }
+        }
+
+        .copy {
+          margin-right: 24rpx;
+          padding: 0;
+          color: #a1a1a1;
+          font-size: 26rpx;
+          background: #FFFFFF;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      .foot, .info {
+        border-top: 12rpx solid @faintWhite;
+
+        .item {
+          padding-bottom: 36rpx;
+          font-size: 26rpx;
+          display: flex;
+          justify-content: space-between;
+
+          &:first-of-type {
+            padding-top: 30rpx;
+          }
+
+          &:last-of-type {
+            padding-bottom: 30rpx;
+          }
+
+          view:first-of-type {
+            padding-left: 26rpx;
+            color: @textColor2;
+          }
+
+          view:last-of-type {
+            padding-right: 26rpx;
+            color: @textColor0;
+          }
+        }
+      }
+
+      .foot {
+        border-top: 2rpx solid @faintWhite;
+      }
+
+      .detail, .invoice {
+        border-top: 12rpx solid @faintWhite;
+        font-size: 28rpx;
+
+        .title {
+          height: 90rpx;
+          padding-left: 26rpx;
+          color: @textColor0;
+          font-weight: bold;
+          border-bottom: 2rpx solid @dimWhite;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .item {
+          padding-bottom: 36rpx;
+          font-size: 26rpx;
+          display: flex;
+          justify-content: space-between;
+
+          &:nth-child(2) {
+            padding-top: 30rpx;
+          }
+
+          view:first-of-type {
+            padding-left: 26rpx;
+            color: @textColor2;
+          }
+
+          view:last-of-type {
+            padding-right: 26rpx;
+            color: @textColor0;
+          }
+        }
+      }
+
+      .hr {
+        width: 100%;
+        border-bottom: 2rpx solid @faintWhite;
+        display: flex;
+      }
+    }
+
+    .delivery {
+      margin: 0 30rpx;
+      border-top: 2rpx solid @dimWhite;
+
+      image {
+        width: 46rpx;
+        height: 46rpx;
+        margin-right: 6px;
+        border-radius: 50%;
+      }
+
+      view.red {
+        color: @primaryColor !important;
+        font-size: 30rpx;
+        font-weight: bold;
+      }
+
+      & > view {
+        width: 100%;
+        padding-bottom: 26rpx;
+        color: @textColor2;
+        font-size: 28rpx;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &:first-of-type {
+          padding-top: 34rpx;
+        }
+
+        &:last-of-type {
+          padding-bottom: 34rpx;
+        }
+
+        view:last-of-type {
+          color: @textColor0;
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      .button {
+        margin: 26rpx 0;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-order-detail">
+    <view wx:if="{{!detail.fictitious}}" class="address">
+      <view class="up">
+        <image src="../../assets/img/confirmOrder/address.png"></image>
+        <view style="margin-right: 34rpx;">
+          {{detail.delivery_address.sign_name}}
+        </view>
+        <view>{{detail.delivery_address.mobile_phone}}</view>
+      </view>
+      <view class="down">
+        {{detail.delivery_address.address_info}}
+      </view>
+    </view>
+
+    <view class="details">
+      <view class="head">
+        <block wx:if="{{detail.status === 'groupbuy'}}">
+          <view class="num">拼团号：{{detail._groupInfo.ptgroup_no}}</view>
+          <view class="status red">{{detail._statusInfo}}</view>
+        </block>
+
+        <block wx:else>
+          <view class="num">订单号：{{detail.order_sn}}</view>
+          <view class="{{detail.status === 'done' || detail.status === 'close' ? 'status' : 'status red'}}">
+            {{detail._statusInfo}}
+          </view>
+        </block>
+      </view>
+
+      <block
+        wx:key="{{i.url}}"
+        wx:for="{{detail._items}}"
+        wx:for-item="i">
+        <view class="mid" @tap="bindGo2Product({{i.goods_backup.goods_url}})">
+          <view wx:if="{{detail._groupInfo._groupType}}" class="hint">
+            {{detail._groupInfo._groupType}}
+          </view>
+          <view class="item-image">
+            <image src="{{i.goods_backup.image + '?imageView2/2/w/160'}}"></image>
+          </view>
+          <view class="item-names">
+            <view>{{i.goods_backup.goods_name}}</view>
+            <view>{{i.goods_backup.gtype_name}}</view>
+          </view>
+          <view class="item-pricing">
+            <block wx:if="{{detail._model === 'credits'}}">
+              <view class="price">
+                {{i.goods_backup.repl_goods_info.credit}}积分 + ¥{{i.goods_backup.price}}
+              </view>
+              <view class="original" style="visibility: hidden;">0</view>
+            </block>
+            <block wx:else>
+              <view class="price">
+                <view
+                  wx:if="{{detail.discount !== '1.00'}}"
+                  class="pill">会员价</view>
+                ￥{{i.goods_backup.price}}
+              </view>
+              <view
+                class="original"
+                style="{{detail.discount === '1.00' ? 'visibility: hidden;' : ''}}">
+                ￥{{i.goods_backup.original_price}}
+              </view>
+            </block>
+            <view class="count">数量：x{{i.goods_backup.num}}</view>
+          </view>
+        </view>
+
+        <block wx:if="{{i._customizedFields}}">
+          <view
+            wx:key="{{field.id}}"
+            wx:for="{{i._customizedFields}}"
+            wx:for-item="field"
+            class="customized-fields"
+          >
+            <view>{{field.label}}</view>
+            <view>{{field.value}}</view>
+          </view>
+        </block>
+
+        <block wx:if="{{detail.status !== 'groupbuy'}}">
+          <block wx:if="{{detail.fictitious}}">
+            <view class="delivery">
+              <view wx:if="{{detail._model === 'subscription'}}">
+                <view>配送总期数</view>
+                <view>{{detail._allPeriod}}期</view>
+              </view>
+
+              <!--服务中-->
+              <block wx:if="{{detail.status === 'serving'}}">
+                <view>
+                  <view>当前期数(配送状态)</view>
+                  <view>
+                    <view style="display: inline">{{i.cycle}}期</view>
+                    <view style="color: #f44939; display: inline"> ({{i.zh_send_type}})</view>
+                  </view>
+                </view>
+              </block>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="delivery">
+              <view>
+                <view>配送方式</view>
+                <view>
+                  {{i._delivery}}
+                  <view
+                    wx:if="{{detail._model === 'regular' || detail._model === 'credits'}}"
+                    style="{{i.send_type !== 'arrive' ? 'color: #f44939; display: inline' : 'display: inline'}}">
+                    ({{i.zh_send_type}})
+                  </view>
+                </view>
+              </view>
+
+              <block wx:if="{{i.goods_backup.delivery_method === 'buyer'}}">
+                <view>
+                  <view>自提门店</view>
+                  <view>{{detail._shopInfo.name}}</view>
+                </view>
+                <view>
+                  <view>自提门店地址</view>
+                  <view>{{detail._shopInfo.address}}</view>
+                </view>
+              </block>
+
+              <block wx:if="{{item._model === 'regular' && i._receiveTime && i.goods_backup.delivery_method === 'own'}}">
+                <view>
+                  <view>送达时间</view>
+                  <view>{{i._receiveTime}}</view>
+                </view>
+              </block>
+
+              <view wx:if="{{detail._model === 'subscription'}}">
+                <view>配送总期数</view>
+                <view>{{detail._allPeriod}}期</view>
+              </view>
+
+              <!--待付款-->
+              <view wx:if="{{detail.status === 'paying' && i._sendDate}}">
+                <!--且 商家配送-->
+                <block wx:if="{{detail._model === 'regular' && i.goods_backup.delivery_method === 'own'}}">
+                  <view>预计时间</view>
+                  <view>{{i._sendDate}}</view>
+                </block>
+
+                <!--订阅商品-->
+                <block wx:if="{{detail._model === 'subscription'}}">
+                  <view>起送日期</view>
+                  <view>{{i._sendDate}}</view>
+                </block>
+              </view>
+
+              <!--服务中-->
+              <block wx:if="{{detail.status === 'serving'}}">
+                <view>
+                  <view>当前期数(配送状态)</view>
+                  <view>
+                    <view style="display: inline">{{i.cycle}}期</view>
+                    <view style="color: #f44939; display: inline"> ({{i.zh_send_type}})</view>
+                  </view>
+                </view>
+
+                <view wx:if="{{i._sendTime}}">
+                  <view>本期发货时间</view>
+                  <view>{{i._sendTime}}</view>
+                </view>
+
+                <view wx:if="{{i._nextTime}}">
+                  <view>下次配送日期</view>
+                  <view>{{i._nextTime}}</view>
+                </view>
+              </block>
+            </view>
+
+            <view
+              wx:if="{{i.express_num && (detail._model === 'regular' || detail._model === 'credits')}}"
+              class="action"
+              style="margin: 0 30rpx;">
+              <!--<view-->
+                <!--class="button"-->
+                <!--style="margin-right: 0"-->
+                <!--@tap.stop="bindCheckExpress({{i.logistics}})">-->
+                <!--查看物流-->
+              <!--</view>-->
+              <view
+                class="copy"
+                style="margin-right: 0"
+                @tap="bindCopyExpress({{'https://m.kuaidi100.com/result.jsp?nu=' + i.express_num}})">
+                复制物流查询网址
+              </view>
+            </view>
+          </block>
+        </block>
+
+        <block wx:else>
+          <view class="delivery">
+            <view>
+              <view>拼团方式</view>
+              <view>{{detail._groupInfo.is_owner ? '发起拼团' : '参与拼团'}}</view>
+            </view>
+
+            <view>
+              <view>拼团人数</view>
+              <view>
+                <image src="{{detail._groupInfo.owner.avatar_url || '../../assets/img/me/avatar.png'}}"></image>
+                {{detail._groupInfo.partake_count}}人
+              </view>
+            </view>
+
+            <view>
+              <view>拼团商品件数</view>
+              <view>{{detail._groupInfo.goods_count}}件</view>
+            </view>
+
+            <view>
+              <view>拼团情况</view>
+              <view>{{detail._groupInfo._currentState}}</view>
+            </view>
+
+            <view>
+              <view>成团奖励</view>
+              <view>{{detail._groupInfo.integral}}积分</view>
+            </view>
+
+            <view>
+              <view>拼团倒计时</view>
+              <view class="red">{{timer[detail._groupInfo.ptgroup_no] || '00:00:00'}}</view>
+            </view>
+          </view>
+        </block>
+
+        <view class="hr"></view>
+      </block>
+
+      <view class="foot">
+        <block wx:if="{{detail._model === 'regular'}}">
+          <view class="item">
+            <view>共{{detail._count}}件商品</view>
+            <view>
+              ￥{{detail.order_amount}}
+              <text wx:if="{{!detail.fictitious}}"> (含运费￥{{detail.postage_total || '0.00'}})</text>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{detail._model === 'subscription'}}">
+          <view class="item">
+            <view>订单金额</view>
+            <view>
+              ￥{{detail.order_amount}}
+              <text wx:if="{{!detail.fictitious}}"> (含运费￥{{detail.postage_total || '0.00'}})</text>
+            </view>
+          </view>
+          <view wx:if="{{detail.status === 'paying'}}" class="item">
+            <view>会员钱包扣减</view>
+            <view>￥{{detail.wallet_pay}}</view>
+          </view>
+          <view wx:if="{{detail.status === 'paying'}}" class="item">
+            <view>待支付</view>
+            <view>{{detail.real_amount ? '￥' + detail.real_amount : ''}}</view>
+          </view>
+        </block>
+
+        <block wx:if="{{detail._model === 'credits'}}">
+          <view class="item">
+            <view>积分抵扣：</view>
+            <view>
+              {{detail.credit}}积分
+            </view>
+          </view>
+          <view wx:if="{{detail.status === 'paying'}}" class="item">
+            <view>会员钱包扣减</view>
+            <view>￥{{detail.wallet_pay}}</view>
+          </view>
+          <view class="item">
+            <view>总计：</view>
+            <view>
+              ¥{{detail.wallet_pay * 1 + detail.order_amount * 1}}
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!--待付款-->
+      <view class="action" wx:if="{{detail.status === 'paying'}}">
+        <view
+          class="button"
+          @tap="bindToggleCancel">
+          取消订单
+        </view>
+        <view
+          class="button red"
+          @tap="bindPayOrder">
+          支付订单
+        </view>
+      </view>
+
+      <!--待发货-->
+      <view class="action" wx:if="{{detail.status === 'has paid'}}">
+        <block wx:if="{{showFeedback}}">
+          <button class="button" @tap="bindGo2Feedback">
+            <view>联系客服</view>
+          </button>
+        </block>
+        <block wx:else>
+          <button open-type="contact" class="button">
+            联系客服
+          </button>
+        </block>
+      </view>
+
+      <!--服务中-->
+      <view class="action" wx:if="{{detail.status === 'serving'}}">
+        <block wx:if="{{showFeedback}}">
+          <button class="button" @tap="bindGo2Feedback">
+            <view>联系客服</view>
+          </button>
+        </block>
+        <block wx:else>
+          <button open-type="contact" class="button" style="margin-left: 0">
+            联系客服
+          </button>
+        </block>
+
+        <!--<button-->
+          <!--wx:if="{{detail._expressTrack}}"-->
+          <!--class="button"-->
+          <!--style="margin-left: 0"-->
+          <!--@tap="bindCheckExpress({{detail._expressTrack}})">-->
+          <!--查看物流-->
+        <!--</button>-->
+        <view
+          wx:if="{{detail.express_num}}"
+          class="copy"
+          style="margin-left: 0"
+          @tap="bindCopyExpress({{'https://m.kuaidi100.com/result.jsp?nu=' + detail.express_num}})">
+          复制物流查询网址
+        </view>
+        <button
+          wx:if="{{detail._confirm}}"
+          class="button red"
+          style="margin-left: 0; width: 180rpx"
+          @tap="bindToggleConfirm">
+          本期确认收货
+        </button>
+      </view>
+
+      <!--拼团中-->
+      <view class="action" wx:if="{{detail.status === 'groupbuy'}}">
+        <block wx:if="{{detail._groupInfo.is_owner}}">
+          <button
+            class="button red"
+            style="width: 170rpx;"
+            open-type='share'
+            hover-class='none'>
+            拉好友拼团
+          </button>
+        </block>
+        <block wx:else>
+          <view
+            class="button red"
+            style="width: 170rpx;"
+            @tap="bindGroupDetail">
+            拉好友拼团
+          </view>
+        </block>
+      </view>
+
+      <!--待收货-->
+      <view class="action" wx:if="{{detail.status === 'receiving'}}">
+        <view
+          class="button red"
+          @tap="bindToggleConfirm">
+          确认收货
+        </view>
+      </view>
+
+      <!--订单详情-->
+      <view class="detail">
+        <view class="title">订单详情</view>
+
+        <!--普通商品-->
+        <block wx:if="{{detail._model === 'regular'}}">
+          <view class="item">
+            <view>创建时间</view>
+            <view>{{detail._createTime}}</view>
+          </view>
+          <view class="item" wx:if="{{detail._payTime}}">
+            <view>支付时间</view>
+            <view>{{detail._payTime}}</view>
+          </view>
+          <view class="item">
+            <view>会员钱包支付</view>
+            <view>￥{{detail.wallet_pay}}</view>
+          </view>
+          <view class="item">
+            <view>微信支付</view>
+            <view>￥{{detail.real_amount}}</view>
+          </view>
+          <view class="item">
+            <view>买家备注</view>
+            <view style="max-width: 60vw;">
+              {{detail.remark}}
+            </view>
+          </view>
+          <view class="item" wx:if="{{detail._sendTime}}">
+            <view>发货时间</view>
+            <view>{{detail._sendTime}}</view>
+          </view>
+          <view class="item" wx:if="{{detail._receiveTime}}">
+            <view>收货时间</view>
+            <view>{{detail._receiveTime}}</view>
+          </view>
+        </block>
+
+        <!--订阅商品-->
+        <block wx:if="{{detail._model === 'subscription'}}">
+          <view class="item">
+            <view>创建时间</view>
+            <view>{{detail._createTime}}</view>
+          </view>
+          <view class="item" wx:if="{{detail._payTime}}">
+            <view>支付时间</view>
+            <view>{{detail._payTime}}</view>
+          </view>
+          <view class="item">
+            <view>会员钱包支付</view>
+            <view>￥{{detail.wallet_pay}}</view>
+          </view>
+          <view class="item">
+            <view>微信支付</view>
+            <view>￥{{detail.real_amount}}</view>
+          </view>
+          <view class="item">
+            <view>买家备注</view>
+            <view style="max-width: 60vw;">
+              {{detail.remark}}
+            </view>
+          </view>
+          <view class="item" wx:if="{{detail.status === 'done' && detail._receiveTime}}">
+            <view>完成时间</view>
+            <view>{{detail._receiveTime}}</view>
+          </view>
+        </block>
+
+        <!--积分商品-->
+        <block wx:if="{{detail._model === 'credits'}}">
+          <view class="item">
+            <view>创建时间</view>
+            <view>{{detail._createTime}}</view>
+          </view>
+          <view class="item" wx:if="{{detail._payTime}}">
+            <view>支付时间</view>
+            <view>{{detail._payTime}}</view>
+          </view>
+          <view class="item">
+            <view>积分抵扣</view>
+            <view>{{detail.credit}}积分</view>
+          </view>
+          <view class="item">
+            <view>会员钱包支付</view>
+            <view>￥{{detail.wallet_pay}}</view>
+          </view>
+          <view class="item">
+            <view>微信支付</view>
+            <view>￥{{detail.real_amount}}</view>
+          </view>
+          <view class="item">
+            <view>买家备注</view>
+            <view style="max-width: 60vw;">
+              {{detail.remark}}
+            </view>
+          </view>
+          <view class="item" wx:if="{{detail._sendTime}}">
+            <view>发货时间</view>
+            <view>{{detail._sendTime}}</view>
+          </view>
+          <view class="item" wx:if="{{detail._receiveTime}}">
+            <view>收货时间</view>
+            <view>{{detail._receiveTime}}</view>
+          </view>
+        </block>
+      </view>
+
+      <!--发票栏-->
+      <view wx:if="{{detail.invoice.title}}" class="invoice">
+        <view class="title">发票信息</view>
+        <view class="item">
+          <view>抬头</view>
+          <view>{{detail.invoice.title || ''}}</view>
+        </view>
+        <view class="item">
+          <view>纳税人识别号</view>
+          <view>{{detail.invoice.taxNumber || ''}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!--浮窗-->
+    <cancelMask :showCancel.sync="showCancel"></cancelMask>
+    <confirmMask :showConfirm.sync="showConfirm"></confirmMask>
+    <expressMask :showExpress.sync="showExpress"></expressMask>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import PersistenceMixin from '../../mixins/persistence';
+  import {actions as OrderActions} from '../../store/order';
+  import {actions as ProductActions} from '../../store/product';
+  import CancelMask from '../../components/me/cancelMask';
+  import ConfirmMask from '../../components/me/confirmMask';
+  import ExpressMask from '../../components/me/express';
+
+
+  @connect({
+    detail(state) { return state.order.detail },
+    timer(state) { return state.timer.results },
+    user(state) { return state.user },
+    payInfo(state) { return state.order.payInfo },
+    showFeedback(state) { return state.config.showFeedback },
+  }, {
+    ...OrderActions,
+    ...ProductActions,
+  })
+
+
+  /* eslint-disable camelcase */
+  export default class OrderDetail extends wepy.page {
+    // 订单详情页
+
+    data = {
+      showCancel: false,
+      showConfirm: false,
+      showExpress: false,
+    };
+
+    components = {
+      cancelMask: CancelMask,
+      confirmMask: ConfirmMask,
+      expressMask: ExpressMask,
+    };
+
+    mixins = [UtilsMixin, PersistenceMixin];
+
+    methods = {
+      bindToggleCancel: () => {
+        this.showCancel = !this.showCancel;
+      },
+
+      bindToggleConfirm: () => {
+        this.showConfirm = !this.showConfirm;
+      },
+
+      bindToggleExpress: () => {
+        this.showExpress = !this.showExpress;
+      },
+
+      bindPayOrder: () => {
+        const {order_sn, url, is_pt, real_amount} = this.detail;
+        if (order_sn)
+          this.methods.wechatPayService({
+            order_sn,
+            other: {url, is_pt, real_amount},
+          });
+      },
+
+      bindCheckExpress: (uri) => {
+        this.methods.getExpressInfoService(uri);
+        this.methods.bindToggleExpress();
+      },
+
+      bindCopyExpress: (data) => {
+        this.copyText(data);
+      },
+
+      bindGroupDetail: () => {
+        this.go2page().navigate('/pages/all/groupBuyingDetail?back=2');
+      },
+
+      bindGo2Feedback: () => {
+        const {id} = this.detail;
+        this.go2page().navigate('/pages/all/feedback?order=' + id);
+      },
+
+      bindGo2Product: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+    };
+
+    events = {
+      // Reciving events from children components
+      toggleCancel: () => {
+        this.methods.bindToggleCancel();
+      },
+
+      cancelOrder: () => {
+        this.cancelOrder();
+        this.methods.bindToggleCancel();
+      },
+
+      toggleConfirm: () => {
+        this.methods.bindToggleConfirm();
+      },
+
+      confirmOrder: () => {
+        this.confirmOrder();
+        this.methods.bindToggleConfirm();
+      },
+
+      toggleExpress: () => {
+        this.methods.bindToggleExpress();
+      },
+    };
+
+    onLoad() {
+      if (
+        this.detail
+        && this.detail.status === 'groupbuy'
+      )
+        this.setTitle('拼团详情');
+      else
+        this.setTitle('订单详情');
+    };
+
+    onShow() {
+      const self = this;
+      setTimeout(() => {
+        if (this.getStorageSync('payJs')) {
+          this.setStorageSync('payJs', false);
+          if (this.payInfo.msg)
+            this.showToast(this.payInfo.msg);
+          if (this.payInfo && this.payInfo.success) {
+            this.methods.setPayJsInfo({data: {}});
+            if (self.detail._model !== 'offline')
+              this.methods.getOrderDetailService({
+                uri: self.detail.url,
+                isGroupOwner: self.detail._groupInfo.is_owner});
+          }
+        }
+      }, 1000);
+    };
+
+    cancelOrder = () => {
+      if (this.detail.cancel)
+        this.methods.orderCallUrlService({
+          url: this.detail.cancel,
+          callback: () => {
+            this.methods.getOrderDetailService({
+              uri: this.detail.url,
+              overlay: true,
+            });
+          },
+        });
+    };
+
+    confirmOrder = () => {
+      const {_confirm, confirm} = this.detail;
+      if (_confirm || confirm)
+        this.methods.orderCallUrlService({
+          url: _confirm || confirm,
+          callback: () => {
+            this.methods.getOrderDetailService({
+              uri: this.detail.url,
+              overlay: true,
+            });
+          },
+        });
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage(res) {
+      if (res.from === 'menu') {
+        const title = this.$parent.globalData.appName || '';
+        const uri = this.getCurrentPath();
+        const {wx_app_openid} = this.user;
+        return {
+          title,
+          path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+        };
+      }
+
+      if (res.from === 'button') {
+        if (this.detail) {
+          const {goods_backup, _model, _groupInfo} = this.detail;
+          const {wx_app_openid, id} = this.user;
+          const {goods, image, goods_name} = goods_backup[0];
+
+          return {
+            title: goods_name,
+            path: `/pages/util/index?scene=${wx_app_openid}&pid=${goods}&sid=${id}&type=${_model}&gid=${_groupInfo.id}`,
+            imageUrl: image,
+          };
+        }
+      }
+    };
+  }
+</script>

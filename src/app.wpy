@@ -1,0 +1,201 @@
+<style lang="less">
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background: transparent;
+    color: transparent;
+  }
+</style>
+
+<script>
+  import wepy from 'wepy';
+  import 'wepy-async-function';
+  import {setStore, connect} from 'wepy-redux';
+
+  import store from './store';
+  import {actions as OrderActions} from './store/order';
+  import {actions as SystemActions} from './store/system';
+
+
+  setStore(store);
+
+  @connect({}, {
+    ...OrderActions,
+    ...SystemActions,
+  })
+
+
+  export default class extends wepy.app {
+    config = {
+      'pages': [
+        'pages/util/index',
+        'pages/util/auth',
+        'pages/util/webview',
+        'pages/util/permissions',
+        'pages/util/qrPay',
+        'pages/util/update',
+
+        'pages/explore/index',
+        'pages/explore/search',
+        'pages/explore/switchStore',
+
+        'pages/all/index',
+        'pages/all/detail',
+        'pages/all/category',
+        'pages/all/list',
+        'pages/all/listCredit',
+        'pages/all/note',
+        'pages/all/rules',
+        'pages/all/feedback',
+        'pages/all/groupBuyingList',
+        'pages/all/groupBuyingDetail',
+
+        'pages/cart/index',
+        'pages/cart/confirmOrder',
+        'pages/cart/deliveryMethod',
+        'pages/cart/deliveryDate',
+
+        'pages/me/index',
+        'pages/me/addressList',
+        'pages/me/editAddress',
+        'pages/me/myOrders',
+        'pages/me/myProfit',
+        'pages/me/myCredit',
+        'pages/me/share',
+        'pages/me/deliveryCode',
+        'pages/me/customService',
+        'pages/me/myPartners',
+        'pages/me/topUp',
+        'pages/me/orderDetail',
+
+        'pages/video/index',
+        'pages/video/detail',
+        'pages/video/upload',
+        'pages/video/recommend',
+        'pages/video/user',
+      ],
+      'permission': {
+        'scope.userLocation': {
+          'desc': '获取您的位置信息我们才能更好地提供商品选购和配送服务',
+        },
+      },
+      'window': {
+        'backgroundTextStyle': 'light',
+        'navigationBarBackgroundColor': '#FFFFFF',
+        'navigationBarTitleText': '齐昌网络(测试)',
+        'navigationBarTextStyle': 'black',
+      },
+      'tabBar': {
+        'color': '#BBBBBB',
+        'selectedColor': '#F44939',
+        'list': [{
+          'pagePath': 'pages/explore/index',
+          'text': '发现',
+          'iconPath': 'assets/img/tabBar/explore.png',
+          'selectedIconPath': 'assets/img/tabBar/explore_active.png',
+        }, {
+          'pagePath': 'pages/all/index',
+          'text': '全部',
+          'iconPath': 'assets/img/tabBar/all.png',
+          'selectedIconPath': 'assets/img/tabBar/all_active.png',
+        }, {
+          'pagePath': 'pages/video/index',
+          'text': '好评',
+          'iconPath': 'assets/img/tabBar/comment.png',
+          'selectedIconPath': 'assets/img/tabBar/comment_active.png',
+        }, {
+          'pagePath': 'pages/cart/index',
+          'text': '购物车',
+          'iconPath': 'assets/img/tabBar/cart.png',
+          'selectedIconPath': 'assets/img/tabBar/cart_active.png',
+        }, {
+          'pagePath': 'pages/me/index',
+          'text': '我的',
+          'iconPath': 'assets/img/tabBar/me.png',
+          'selectedIconPath': 'assets/img/tabBar/me_active.png',
+        }],
+      },
+      'navigateToMiniProgramAppIdList': [
+        'wx959c8c1fb2d877b5',
+      ],
+    };
+
+    globalData = {
+      appName: '齐昌网络(测试)',
+      appThemeColor: '#F44939',
+      appTextColor: '#BBBBBB',
+    };
+
+    constructor() {
+      super();
+      this.use('requestfix');
+    }
+
+    onLaunch(option) {
+      // Update User Permissions from wx.Settings
+      this.methods.updatePermissionsService();
+
+      // const {query} = option;
+      wepy.removeStorageSync('session');
+      // wepy.showLoading({title: '加载中'});
+      // wepy.getSetting({
+      //   success: (res) => {
+      //     wepy.hideLoading();
+      //     if (!res.authSetting['scope.userInfo'])
+      //       wepy.redirectTo({url: `/pages/util/auth?${this.serializer(query)}`});
+      //   },
+      // });
+    }
+
+    onShow(options) {
+      // Update from localStorage
+      let _count = 0;
+      const self = this;
+      const localCart = wepy.getStorageSync('cart');
+      if (localCart && localCart.length)
+        Array.from(localCart).map(
+          ({product, type, count, url, customizedData, attach}) => {
+            self.methods.updateCartItem({
+              product,
+              type,
+              count,
+              url,
+              customizedData,
+              attach,
+            });
+            _count += count;
+          }
+        );
+      setTimeout(() => {
+        if (_count > 0)
+          wepy.setTabBarBadge({
+            index: 3,
+            text: String(_count),
+          });
+        else
+          wepy.removeTabBarBadge({index: 3});
+      }, 3000);
+      if (options.scene === 1038 && options.referrerInfo && options.referrerInfo.appId === 'wx959c8c1fb2d877b5') {
+        // 还应判断请求路径
+        let extraData = options.referrerInfo.extraData;
+        this.methods.setPayJsInfo({
+          data: {...extraData},
+        });
+      }
+    }
+
+    onHide() {
+      this.methods.clearCartItem();
+    }
+
+    serializer = (data = {}) => (
+      Object.keys(data).map(
+        (item) => (
+          item !== undefined
+            ? `${item}=${encodeURIComponent(data[item])}`
+            : ''
+        )
+      ).join('&')
+    );
+  }
+</script>

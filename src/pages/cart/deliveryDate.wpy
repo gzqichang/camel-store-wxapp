@@ -1,0 +1,248 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-delivery-date {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      height: 100rpx;
+      border-bottom: 10rpx solid @faintWhite;
+      display: flex;
+      flex-direction: column;
+
+      .action {
+        display: flex;
+        flex-grow: 1;
+        justify-content: space-evenly;
+
+        .title {
+          padding-top: 0;
+        }
+
+        view {
+          min-width: 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        image {
+          width: 16rpx;
+          height: 28rpx;
+          display: block;
+        }
+      }
+    }
+
+    .day-type {
+      width: 100vw;
+      height: 90rpx;
+      color: @textColor2;
+      font-size: 28rpx;
+      border-bottom: 2rpx solid @faintWhite;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      view:first-of-type,
+      view:last-of-type {
+        color: @primaryColor;
+      }
+    }
+
+    .day {
+      display: flex;
+      flex-wrap: wrap;
+
+      .item {
+        width: 14.28571429vw; // (100 / 7)vw;
+        padding-top: 20rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        view {
+          width: 80rpx;
+          height: 80rpx;
+          color: @textColor0;
+          font-size: 28rpx;
+          border: 2rpx solid @solidWhite;
+          border-radius: 4rpx;
+          background-color: @solidWhite;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &.red {
+            color: @primaryColor;
+            border-color: @primaryColor;
+          }
+
+          &.red.selected {
+            color: @solidWhite;
+            background-color: @primaryColor;
+          }
+        }
+      }
+    }
+
+    .button {
+      width: 100%;
+      height: 95rpx;
+      color: @solidWhite;
+      font-size: 34rpx;
+      border-radius: 0;
+      background-color: @primaryColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      bottom: 0;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-delivery-date">
+    <view class="header">
+      <view class="action">
+        <view @tap="bindPrev">
+          <image src="../../assets/img/detail/arrowLeft.png"></image>
+        </view>
+        <view>
+          <view class="title">{{date.year}}年{{date.month}}月</view>
+        </view>
+        <view @tap="bindNext">
+          <image src="../../assets/img/detail/arrowRight.png"></image>
+        </view>
+      </view>
+    </view>
+    <view class="day-type">
+      <view wx:key="index" wx:for="日一二三四五六">{{item}}</view>
+    </view>
+    <view class="day">
+      <view
+        class="item"
+        wx:key="index"
+        wx:for="{{date.dayList}}"
+        hidden="{{!item.day}}">
+        <view
+          class="{{item.marked ? (item.date === currentDate ? 'red selected' : 'red') : ''}}"
+          @tap="bindDateChange({{item}})">
+          {{item.day || ''}}
+        </view>
+      </view>
+    </view>
+    <view class="button" @tap="bindSave">确定</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as OrderActions} from '../../store/order';
+  import {actions as OthersActions} from '../../store/others';
+  import {Calendar} from '../../utils';
+
+
+  @connect({
+    orderTime(state) { return state.others.orderTime },
+  }, {
+    ...OrderActions,
+    ...OthersActions,
+  })
+
+
+  export default class DeliveryDate extends wepy.page {
+    // 选择配送时间页面
+
+    data = {
+      currentDate: '',
+    };
+
+    calendar = null;
+
+    /* eslint-disable camelcase */
+    computed = {
+      date: () => {
+        if (!this.calendar)
+          this.calendar = new Calendar();
+
+        // Set SUN as first day of a week
+        this.calendar.firstDayOfAWeek = 0;
+
+        if (this.orderTime) {
+          const {
+            start,
+            end,
+            availableType,
+            availableDays,
+          } = this.orderTime;
+
+          if (availableType === 'range') {
+            this.calendar.disableDocsBasedRange();
+            this.calendar.setAvailableDays(availableDays);
+            this.calendar.setAvailableRange(
+              new Date(start) || undefined,
+              new Date(end) || undefined,
+            );
+          }
+          if (availableType === 'docs') {
+            this.calendar.enableDocsBasedRange();
+            this.calendar.setAvailableDays([]);
+            this.calendar.setAvailableRange(availableDays);
+          }
+        }
+
+        return this.calendar.serialize();
+      },
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindSave: () => {
+        const dayType = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+        this.methods.setOrderTime({
+          ...this.orderTime,
+          selected: this.currentDate,
+          now: this.currentDate
+            + ' '
+            + dayType[new Date(this.currentDate.replace(/-/g, '/')).getDay()],
+        });
+        this.go2page().back();
+      },
+
+      bindDateChange: ({date, marked}) => {
+        if (marked)
+          this.currentDate = date;
+      },
+
+      bindNext: () => {
+        if (this.calendar)
+          this.calendar.getNextMonth();
+      },
+
+      bindPrev: () => {
+        if (this.calendar)
+          this.calendar.getPrevMonth();
+      },
+    };
+
+    onShow() {
+      if (this.orderTime) {
+        this.currentDate = this.orderTime.selected;
+        if (this.calendar)
+          this.calendar.currentDate = this.currentDate;
+      }
+    };
+
+    onLoad() {
+      this.setTitle('日期选择');
+    };
+  }
+</script>

@@ -1,0 +1,365 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-edit-address {
+    .form-item {
+      height: 105rpx;
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      &::after {
+        width: 725rpx;
+        height: 2rpx;
+        content: ' ';
+        background-color: @dimWhite;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
+
+      & view:first-of-type {
+        width: 195rpx;
+        padding-left: 30rpx;
+        color: @textColor0;
+        font-size: 28rpx;
+        display: inline-flex;
+      }
+
+      input,
+      picker {
+        width: 100%;
+        color: @textColor0;
+        font-size: 28rpx;
+        display: inline-flex;
+      }
+
+      picker {
+        image {
+          width: 27rpx;
+          height: 15rpx;
+          margin-left: 12rpx;
+          display: inline-flex;
+          position: relative;
+          top: -2rpx;
+        }
+      }
+
+      .default {
+        width: 36rpx;
+        height: 36rpx;
+        margin: 0 20rpx 0 30rpx;
+
+        & + view {
+          padding-left: 0;
+        }
+      }
+    }
+
+    .save {
+      width: 100%;
+      height: 95rpx;
+      color: @solidWhite;
+      font-size: 34rpx;
+      border-radius: 0;
+      background-color: @primaryColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      bottom: 0;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-edit-address">
+    <view class="form-item">
+      <view>收货人：</view>
+      <input
+        placeholder="请输入收货人姓名"
+        type="text"
+        confirm-type="done"
+        @input="bindOnInput('name')"
+        @confirm="bindOnInput('name')"
+        value="{{name}}"/>
+    </view>
+
+    <view class="form-item">
+      <view>联系电话：</view>
+      <input
+        placeholder="请输入联系电话"
+        type="number"
+        confirm-type="done"
+        @input="bindOnInput('tel')"
+        @confirm="bindOnInput('tel')"
+        value="{{tel}}"/>
+    </view>
+
+    <view class="form-item">
+      <view>所在地区：</view>
+      <picker
+        mode="region"
+        value="{{region}}"
+        @change="bindChangeRegion">
+        {{region.length ? regionStr : '请选择'}}
+        <image src="../../assets/img/address/arrow.png"></image>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view>详细地址：</view>
+      <input
+        placeholder="请输入详细地址，不少于5个字"
+        type="text"
+        confirm-type="done"
+        @blur="bindOnInput('detail')"
+        @confirm="bindOnInput('detail')"
+        value="{{detail}}"/>
+    </view>
+
+    <view class="form-item">
+      <view>邮编编码：</view>
+      <input
+        placeholder="（选填）"
+        type="number"
+        confirm-type="done"
+        @input="bindOnInput('code')"
+        @confirm="bindOnInput('code')"
+        value="{{code}}"/>
+    </view>
+
+    <view class="form-item" @tap="bindSwitchDefault" wx:if="{{false}}">
+      <image
+        class="default"
+        src="{{isDefault ? '../../assets/img/address/selected.png' : '../../assets/img/address/item.png'}}"></image>
+      <view>设为默认地址</view>
+    </view>
+
+    <button class="save" @tap="bindOnSave">
+      保存
+    </button>
+  </view>
+
+  <addressUnavailable :show.sync="show"></addressUnavailable>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as AddressActions} from '../../store/address';
+  import {actions as StoreActions} from '../../store/store';
+  import AddressUnavailable from '../../components/me/addressUnavailable';
+
+
+  @connect({
+    user(state) { return state.user },
+    userID(state) { return state.user.id },
+    userAddress(state) { return state.address.list },
+    addressStatus(state) { return state.address.status },
+    store(state) { return state.store.current },
+    storeTemp(state) { return state.others.storeID },
+  }, {
+    ...AddressActions,
+    ...StoreActions,
+  })
+
+
+  export default class EditAddress extends wepy.page {
+    // 编辑地址 页面
+
+    data = {
+      url: '',
+      id: '',
+      add_time: '',
+      name: '',
+      tel: '',
+      code: '',
+      detail: '',
+      region: [],
+      regionStr: '',
+      isDefault: true,
+      skipCheck: false,
+    };
+
+    components = {
+      addressUnavailable: AddressUnavailable,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      show: () => (
+        ['out-of-services', 'no-services'].includes(this.addressStatus)
+      ),
+    };
+
+    methods = {
+      // Change data values
+      bindOnInput: (key, {detail: {value}}) => {
+        if (['name', 'tel', 'code'].includes(key))
+          this[key] = value;
+
+        if (key === 'detail')
+          if (value.trim().length > 5)
+            this[key] = value;
+          else
+            this.showModal({
+              title: '保存失败',
+              content: '详细地址字数过少，请补充完整',
+              showCancel: false,
+            });
+      },
+
+      // Switch default address
+      bindSwitchDefault: () => {
+        this.isDefault = !this.isDefault;
+      },
+
+      // Change region with wechat native
+      bindChangeRegion: ({detail: {value, postcode}}) => {
+        this.region = value;
+        this.regionStr = value.join(' ');
+        this.code = postcode;
+      },
+
+      // Saving address
+      bindOnSave: () => {
+        let flag = false;
+        let keys = {
+          'regionStr': '所在地区',
+          'tel': '联系电话',
+          'name': '收货人',
+        };
+        Object.keys(keys).map(
+          (item) => {
+            if (this[item].trim().length < 1)
+              flag = keys[item];
+          }
+        );
+        if (flag)
+          return this.showModal({
+            title: '保存失败',
+            content: `${flag}不能为空，请补充完整`,
+            showCancel: false,
+          });
+        if (this.detail.trim().length < 5)
+          return this.showModal({
+            title: '保存失败',
+            content: '详细地址字数过少，请补充完整',
+            showCancel: false,
+          });
+
+        if (this.id && this.url) {
+          /* eslint-disable camelcase */
+          const _ = {
+            name: this.name,
+            phone: this.tel,
+            location_detail: this.detail,
+            postcode: this.code,
+            region: this.region.join(''),
+            is_default: this.isDefault,
+            add_time: this.add_time,
+          };
+          this.methods.updateAddressService({
+            url: this.url,
+            address: _,
+            refetch: true,
+            store: this.store.id,
+          });
+          this.go2page().back();
+        } else {
+          const _ = {
+            userName: this.name,
+            telNumber: this.tel,
+            provinceName: this.region[0],
+            cityName: this.region[1],
+            countyName: this.region[2],
+            postalCode: this.code,
+            detailInfo: this.detail,
+            isDefault: this.isDefault,
+          };
+          this.methods.addAddressService({
+            address: _,
+            store: this.store.id,
+            skipCheck: this.skipCheck,
+            callback: () => {
+              this.go2page().back();
+            },
+          });
+        }
+      },
+    };
+
+    events = {
+      dismissModals: () => {
+        this.methods.setAddressStatus('');
+      },
+
+      switchStore: () => {
+        this.methods.setAddressStatus('');
+        if (this.storeTemp) {
+          this.methods.getCurrentStoreService({
+            storeID: this.storeTemp,
+          });
+          this.go2page().switch('/pages/explore/index');
+        }
+      },
+
+      confirmSave: () => {
+        this.methods.setAddressStatus('');
+        this.skipCheck = true;
+        this.methods.bindOnSave();
+      },
+    };
+
+    onShow() {
+      this.setTitle('收货地址');
+    };
+
+    onLoad({id}) {
+      if (id) {
+        const obj = this.userAddress.find(
+          (item) => (item.id === parseInt(id))
+        );
+        const {
+          url,
+          add_time,
+          name,
+          phone,
+          postcode,
+          location_detail,
+          region,
+          is_default,
+        } = obj;
+
+        this.id = id;
+        this.url = url;
+        this.add_time = add_time;
+        this.name = name;
+        this.tel = phone;
+        this.code = postcode;
+        this.detail = location_detail;
+        this.isDefault = is_default;
+        if (region) {
+          const _region = this.parseRegion(region);
+          this.region = _region;
+          this.regionStr = _region.join(' ');
+        }
+      }
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

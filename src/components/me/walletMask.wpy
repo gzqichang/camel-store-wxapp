@@ -1,0 +1,144 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .me-wallet-mask {
+    height: 100vh;
+    transition: all .3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .modal {
+      width: 570rpx;
+      margin: 0 auto;
+      background: @solidWhite;
+      border-radius: 8rpx;
+
+      .wallet-title {
+        padding-top: 60rpx;
+        padding-bottom: 0;
+        color: @textColor0;
+        font-size: 34rpx;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .wallet-content {
+        width: 460rpx;
+        padding: 0 55rpx 60rpx;
+        color: @textColor3;
+        font-size: 28rpx;
+        line-height: 38rpx;
+
+        view {
+          margin-top: 30rpx;
+        }
+
+        .button {
+          width: 450rpx;
+          height: 80rpx;
+          margin: 54rpx auto 0;
+          color: @solidWhite;
+          font-size: 36rpx;
+          background-color: @primaryColor;
+          border-radius: 8rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .close-modal {
+      margin-top: 80rpx;
+      display: flex;
+      justify-content: center;
+
+      image {
+        width: 56rpx;
+        height: 56rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="show"></mask>
+
+  <view class="{{show ? 'me-wallet-mask' : 'me-wallet-mask hide'}}">
+    <view class="modal">
+      <view class="wallet-title">
+        会员钱包
+      </view>
+      <view class="wallet-content">
+        <block wx:if="{{enableDistributionRelations}}">
+          <view>
+            1、用户可预先充值预存到会员钱包,充值活动有超值赠送优惠并且可以提升会员等级，尊享全场商品折扣优惠（拼团商品除外）。
+          </view>
+          <view>
+            2、成员小伙伴消费的返佣都将存入会员钱包，可提现也可直接在小店消费。
+          </view>
+        </block>
+        <block wx:else>
+          <view>
+            用户可预先充值预存到会员钱包,充值活动有超值赠送优惠并且可以提升会员等级,尊享全场商品折扣优惠。
+          </view>
+        </block>
+        <view wx:if="{{!isIOS}}" class="button" @tap="bindGo2TopUp">优惠充值</view>
+      </view>
+    </view>
+    <view class="close-modal" @tap="bindToggleMask">
+      <image src="../../assets/img/detail/close.png"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import Mask from '../utils/mask';
+
+
+  @connect({
+    enableDistributionRelations(state) { return state.config.enableDistributionRelations },
+    isIOS(state) { return state.others.isIOS },
+  }, {})
+
+
+  export default class WalletMask extends wepy.component {
+    // 会员钱包弹窗组件
+
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindToggleMask: () => {
+        this.$emit('toggleWalletMask');
+      },
+
+      bindGo2TopUp: () => {
+        this.go2page().navigate('/pages/me/topUp');
+      },
+    };
+  }
+</script>

@@ -1,0 +1,50 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .utils-empty {
+    .empty {
+      text-align: center;
+
+      image {
+        width: 140rpx;
+        height: 119rpx;
+        margin: 100rpx auto 30rpx;
+      }
+
+      view {
+        margin: 0 auto;
+        color: @textColor5;
+        font-size: 30rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="utils-empty">
+    <view class="empty">
+      <image src="{{imagePath}}"></image>
+      <view>{{text}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+
+  export default class Empty extends wepy.component {
+    // 通用 - 空数据组件
+
+    props = {
+      imagePath: {
+        type: String,
+        default: '../../assets/img/explore/empty.png',
+      },
+      text: {
+        type: String,
+        default: '没有更多数据啦~',
+      },
+    };
+  };
+</script>

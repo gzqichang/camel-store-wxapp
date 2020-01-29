@@ -1,0 +1,334 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-my-profit {
+    .top {
+      height: 360rpx;
+      margin-bottom: 20rpx;
+      border-bottom: 20rpx solid @faintWhite;
+
+      .background {
+        width: 100%;
+        height: 360rpx;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .foreground {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        .head {
+          width: 100vw;
+          height: 160rpx;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+
+          .avatar {
+            width: 98rpx;
+            height: 98rpx;
+            margin-left: 50rpx;
+            border: 6rpx solid fadeout(@solidWhite, 40%);
+            border-radius: 50%;
+          }
+
+          .nickname {
+            margin-left: 28rpx;
+            color: @solidWhite;
+            font-size: 36rpx;
+          }
+
+          .wallet {
+            color: #ffb3a6;
+            font-size: 28rpx;
+            position: absolute;
+            right: 58rpx;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .icon {
+            width: 32rpx;
+            height: 32rpx;
+            display: inline-flex;
+            position: relative;
+            top: 2rpx;
+          }
+        }
+
+        .panel {
+          width: 664rpx;
+          height: 200rpx;
+          margin: 0 auto;
+          background-color: @solidWhite;
+          border-top-left-radius: 10rpx;
+          border-top-right-radius: 10rpx;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+
+          view:first-of-type {
+            margin-bottom: 20rpx;
+            color: @textColor1;
+            font-size: 36rpx;
+          }
+
+          view:last-of-type {
+            color: @primaryColor;
+            font-size: 48rpx;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+
+    .bottom {
+      padding: 0 48rpx;
+      background-color: @solidWhite;
+
+      .title {
+        width: 100%;
+        height: 86rpx;
+        color: @textColor1;
+        font-size: 32rpx;
+        display: flex;
+        align-items: center;
+      }
+
+      .hr {
+        width: 650rpx;
+        height: 2rpx;
+        margin: 0 auto;
+        background-color: @dimWhite;
+      }
+
+      .item {
+        max-width: 650rpx;
+        height: 126rpx;
+        display: flex;
+        justify-content: space-around;
+
+        .name {
+          width: 400rpx;
+          height: 126rpx;
+          color: @textColor1;
+          text-align: left;
+          display: inline-flex;
+          align-items: center;
+          flex-direction: column;
+          flex-grow: 1;
+
+          & > view {
+            width: 100%;
+            font-size: 28rpx;
+            display: flex;
+            overflow: hidden;
+          }
+
+          & > view:nth-child(1) {
+            margin: 24rpx 0 8rpx;
+            color: @textColor1;
+            white-space: nowrap;
+
+            view {
+              max-width: 40vw;
+              color: @textColor4;
+              display: inline;
+              text-overflow: ellipsis;
+              overflow: hidden;
+            }
+          }
+
+          & > view:nth-child(2) {
+            color: @textColor3;
+          }
+        }
+
+        .money {
+          color: @primaryColor;
+          font-size: 36rpx;
+          display: inline-flex;
+          align-items: center;
+
+          &.neg {
+            color: @textColor1;
+          }
+        }
+      }
+    }
+
+    .end {
+      margin: 28rpx auto 35rpx;
+      color: @textColor4;
+      font-size: 24rpx;
+      text-align: center;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-my-profit">
+    <view class="top">
+      <image
+        class="background"
+        src="../../assets/img/me/profitBackground.png"></image>
+      <view class="foreground">
+        <view class="head">
+          <image
+            class="avatar"
+            src="{{user.avatar_url}}"></image>
+          <view class="nickname">
+            {{user.nickname}}
+          </view>
+          <view class="wallet" @tap="bindToggle">
+            （如何赚取积分）
+            <image
+              class="icon"
+              src="../../assets/img/me/questionIcon.png"></image>
+          </view>
+        </view>
+
+        <view class="panel">
+          <view>积分余额</view>
+          <view>{{user.credit}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="bottom">
+      <view class="title">积分记录</view>
+      <view class="hr"></view>
+      <block wx:key="add_time" wx:for="{{logs}}">
+        <view class="item">
+          <view class="name">
+            <view style="width: calc(100% - 1rem); padding-right: 1rem;">
+              {{item.title}}
+              <view wx:if="{{item.note}}" style="padding-left: .3rem;">
+                ({{item.note}})
+              </view>
+            </view>
+            <view>{{item.date}}</view>
+          </view>
+          <view class="{{item.negative ? 'money' : 'money neg'}}">
+            {{item.credit}}
+            <view style="font-size: 24rpx">（积分）</view>
+          </view>
+        </view>
+        <view class="hr"></view>
+      </block>
+      <view class="end">已经到底咯~</view>
+    </view>
+
+    <!--浮窗-->
+    <creditRulesMask :show.sync="show"></creditRulesMask>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as UserActions} from '../../store/user';
+  import CreditRulesMask from '../../components/me/creditRulesMask';
+
+
+  @connect({
+    user(state) { return state.user },
+    userID(state) { return state.user.id },
+    nextURL(state) { return state.others.nextURL },
+  }, {
+    ...UserActions,
+  })
+
+
+  export default class MyCredit extends wepy.page {
+    // 我的积分 页面
+
+    data = {
+      show: false,
+    };
+
+    mixins = [UtilsMixin];
+
+    components = {
+      creditRulesMask: CreditRulesMask,
+    };
+
+    methods = {
+      bindToggle: () => {
+        this.show = !this.show;
+      },
+    };
+
+    computed = {
+      logs: () => {
+        let _ = [];
+        if (this.user && this.user.creditLog)
+          _ = this.user.creditLog;
+        return _.map(
+          (item) => ({
+            title: item.remark,
+            note: item.note,
+            date: this.parseTime(new Date(item.add_time)),
+            credit: item.credit,
+            add_time: item.add_time,
+            negative: /\+/.test(item.credit),
+          })
+        );
+      },
+    };
+
+    events = {
+      // Reciving events from children components
+      toggleCreditRulesMask: () => {
+        this.methods.bindToggle();
+      },
+    };
+
+    onShow() {
+      // Get log
+      if (this.user && this.user.id)
+        this.methods.getCreditLogService({
+          user: this.user.id,
+        });
+
+      // Get User Info for the Profit Numbers Updation
+      this.methods.getUserInfoService();
+    };
+
+    onLoad() {
+      this.setTitle('我的积分');
+    };
+
+    onReachBottom() {
+      this.getNextPageData();
+    }
+
+    getNextPageData = () => {
+      let next = this.nextURL.creditLog;
+      if (next !== null)
+        this.methods.getCreditLogService({next});
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

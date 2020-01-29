@@ -1,0 +1,261 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  page {
+    background: #fff;
+  }
+
+  .opacity {
+    opacity: 0.5;
+  }
+  view.page-video {
+    padding: 34rpx 30rpx;
+
+    .video-item {
+      position: relative;
+      width: 690rpx;
+      height: 656rpx;
+      margin-bottom: 30rpx;
+      border-radius: 16rpx;
+      overflow: hidden;
+
+      image {
+        width: 690rpx;
+        height: 656rpx;
+      }
+      .bottom-text {
+        position: absolute;
+        bottom: 0;
+        height: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(34,34,34,0.8));
+        .title {
+          font-size: 36rpx;
+          color: #fff;
+          padding-left: 30rpx;
+          padding-bottom: 40rpx;
+        }
+        .user {
+          color: #c2c2c2;
+          font-size: 24rpx;
+          padding-right: 30rpx;
+          padding-bottom: 40rpx;
+          text-align: right;
+          image {
+            width: 60rpx;
+            height: 60rpx;
+            border-radius: 3em;
+            margin-bottom: 10rpx;
+          }
+        }
+      }
+    }
+
+    .none_tip {
+      color: #eee;
+      width: 100vw;
+      padding-top: 100rpx;
+      text-align: center;
+    }
+
+    .unable {
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+
+      image {
+        width: 445rpx;
+        height: 273rpx;
+      }
+      .big {
+        margin-top: 54rpx;
+        margin-bottom: 34rpx;
+        font-size: 46rpx;
+        color: #444;
+      }
+      .small {
+        font-size: 28rpx;
+        color: #ccc;
+        line-height: 42rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-video">
+    <block wx:if="{{enableVideo}}">
+
+      <block wx:if="{{videoList.length}}">
+        <block wx:for="{{videoList}}" wx:key="{{index}}">
+          <view class="video-item" @tap="bindToDetail({{index}})">
+            <image mode="aspectFill" src="{{item.video + '?vframe/jpg/offset/1/w/690'}}"></image>
+            <view class="bottom-text">
+              <view class="title">{{item.title}}</view>
+              <view class="user" @tap.stop="bindToUser({{item.user_info}})">
+                <image src="{{item.user_info.avatar_url}}"></image>
+                <view>{{item.user_info.nickname}}</view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </block>
+      <block wx:else>
+        <view class="none_tip">暂无短视频！</view>
+      </block>
+
+    </block>
+    <block wx:else>
+      <view class="unable">
+        <image src="../../assets/img/video/bg.png"></image>
+        <view class="big">哎呀！</view>
+        <view class="small">小店还没有开通短视频，</view>
+        <view class="small">客官您稍后再来看看吧！</view>
+      </view>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import {actions as VideoActions} from '../../store/video';
+  import UtilsMixin from '../../mixins/utils';
+  import PersistenceMixin from '../../mixins/persistence';
+
+
+  @connect({
+    videoList(state) { return state.video.videoList },
+    userVideoList(state) { return state.video.userVideoList },
+    isUser(state) { return state.video.isUser },
+    user(state) { return state.user },
+    nextURL(state) { return state.others.nextURL },
+    enableVideo(state) { return state.config.enableVideo },
+  }, {
+    ...VideoActions,
+  })
+
+
+  export default class Video extends wepy.page {
+    // 写页面用的模板
+    config = {
+      enablePullDownRefresh: true,
+    };
+
+    mixins = [UtilsMixin, PersistenceMixin];
+
+    data = {
+      showVideoTip: false,
+      isShare: true,
+    };
+
+    onShow() {
+      if (!this.enableVideo)
+        return;
+
+      if (!this.hasUserInfo())
+        this.isShare = false;
+    };
+
+    onLoad() {
+      if (!this.enableVideo)
+        return;
+
+      if (this.videoList && this.videoList.length)
+        return;
+
+      const self = this;
+      this.loading().show();
+      this.methods.getShortVideoService({
+        callback: () => {
+          self.loading().hide();
+        },
+      });
+    };
+
+    onReachBottom() {
+      this.getNextPageData();
+    };
+
+    onPullDownRefresh() {
+      wepy.stopPullDownRefresh();
+
+      const self = this;
+      this.loading().show();
+      this.methods.getShortVideoService({
+        reload: true,
+        pageSize: 6,
+        callback: () => {
+          self.loading().hide();
+        },
+      });
+    }
+
+    methods = {
+      bindToUser: (userInfo) => {
+        const self = this;
+        this.methods.setUser({
+          isUser: null,
+        });
+        setTimeout(() => {
+          this.methods.setUserInfo({payload: userInfo});
+          this.methods.getShortVideoUserService({
+            user: userInfo.id,
+            callback: () => {
+              self.go2page().navigate('/pages/video/user');
+            },
+          });
+        }, 200);
+      },
+
+      bindToPermission: () => {
+        const callback = () => {
+          this.isShare = true;
+        };
+        this.checkUserInfo(callback);
+      },
+
+      bindToDetail: (index) => {
+        this.methods.setUser({
+          isUser: null,
+        });
+        this.go2page().navigate('/pages/video/detail?index=' + index);
+      },
+    };
+
+    getNextPageData = () => {
+      let next = this.nextURL.videoList;
+      let userNext = this.nextURL.videoUserList;
+      if (this.isUser) {
+        if (userNext !== null)
+          this.methods.getShortVideoUserService({
+            next: userNext,
+          });
+      } else {
+        if (next !== null)
+          this.methods.getShortVideoService({
+            next,
+          });
+      }
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const {title, video, id, user} = this.currentVideo;
+      const {wx_app_openid} = this.user;
+      const pid = this.currentVideoGoods.id;
+      return {
+        title,
+        path: `/pages/util/index?vid=${id}&scene=${wx_app_openid}&pid=${pid}&sid=${user}`,
+        imageUrl: video + '?vframe/jpg/offset/1',
+      };
+    };
+  }
+</script>

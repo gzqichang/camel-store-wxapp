@@ -1,0 +1,358 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .placeholder {
+    /*font-size: 28rpx;*/
+    color: @textColor4;
+  }
+
+  page {
+    background: @faintWhite;
+  }
+
+  view.util-qr-pay {
+    background: @solidWhite;
+
+    .top {
+      margin-bottom: 140rpx;
+      text-align: center;
+
+      .logo {
+        image {
+          width: 130rpx;
+          height: 130rpx;
+          border-radius: 50%;
+          margin: 54rpx auto 34rpx;
+        }
+      }
+
+      .app {
+        padding-bottom: 10rpx;
+        font-size: 36rpx;
+        font-weight: bold;
+        color: @textColor1;
+      }
+
+      .name {
+        font-size: 30rpx;
+        color: @textColor1;
+      }
+    }
+
+    .pay {
+      padding-bottom: 50rpx;
+      border-bottom: 20rpx solid @faintWhite;
+
+      .title {
+        margin-bottom: 46rpx;
+        padding-left: 48rpx;
+        font-size: 38rpx;
+        color: @textColor1;
+      }
+
+      .input {
+        margin: 0 48rpx;
+        border-bottom: 1rpx solid @faintWhite;
+        display: flex;
+        align-items: baseline;
+
+        view {
+          color: #404040;
+          font-size: 60rpx;
+          position: relative;
+          left: -0.23em;
+        }
+
+        input {
+          height: 80rpx;
+          font-size: 80rpx;
+          color: @textColor1;
+        }
+      }
+    }
+
+    .option {
+      display: flex;
+      flex-direction: column;
+
+      .item {
+        height: 100rpx;
+        margin-left: 48rpx;
+        padding-right: 36rpx;
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
+
+        &.i1 {
+          border-bottom: 1rpx solid @faintWhite;
+
+          .balance {
+            padding-right: 16rpx;
+            font-size: 26rpx;
+            color: @textColor4;
+            flex-grow: 0;
+          }
+        }
+
+        &.i2 {
+          height: 80rpx;
+          padding-left: 78rpx;
+          color: @textColor4;
+          font-size: 26rpx;
+          border-bottom: 1rpx solid @faintWhite;
+          justify-content: flex-start;
+        }
+
+        &.i3 {
+          height: 90rpx;
+          color: @primaryColor;
+          font-size: 26rpx;
+          justify-content: flex-end;
+        }
+
+        .wallet {
+          width: 50rpx;
+          height: 50rpx;
+          margin-right: 28rpx;
+          flex-shrink: 0;
+        }
+
+        .check {
+          width: 36rpx;
+          height: 36rpx;
+          flex-shrink: 0;
+        }
+
+        view {
+          font-size: 30rpx;
+          color: @textColor1;
+          flex-grow: 1;
+        }
+      }
+    }
+
+    .bottom {
+      width: 100vw;
+      background: @solidWhite;
+      position: fixed;
+      bottom: 0;
+
+      view {
+        height: 98rpx;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .bottom-text {
+          color: @textColor1;
+          font-size: 26rpx;
+        }
+
+        .bottom-price {
+          margin-right: 18rpx;
+          color: @primaryColor;
+          font-size: 32rpx;
+        }
+
+        .bottom-btn {
+          width: 200rpx;
+          color: @solidWhite;
+          font-size: 30rpx;
+          background: @primaryColor;
+          justify-content: center;
+
+          &.disabled {
+            background-color: @textColor5;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="util-qr-pay">
+    <view class="top">
+      <view class="logo">
+        <image src="{{info.square_logo + '?imageView2/2/w/130'}}"></image>
+      </view>
+      <view class="app">
+        {{info.storename}}
+      </view>
+      <view class="name">
+        （{{store.name}}）
+      </view>
+    </view>
+
+    <view class="pay">
+      <view class="title">付款金额</view>
+      <view class="input">
+        <view>￥</view>
+        <input
+          type="digit"
+          confirm-type="done"
+          @input="bindInput"
+          placeholder="0.00"
+          placeholder-class="placeholder"
+          value="{{amount}}"/>
+      </view>
+    </view>
+
+    <view class="option">
+      <view class="item i1">
+        <image src="../../assets/img/qrPay/wallet.png" class="wallet"></image>
+        <view>使用会员钱包</view>
+        <view class="balance" wx:if="{{remains !== 0}}">-￥{{remains}}</view>
+        <image
+          src="{{checked ? '../../assets/img/qrPay/check.png' : '../../assets/img/qrPay/unCheck.png'}}"
+          class="check"
+          @tap="bindToggle"
+        >
+        </image>
+      </view>
+      <view class="item i2">
+        您的会员钱包剩余余额为
+        <view style="color: #F44939; flex-grow: 0; padding: 0.3em;">{{balance}}</view>
+        <view style="color: #F44939; flex-grow: 0;">元</view>
+      </view>
+      <view class="item i3" @tap="bindRedirectTopUp">
+        会员钱包充值  更多优惠 >>
+      </view>
+    </view>
+
+    <view class="bottom">
+      <view>
+        <view class="bottom-text">待支付金额：</view>
+        <view class="bottom-price">￥{{total}}</view>
+        <view
+          class="{{enable ? 'bottom-btn' : 'bottom-btn disabled'}}"
+          @tap="bindOnNewOrder">
+          <text>确认支付</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as UserActions} from '../../store/user';
+  import {actions as OrderActions} from '../../store/order';
+
+
+  @connect({
+    info(state) { return state.store.info },
+    store(state) { return state.store.current },
+    code(state) { return state.config.machineCode },
+    user(state) { return state.user },
+  }, {
+    ...UserActions,
+    ...OrderActions,
+  })
+
+
+  export default class QrPay extends wepy.page {
+    // 线下支付
+    data = {
+      amount: null,
+      checked: false,
+      enable: true,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      balance: () => {
+        let balance = this.user && (this.user.recharge || this.user.asset)
+          ? ((this.user.recharge * 1000) + (this.user.asset * 1000)) / 1000
+          : 0;
+        if (this.checked)
+          balance = ((balance * 1000) - (this.amount * 1000)) / 1000;
+        return balance > 0 ? this.parse2Float(balance) : 0;
+      },
+
+      remains: () => {
+        let balance = this.user && (this.user.recharge || this.user.asset)
+          ? ((this.user.recharge * 1000) + (this.user.asset * 1000)) / 1000
+          : 0;
+        let rest = ((balance * 1000) - (this.amount * 1000)) / 1000;
+        return this.checked
+          ? (
+            rest > 0
+              ? this.parse2Float(this.amount)
+              : this.parse2Float(balance)
+          )
+          : 0;
+      },
+
+      total: () => {
+        let _ = this.amount || 0;
+        let balance = this.user && (this.user.recharge || this.user.asset)
+          ? ((this.user.recharge * 1000) + (this.user.asset * 1000)) / 1000
+          : 0;
+        if (this.checked) {
+          _ = (((balance * 1000) - (this.amount * 1000)) / 1000);
+          return _ > 0 ? 0 : this.parse2Float(-_);
+        } else {
+          return this.parse2Float(_);
+        }
+      },
+    };
+
+    methods = {
+      bindInput: (e) => {
+        let {value} = e.detail;
+        if (
+          /^\d*\.?\d{0,2}$/.test(String(value))
+          && value > 0
+        ) {
+          this.enable = true;
+          this.amount = value;
+        } else {
+          this.enable = false;
+        }
+      },
+
+      bindToggle: () => {
+        this.checked = !this.checked;
+      },
+
+      bindRedirectTopUp: () => {
+        this.go2page().navigate('/pages/me/topUp');
+      },
+
+      bindOnNewOrder: () => {
+        if (!this.amount)
+          return this.showToast('请填写支付金额');
+
+        if (this.enable)
+          this.enable = !this.enable;
+        else
+          return;
+
+        this.methods.newQROrderService({
+          data: {
+            shop: this.store.id,
+            money: this.amount,
+            use_wallet: this.checked,
+            machine_code: this.code,
+          },
+        });
+      },
+    };
+
+    onShow() {
+      // Get User Info
+      this.methods.getUserInfoService();
+    }
+
+    onLoad() {
+      this.setTitle('支付');
+    };
+  }
+</script>

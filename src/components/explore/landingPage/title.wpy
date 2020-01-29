@@ -1,0 +1,62 @@
+<style lang="less">
+  @import (reference) "../../../config/variables";
+
+  view.landingPage-title {
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      view {
+        font-size: 36rpx;
+        color: @primaryColor;
+        padding: 0 20rpx;
+      }
+
+      .line {
+        width: 72rpx;
+        height: 6rpx;
+      }
+
+      .icon {
+        width: 35rpx;
+        height: 35rpx;
+        padding-left: 20rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="landingPage-title">
+    <view class="title">
+      <image
+        class="line"
+        src="../../../assets/img/explore/lineLeft.png"></image>
+      <image class="icon" src="{{icon}}"></image>
+      <view>{{title}}</view>
+      <image
+        class="line"
+        src="../../../assets/img/explore/lineRight.png"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+
+  export default class Title extends wepy.component {
+    // 首页模块标题
+    props = {
+      icon: {
+        type: String,
+        default: '../../../assets/img/explore/hot.png',
+      },
+      title: {
+        type: String,
+        default: '',
+      },
+    };
+  }
+</script>

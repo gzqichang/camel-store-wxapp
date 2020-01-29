@@ -1,0 +1,76 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.explore-loading {
+    .loading {
+      width: 125rpx;
+      height: 194rpx;
+      margin: 0 auto;
+      padding: 36vh 0 60rpx;
+      display: block;
+    }
+
+    @keyframes dots {
+      from {
+        transform: translate(0);
+      }
+      to {
+        transform: translate(1em);
+      }
+    }
+
+    @-webkit-keyframes dots {
+      from {
+        transform: translate(0);
+      }
+      to {
+        transform: translate(1em);
+      }
+    }
+
+    .text {
+      color: @textColor3;
+      font-size: 28rpx;
+      text-align: center;
+      position: relative;
+
+      &::after {
+        width: 2em;
+        height: 2em;
+        background: @solidWhite;
+        display: block;
+        content: ' ';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(~"50% + 3em + 1px");
+        animation-name: dots;
+        animation-duration: 1.5s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        -webkit-animation-name: dots;
+        -webkit-animation-duration: 1.5s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-iteration-count: infinite;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="explore-loading">
+    <image
+      class="loading"
+      src="../../assets/img/explore/loading.png"></image>
+    <view class="text">门店信息获取中...</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+
+  export default class Loading extends wepy.component {
+    // 发现页 - 加载组件
+  };
+</script>

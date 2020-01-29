@@ -1,0 +1,238 @@
+<style lang="less">
+  @import (reference) "../../../config/variables";
+
+  view.landingPage-creditBlock {
+    width: 100vw;
+
+    & > .title {
+      padding: 50rpx 0 40rpx;
+      text-align: right;
+
+      .more {
+        color: @textColor1;
+        font-size: 28rpx;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        view {
+          padding-right: 6rpx;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .arrow {
+          width: 15rpx;
+          height: 23rpx;
+          padding-right: 30rpx;
+        }
+      }
+    }
+
+    .ellipsis {
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .content {
+      width: 100vw;
+      margin-bottom: 40rpx;
+
+      swiper {
+        width: 100vw;
+        height: 320rpx;
+
+        swiper-item {
+          .box {
+            width: calc(~"100vw - 40rpx");
+            padding: 0 20rpx;
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+
+            .item {
+              width: 216rpx;
+              margin: 0 10rpx 50rpx;
+              display: inline-flex;
+              flex-direction: column;
+
+              .top {
+                width: 216rpx;
+                height: 216rpx;
+                border: 2rpx solid @dimWhite;
+                border-radius: 8rpx;
+                flex-shrink: 0;
+                overflow: hidden;
+
+                image {
+                  width: 216rpx;
+                  height: 216rpx;
+                }
+              }
+
+              .bottom {
+                display: flex;
+                flex-direction: column;
+
+                .title {
+                  padding: 18rpx 0;
+                  color: @textColor1;
+                  font-size: 24rpx;
+                }
+
+                .credit {
+                  font-size: 24rpx;
+                  color: @primaryColor;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .dots {
+        width: 50vw;
+        margin: 30rpx auto 38rpx;
+        display: flex;
+        justify-content: center;
+
+        .dot {
+          width: 12rpx;
+          height: 12rpx;
+          margin: 0 4rpx;
+          background: #E5E5E5;
+          border-radius: 50%;
+
+          &.active {
+            background: #C0C0C0;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view
+    wx:if="{{product && product.length}}"
+    class="landingPage-creditBlock">
+    <!--标题-->
+    <view class="title">
+      <title
+        title="积分换购"
+        icon="../../assets/img/explore/coin.png"></title>
+      <view class="more">
+        <view @tap="bindMore">更多</view>
+        <image
+          class="arrow"
+          src="../../../assets/img/explore/arrow3.png"></image>
+      </view>
+    </view>
+
+    <!--内容-->
+    <view class="content">
+      <swiper
+        circular
+        current="{{swiperCurrent}}"
+        @change="bindSwiperChange">
+        <block
+          wx:key="id"
+          wx:for="{{list}}"
+          wx:for-item="itemSet">
+          <swiper-item>
+            <view class="box">
+              <view
+                class="item"
+                wx:key="id"
+                wx:for="{{itemSet}}"
+                @tap="bindGetDetail({{item.url}})">
+                <view class="top">
+                  <image src="{{item._image + '?imageView2/2/w/216'}}"></image>
+                </view>
+                <view class="bottom">
+                  <view class="title ellipsis">{{item.name}}</view>
+                  <view class="credit">{{item._credit}}积分 + ¥{{item._sellPrice}}</view>
+                </view>
+              </view>
+            </view>
+          </swiper-item>
+        </block>
+      </swiper>
+      <view wx:if="{{list && list.length > 1}}" class="dots">
+        <block wx:for="{{list}}" wx:key="{{id}}">
+          <view class="{{index === swiperCurrent ? 'dot active' : 'dot'}}"></view>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../../mixins/utils';
+  import Title from './title';
+  import {actions as ProductActions} from '../../../store/product';
+
+
+  @connect({
+    product(state) { return state.home.credits },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class GroupingBlock extends wepy.component {
+    // 首页积分模块
+
+    data = {
+      swiperCurrent: 0,
+    };
+
+    components = {
+      title: Title,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      list: () => {
+        let _ = [];
+
+        if (this.product && this.product.length)
+          for (let i = 0; i < this.product.length; i += 3)
+            _.push(this.product.slice(i, i + 3));
+
+        return _;
+      },
+    };
+
+    methods = {
+      bindSwiperChange: (e) => {
+        this.swiperCurrent = e.detail.current;
+      },
+
+      bindMore: () => {
+        this.methods.getCreditsProductListService({
+          store: this.store,
+          callback: () => {
+            this.go2page().navigate('/pages/all/listCredit');
+          },
+        });
+      },
+
+      bindGetDetail: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+    };
+  }
+</script>

@@ -1,0 +1,623 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-me {
+    min-height: 100%;
+
+    .top {
+      height: 358rpx;
+      padding-top: 30rpx;
+      text-align: center;
+      border-bottom: 20rpx solid @faintWhite;
+
+      .background {
+        width: 710rpx;
+        height: 358rpx;
+        margin: auto;
+        position: absolute;
+        left: 0;
+        right: 0;
+      }
+
+      .foreground {
+        width: 710rpx;
+        height: 358rpx;
+        margin: auto;
+        position: absolute;
+        left: 0;
+        right: 0;
+
+        .member {
+          display: flex;
+          align-items: center;
+          position: absolute;
+          top: 24rpx;
+          left: 28rpx;
+
+          image {
+            display: inline-flex;
+
+            &:first-of-type {
+              width: 50rpx;
+              height: 50rpx;
+              margin-right: 6rpx;
+            }
+
+            &:last-of-type {
+              width: 20rpx;
+              height: 20rpx;
+              margin-left: 6rpx;
+            }
+          }
+
+          view {
+            color: @dimWhite;
+            font-size: 24rpx;
+          }
+        }
+
+        .avatar {
+          width: 140rpx;
+          height: 140rpx;
+          margin: 36rpx auto 0;
+          border: 6rpx solid fadeout(@solidWhite, 40%);
+          border-radius: 50%;
+          display: flex;
+        }
+
+        .nickname {
+          margin: 20rpx auto;
+          color: @solidWhite;
+          font-size: 36rpx;
+          display: flex;
+          justify-content: center;
+          position: relative;
+          top: -4rpx;
+        }
+
+        .profit {
+          width: 100%;
+          height: 90rpx;
+          border-top: 1rpx solid #ffa698;
+          border-bottom: 1rpx solid transparent;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: absolute;
+          bottom: 0;
+
+          .left {
+            height: 60rpx;
+            display: flex;
+            align-items: center;
+
+            & > view {
+              margin-left: 20rpx;
+              color: @solidWhite;
+              font-size: 24rpx;
+              display: flex;
+              align-items: baseline;
+
+              &:first-of-type {
+                width: 180rpx;
+              }
+
+              &:nth-of-type(2) {
+                width: 2rpx;
+                height: 60rpx;
+                background-color: @solidWhite;
+                opacity: .2;
+              }
+            }
+          }
+
+          view {
+            &.money {
+              padding: 0 4rpx 0 14rpx;
+              color: #ffe5b5;
+              font-size: 34rpx;
+              position: relative;
+              top: 4rpx;
+            }
+
+            &.money2 {
+              font-size: 24rpx;
+            }
+
+            .btn {
+              width: 150rpx;
+              height: 60rpx;
+              margin-right: 20rpx;
+              color: @solidWhite;
+              font-size: 28rpx;
+              background: @primaryColor;
+              border: 2rpx solid @solidWhite;
+              border-radius: 8rpx;
+              display: inline-flex;
+              justify-content: center;
+              align-items: center;
+            }
+          }
+        }
+      }
+    }
+
+    .bottom {
+      min-height: calc(~"100vh - 358rpx - 30rpx");
+      background-color: @faintWhite;
+
+      .hr {
+        height: 2rpx;
+        width: 84vw;
+        margin-left: 12vw;
+      }
+
+      .item {
+        height: 94rpx;
+        background-color: @solidWhite;
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: space-between;
+
+        &.orders {
+          height: 100rpx;
+          margin-bottom: 0;
+          padding-left: 30rpx;
+          border-bottom: 2rpx solid @dimWhite;
+        }
+
+        &.orders2 {
+          height: 130rpx;
+          margin-bottom: 20rpx;
+          align-items: stretch;
+
+          .navigator {
+            display: flex;
+            flex-grow: 1;
+            position: relative;
+
+            .badge {
+              padding: 0 10rpx;
+              height: 26rpx;
+              color: @solidWhite;
+              font-size: 19rpx;
+              text-align: center;
+              line-height: 26rpx;
+              border-radius: 2em;
+              background: @primaryColor;
+              display: inline-block;
+              position: absolute;
+              top: 16rpx;
+              right: 29%;
+            }
+
+            .items {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+
+              image {
+                width: 55rpx;
+                height: 55rpx;
+                display: flex;
+              }
+
+              view {
+                color: @textColor2;
+                font-size: 24rpx;
+                flex-grow: 0;
+              }
+            }
+          }
+        }
+
+        image {
+          width: 45rpx;
+          height: 45rpx;
+          margin-left: 25rpx;
+          margin-right: 20rpx;
+
+          &:last-of-type {
+            width: 25rpx;
+            height: 25rpx;
+            margin-right: 20rpx;
+          }
+        }
+
+        view {
+          color: @textColor1;
+          font-size: 28rpx;
+          display: flex;
+          flex-grow: 1;
+        }
+      }
+
+      .support {
+        text-align: center;
+        color: @textColor5;
+        font-size: 24rpx;
+        padding: 40rpx 0;
+
+        image {
+          width: 146rpx;
+          height: 39rpx;
+        }
+      }
+
+      .nav-icons {
+        width: 100vw;
+        background: @solidWhite;
+        display: flex;
+        flex-wrap: wrap;
+
+        .navigator {
+          width: calc(100vw / 3);
+          height: 170rpx;
+          border-bottom: 2rpx solid @faintWhite;
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+
+          image {
+            width: 54rpx;
+            height: 54rpx;
+            margin: 30rpx auto 20rpx;
+          }
+
+          view {
+            color: @textColor1;
+            font-size: 28rpx;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-me">
+    <view class="top">
+      <image
+        class="background"
+        src="../../assets/img/me/background.png"></image>
+      <view class="foreground">
+        <view class="member" @tap="bindToggleLevels">
+          <block wx:if="{{userLevels}}">
+            <image src="{{userLevels.icon}}"></image>
+            <view>{{userLevels.title}}</view>
+          </block>
+          <block wx:else>
+            <image src="../../assets/img/me/memberDefault.png"></image>
+            <view>普通会员</view>
+          </block>
+          <image src="../../assets/img/me/questionIcon2.png"></image>
+        </view>
+        <image
+          class="avatar"
+          src="{{user.avatar_url || '../../assets/img/me/avatar.png'}}"
+          @tap="bindCheckUserInfo"
+        ></image>
+        <view class="nickname" @tap="bindCheckUserInfo">
+          {{user.nickname || '请登录'}}
+        </view>
+        <view class="profit">
+          <view class="left">
+            <view>
+              积分:
+              <view class="money">{{user.credit}}</view>
+            </view>
+            <view></view>
+            <view>
+              会员钱包:
+              <block wx:if="{{total !== null}}">
+                <view class="money">{{total}}</view>
+                <view class="money2">元</view>
+              </block>
+            </view>
+          </view>
+          <view class="right">
+            <view
+              wx:if="{{!isIOS}}"
+              class="btn"
+              @tap="bindGo2TopUp"
+              style="{{showMask ? 'position: relative; z-index: 100;' : ''}}">
+              优惠充值
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom" style="{{showCopyright ? '' : 'min-height: 0'}}">
+      <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myOrders')">
+        <view class="item orders">
+          <view>全部订单</view>
+          <image src="../../assets/img/me/arrow.png"></image>
+        </view>
+      </view>
+
+      <view class="item orders2">
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myOrders?aid=paying')">
+          <view class="badge" style="{{!orderCount.paying ? 'display: none' : ''}}">
+            {{orderCount.paying}}
+          </view>
+          <view class="items">
+            <image src="../../assets/img/me/pendingPayment.png"></image>
+            <view>待付款</view>
+          </view>
+        </view>
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myOrders?aid=has paid')">
+          <view class="badge" style="{{!orderCount.has_paid ? 'display: none' : ''}}">
+            {{orderCount.has_paid}}
+          </view>
+          <view class="items">
+            <image src="../../assets/img/me/pendingDelivering.png"></image>
+            <view>待发货</view>
+          </view>
+        </view>
+        <block wx:if="{{storeType === 'camel' || (storeType === 'cloud' && enableSubscription)}}">
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myOrders?aid=serving')">
+          <view class="badge" style="{{!orderCount.serving ? 'display: none' : ''}}">
+            {{orderCount.serving}}
+          </view>
+          <view class="items">
+            <image src="../../assets/img/me/serving.png"></image>
+            <view>服务中</view>
+          </view>
+        </view>
+        </block>
+        <block wx:else>
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myOrders?aid=groupbuy')">
+          <view class="badge" style="{{!orderCount.groupbuy ? 'display: none' : ''}}">
+            {{orderCount.groupbuy}}
+          </view>
+          <view class="items">
+            <image src="../../assets/img/me/serving.png"></image>
+            <view>拼团中</view>
+          </view>
+        </view>
+        </block>
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myOrders?aid=receiving')">
+          <view class="badge" style="{{!orderCount.receiving ? 'display: none' : ''}}">
+            {{orderCount.receiving}}
+          </view>
+          <view class="items">
+            <image src="../../assets/img/me/delivering.png"></image>
+            <view>待收货</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="nav-icons">
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myOrders?aid=groupbuy')">
+          <image src="../../assets/img/me/icons/grouping.png"></image>
+          <view>我的拼团</view>
+        </view>
+
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myProfit')">
+          <image src="../../assets/img/me/icons/wallet.png"></image>
+          <view>会员钱包</view>
+        </view>
+
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/myCredit')">
+          <image src="../../assets/img/me/icons/credits.png"></image>
+          <view>我的积分</view>
+        </view>
+
+        <view
+          class='navigator'
+          @tap="bindCheckUserInfo('/pages/me/myPartners')"
+          style="{{!enableDistributionRelations && 'display: none'}}">
+          <image src="../../assets/img/me/icons/members.png"></image>
+          <view>我的成员</view>
+        </view>
+
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/addressList')">
+          <image src="../../assets/img/me/icons/address.png"></image>
+          <view>地址管理</view>
+        </view>
+
+        <view class='navigator' @tap="bindCheckUserInfo('/pages/me/customService')">
+          <image src="../../assets/img/me/icons/service.png"></image>
+          <view>客户服务</view>
+        </view>
+
+        <view wx:if="{{enableVideo && user.upload_perm}}" class='navigator' @tap="bindCheckUserInfo('/pages/video/user')">
+          <image src="../../assets/img/me/icons/comment.png"></image>
+          <view>我的好评</view>
+        </view>
+      </view>
+
+      <navigator
+        wx:if="{{showCopyright}}"
+        hover-class='none'
+        url='/pages/util/webview?url=https://www.luotuoxiaodian.com/'
+      >
+        <view class="support">
+          <image src="../../assets/img/me/logo.png"></image>
+          <view>骆驼小店提供技术支持</view>
+        </view>
+      </navigator>
+    </view>
+  </view>
+
+  <!--遮罩层-->
+  <view
+    @tap="bindCheckUserInfo"
+    wx:if="{{showUserInfoMask}}"
+    id="user-info-mask"
+  ></view>
+  <rechargeMask :showMask.sync="showMask"></rechargeMask>
+  <levelsMask :show.sync="showLevels"></levelsMask>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import PersistenceMixin from '../../mixins/persistence';
+  import {actions as OrderActions} from '../../store/order';
+  import {actions as UserActions} from '../../store/user';
+  import {actions as OthersActions} from '../../store/others';
+  import {actions as TimerActions} from '../../store/timer';
+  import {actions as VideoActions} from '../../store/video';
+  import RechargeMask from '../../components/me/rechargeMask';
+  import LevelsMask from '../../components/me/levelsMask';
+
+
+  @connect({
+    user(state) { return state.user },
+    userLevels(state) { return state.user.level },
+    userID(state) { return state.user.id },
+    orderCount(state) { return state.order.count },
+    storeType(state) { return state.config.storeType },
+    enableSubscription(state) { return state.config.enableSubscription },
+    enableSharingProfit(state) { return state.config.enableSharingProfit },
+    enableDistributionRelations(state) { return state.config.enableDistributionRelations },
+    showCopyright(state) { return state.config.showCopyright },
+    enableVideo(state) { return state.config.enableVideo },
+    isIOS(state) { return state.others.isIOS },
+  }, {
+    ...OrderActions,
+    ...OthersActions,
+    ...UserActions,
+    ...TimerActions,
+    ...VideoActions,
+  })
+
+
+  export default class Me extends wepy.page {
+    // 我的 页面
+
+    data = {
+      showMask: false, // The Guiding Layer
+      showLevels: false,
+    };
+
+    components = {
+      rechargeMask: RechargeMask,
+      levelsMask: LevelsMask,
+    };
+
+    mixins = [UtilsMixin, PersistenceMixin];
+
+    computed = {
+      showUserInfoMask: () => {
+        return !this.hasUserInfo();
+      },
+
+      total: () => {
+        let _ = 0;
+        if (this.user) {
+          const {recharge, asset} = this.user;
+          _ = ((1000 * recharge) + (1000 * asset)) / 1000;
+        }
+        return _;
+      },
+    };
+
+    methods = {
+      // The Guiding Layer
+      bindHideMask: () => {
+        this.setStorageSync('firstTimeMe', true);
+        this.showMask = false;
+        this.$apply();
+      },
+
+      bindGo2TopUp: () => {
+        if (!this.checkUserInfo(this.methods.bindGo2TopUp))
+          return;
+
+        if (this.showMask)
+          this.methods.bindHideMask();
+        this.go2page().navigate('/pages/me/topUp');
+      },
+
+      bindToggleLevels: () => {
+        this.showLevels = !this.showLevels;
+      },
+
+      bindCheckUserInfo: (page) => {
+        if (!this.checkUserInfo(
+          () => this.methods.bindCheckUserInfo(page)))
+          return;
+
+        if (page === '/pages/video/user') {
+          const self = this;
+          const userInfo = {
+            id: this.user.id,
+            avatar_url: this.user.avatar_url,
+            nickname: this.user.nickname,
+          };
+          this.methods.setUserInfo({payload: userInfo});
+          this.methods.getShortVideoUserService({
+            user: self.user.id,
+            callback: () => self.go2page().navigate('/pages/video/user'),
+          });
+          return;
+        }
+
+        this.go2page().navigate(page);
+      },
+    };
+
+    events = {
+      // The Guiding Layer
+      hideMask: () => {
+        this.methods.bindHideMask();
+      },
+
+      toggleLevelsMask: () => {
+        this.methods.bindToggleLevels();
+      },
+    };
+
+    onShow() {
+      // Clear Timer Task
+      this.methods.clearTicking();
+
+      // Clear Ordering temp data(eg. order notes)
+      this.methods.setOrderNotes('');
+      this.methods.setOrderGroup('');
+      this.methods.setNewGroup('');
+
+      if (this.hasUserInfo()) {
+        // Get Orders
+        this.methods.getOrderService();
+
+        // Get User Info
+        this.methods.getUserInfoService();
+
+        // Count User's Orders
+        this.methods.getOrderCountService();
+      }
+
+      // Get TopUp Types
+      this.methods.getTopUpTypesService();
+    }
+
+    onLoad() {
+      // The Guiding Layer
+      const firstTime = this.getStorageSync('firstTimeMe');
+      if (!firstTime)
+        this.showMask = true;
+      else
+        this.setStorageSync('firstTimeMe', true);
+      this.$apply();
+    }
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

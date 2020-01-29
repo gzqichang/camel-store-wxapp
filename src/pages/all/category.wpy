@@ -1,0 +1,90 @@
+<style lang="less">
+  view.page-category {}
+</style>
+
+<template>
+  <view class="page-category">
+    <tabView
+      :activeTab.sync="activeTab"
+      :scrollIntoView.sync="intoView"
+    ></tabView>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import TabView from '../../components/all/tabView';
+
+
+  @connect({
+    category(state) { return state.product.category },
+    user(state) { return state.user },
+    nextURL(state) { return state.others.nextURL },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class Category extends wepy.page {
+    // 全部分类 页面
+
+    data = {
+      activeTab: 0,
+      intoView: '',
+    };
+
+    components = {
+      tabView: TabView,
+    };
+
+    mixins = [UtilsMixin];
+
+    onShow() {
+      // The top TAB scroll position
+      for (let i in this.category) {
+        if (this.category[i].id === this.activeTab)
+          this.intoView = `t${i}`;
+      }
+    };
+
+    onLoad(option) {
+      this.setTitle('商品列表');
+
+      // Switch Tab
+      if (this.category && option.id)
+        this.activeTab = parseInt(option.id);
+    };
+
+    onReachBottom() {
+      this.getNextPageData();
+    }
+
+    getNextPageData = () => {
+      let next = this.nextURL.productList;
+      if (this.activeTab !== 0)
+        next = this.nextURL[`productList_${this.activeTab}`];
+      if (next !== null)
+        this.methods.getProductListService({
+          storeID: this.store,
+          next,
+          category: this.activeTab || '',
+        });
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

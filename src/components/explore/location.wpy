@@ -1,0 +1,121 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.explore-location {
+    height: 76rpx;
+    display: flex;
+    align-items: center;
+
+    .locating {
+      width: 30rpx;
+      height: 38rpx;
+      padding-left: 28rpx;
+      padding-right: 17rpx;
+    }
+
+    @keyframes dots {
+      from {
+        transform: translate(0) scale(1, 1);
+      }
+      to {
+        transform: translate(14rpx) scale(0, 1);
+      }
+    }
+
+    @-webkit-keyframes dots {
+      from {
+        transform: translate(0) scale(1, 1);
+      }
+      to {
+        transform: translate(14rpx) scale(0, 1);
+      }
+    }
+
+    .text {
+      max-width: 60vw;
+      color: @textColor1;
+      font-size: 30rpx;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline;
+    }
+
+    .ani {
+      position: relative;
+
+      &::after {
+        width: 28rpx;
+        height: 2em;
+        background: @solidWhite;
+        display: block;
+        content: ' ';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(~"3em + 1px");
+        animation-name: dots;
+        animation-duration: 1.5s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        -webkit-animation-name: dots;
+        -webkit-animation-duration: 1.5s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-iteration-count: infinite;
+      }
+    }
+
+    .arrow {
+      width: 25rpx;
+      height: 15rpx;
+      padding-left: 28rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="explore-location" @tap="bindRedirect">
+    <image
+      class="locating"
+      src="../../assets/img/explore/location.png"></image>
+    <block wx:if="{{storeStatus === 'locating'}}">
+      <view class="text ani">定位中...</view>
+    </block>
+    <block wx:elif="{{storeStatus === 'available'}}">
+      <view class="text">{{storeName}}</view>
+    </block>
+    <block wx:else>
+      <view class="text">当前位置暂无门店</view>
+    </block>
+    <image
+      class="arrow"
+      src="../../assets/img/explore/arrow.png"></image>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+
+
+  @connect({
+    storeStatus(state) { return state.store.status },
+    storeName(state) { return state.store.current.name },
+  }, {
+  })
+
+
+  export default class Location extends wepy.component {
+    // 发现页 - 位置组件
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindRedirect: () => {
+        this.go2page().navigate('/pages/explore/switchStore');
+      },
+    };
+  };
+</script>

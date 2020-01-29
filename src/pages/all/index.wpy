@@ -1,0 +1,165 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-all {
+    min-height: 100vh;
+
+    .strech {
+      view.explore-unavailable {
+        background: @solidWhite;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-all">
+    <!--一切正常-->
+    <block wx:if="{{storeStatus === 'available'}}">
+      <block wx:if="{{showCards}}">
+        <cardView></cardView>
+      </block>
+      <block wx:else>
+        <tabView :activeTab.sync="0"></tabView>
+      </block>
+    </block>
+
+    <!--请求定位失败-->
+    <block wx:if="{{storeStatus === 'error'}}">
+      <view class="strech">
+        <unavailable
+          title="无法获取地理位置"
+          hint="请添加配送地址"
+          button="添加地址"></unavailable>
+      </view>
+    </block>
+
+    <!--不在配送范围-->
+    <block wx:if="{{storeStatus === 'unavailable'}}">
+      <view class="strech">
+        <unavailable2
+          title="当前位置暂不支持配送"
+          hint="请添加配送地址"
+          button="添加地址"></unavailable2>
+      </view>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import {actions as OthersActions} from '../../store/others';
+  import {actions as TimerActions} from '../../store/timer';
+  import CardView from '../../components/all/cardView';
+  import TabView from '../../components/all/tabView';
+  import Unavailable from '../../components/explore/unavailable';
+
+
+  @connect({
+    showCards(state) { return state.config.showCards },
+    nextURL(state) { return state.others.nextURL },
+    store(state) { return state.store.id },
+    storeStatus(state) { return state.store.status },
+    user(state) { return state.user },
+  }, {
+    ...ProductActions,
+    ...OthersActions,
+    ...TimerActions,
+  })
+
+
+  export default class All extends wepy.page {
+    // 全部 页面
+    config = {
+      enablePullDownRefresh: true,
+    };
+
+    data = {
+      category: 0,
+    };
+
+    components = {
+      cardView: CardView,
+      tabView: TabView,
+      unavailable: Unavailable,
+      unavailable2: Unavailable,
+    };
+
+    mixins = [UtilsMixin];
+
+    events = {
+      // Reciving events from children components
+      changeCategory: (id) => {
+        this.category = id;
+      },
+    };
+
+    onShow() {
+      // Clear Timer Task
+      this.methods.clearTicking();
+
+      // Clear Ordering temp data(eg. order notes)
+      this.methods.setOrderNotes('');
+      this.methods.setOrderGroup('');
+    };
+
+    onLoad() {
+      this.setTitle('商品列表');
+
+      if (this.store) {
+        // Fetch Category
+        this.methods.getCategoryService(this.store);
+
+        // Fetch Product List
+        this.methods.getProductListService({
+          storeID: this.store,
+          category: parseInt(this.category) || '',
+        });
+      }
+    }
+
+    onReachBottom() {
+      this.getNextPageData();
+    }
+
+    onPullDownRefresh() {
+      wepy.stopPullDownRefresh();
+      this.methods.getProductListService({
+        storeID: this.store,
+        category: parseInt(this.category) || '',
+      });
+    }
+
+    getNextPageData = () => {
+      let next = this.nextURL.productList;
+      if (this.category !== 0)
+        next = this.nextURL[`productList_${this.category}`];
+      if (next !== null)
+        this.methods.getProductListService({
+          storeID: this.store,
+          next,
+          category: this.category || '',
+        });
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

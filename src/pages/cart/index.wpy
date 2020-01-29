@@ -1,0 +1,954 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  page{
+    background: @faintWhite;
+  }
+
+  view.page-cart {
+    .top {
+      .cart-store {
+        height: 94rpx;
+        display: flex;
+        background: @solidWhite;
+        border-bottom: 2rpx solid @faintWhite;
+        align-items: center;
+        justify-content: flex-start;
+
+        image {
+          width: 50rpx;
+          height: 50rpx;
+          margin-left: 30rpx;
+          margin-right: 10rpx;
+        }
+
+        view {
+          color: @textColor1;
+          font-size: 30rpx;
+        }
+      }
+
+      .grey {
+        view,
+        label,
+        input {
+          color: @textColor5 !important;
+          border-color: @dimWhite !important;
+        }
+      }
+
+      view {
+        overflow: hidden;
+
+        .cart-items {
+          width: 100vw;
+          margin-bottom: 2rpx;
+          background: @solidWhite;
+          display: flex;
+          overflow: hidden;
+
+          .anchor {
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            position: absolute;
+            left: 0;
+          }
+
+          .left {
+            width: 100vw;
+            padding: 0;
+            background: @solidWhite;
+            display: inline-flex;
+            align-items: center;
+
+            .shadow-block {
+              width: 622rpx;
+              margin: 16rpx 0;
+              padding: 18rpx 14rpx;
+              border: 2rpx solid @dimWhite;
+              border-radius: 10rpx;
+              display: flex;
+              flex-direction: column;
+
+              .top-block {
+                display: flex;
+              }
+
+              .bottom-block {
+                padding-top: 10rpx;
+                display: flex;
+                flex-direction: column;
+
+                .item {
+                  color: @textColor2;
+                  font-size: 22rpx;
+                  display: flex;
+                  flex-grow: 1;
+
+                  view {
+                    display: flex;
+                    align-items: flex-end;
+                  }
+
+                  view:first-of-type {
+                    width: 110rpx;
+                    height: 32rpx;
+                    padding-right: 20rpx;
+                    font-weight: bold;
+                    line-height: 32rpx;
+                    flex-shrink: 0;
+
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                    overflow: hidden;
+                  }
+
+                  view:last-of-type {
+                    height: auto;
+                    flex-grow: 1;
+                  }
+                }
+              }
+            }
+
+            .left-choose {
+              width: 36rpx;
+              height: 36rpx;
+              padding: 110rpx 16rpx 82rpx 30rpx;
+              display: inline-flex;
+              flex-shrink: 0;
+              align-self: flex-start;
+            }
+
+            .left-img {
+              width: 160rpx;
+              height: 160rpx;
+              border: 1rpx solid @textColor5;
+              display: inline-flex;
+              flex-shrink: 0;
+            }
+
+            .left-text {
+              height: 164rpx;
+              margin-left: 26rpx;
+              display: flex;
+              flex-grow: 1;
+              flex-direction: column;
+              justify-content: space-between;
+
+              .text-title {
+                margin-bottom: 6rpx;
+                color: @textColor1;
+                font-size: 28rpx;
+
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 1;
+                overflow: hidden;
+              }
+
+              .text-type {
+                margin-bottom: 10rpx;
+                color: @textColor4;
+                font-size: 24rpx;
+
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 1;
+                overflow: hidden;
+              }
+
+              .text-number {
+                width: 100%;
+                display: inline-flex;
+                justify-content: space-between;
+
+                .text-price {
+                  .text-price-market {
+                    color: @textColor5;
+                    font-size: 28rpx;
+                    text-decoration: line-through;
+                  }
+
+                  .text-price-shell {
+                    color: @primaryColor;
+                    font-size: 32rpx;
+                  }
+                }
+
+                .text-num {
+                  display: inline-flex;
+                  align-items: flex-end;
+
+                  .button {
+                    width: 66rpx;
+                    height: 50rpx;
+                    background: @solidWhite;
+                    border: 1rpx solid @textColor2;
+                    border-radius: 4rpx;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    image {
+                      width: 26rpx;
+                      height: 26rpx;
+                    }
+                  }
+
+                  .button.disabled {
+                    border-color: @textColor4;
+                  }
+
+                  .label {
+                    margin: 0 12rpx;
+                    display: inline-flex;
+
+                    input {
+                      width: 77rpx;
+                      height: 50rpx;
+                      color: @textColor0;
+                      font-size: 28rpx;
+                      text-align: center;
+                      border: 1rpx solid @textColor2;
+                      border-radius: 4rpx;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .right {
+            width: 23vw;
+            height: 100%;
+            color: @solidWhite;
+            font-size: 32rpx;
+            background: @secondaryColor;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+
+            &.ios {
+              height: calc(~"100% - 1rem");
+            }
+          }
+        }
+      }
+
+      .cart-count {
+        height: 170rpx;
+        margin: 28rpx auto 0 auto;
+        color: @textColor5;
+        font-size: 24rpx;
+        text-align: center;
+      }
+    }
+
+    .bottom {
+      width: 100vw;
+      height: 98rpx;
+      background: @solidWhite;
+      position: fixed;
+      bottom: 0;
+
+      view {
+        display: flex;
+        justify-content: space-between;
+
+        .left {
+          display: inline-flex;
+          justify-content: space-around;
+
+          .check-all {
+            width: 152rpx;
+            display: inline-flex;
+            align-items: center;
+            justify-content:flex-start;
+
+            image {
+              width: 36rpx;
+              height: 36rpx;
+              margin-left: 30rpx;
+              margin-right: 15rpx;
+            }
+
+            .check-text {
+              color: @textColor1;
+              font-size: 26rpx;
+            }
+          }
+        }
+
+        .calculate {
+          display: inline-flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          .calculate-text {
+            margin-right: 10rpx;
+            color: @textColor1;
+            font-size: 26rpx;
+          }
+
+          .calculate-price {
+            margin-right: 20rpx;
+            color: @primaryColor;
+            font-size: 32rpx;
+          }
+
+          .calculate-btn {
+            width: 190rpx;
+            height: 98rpx;
+            color: @solidWhite;
+            font-size: 30rpx;
+            background: @primaryColor;
+            display: inline-flex;
+            align-items:center;
+            justify-content: center;
+          }
+        }
+      }
+    }
+
+    .cart-none {
+      margin: 220rpx auto;
+      text-align: center;
+
+      image {
+        width: 142rpx;
+      }
+
+      .none-text {
+        margin-top: 20rpx;
+        color: @textColor5;
+        font-size: 28rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-cart">
+    <block wx:if="{{cartData.length}}">
+      <view class="top">
+        <block wx:key="index" wx:for-item="store_" wx:for="{{cartForView}}">
+          <view class="{{storeID === store_.id ? 'cart-store' : 'cart-store grey'}}">
+            <image src="{{storeID === store_.id ? '../../assets/img/cart/store_black.png' : '../../assets/img/cart/store_grey.png'}}"></image>
+            <view>{{store_.name}}</view>
+          </view>
+          <view class="{{storeID === store_.id ? '' : 'grey'}}" style="margin-bottom: 15rpx">
+            <block wx:key="index" wx:for="{{store_.list}}">
+              <view class="cart-items" @tap="bindGetDetail({{item}})">
+                <scroll-view
+                  scroll-x
+                  scroll-with-animation
+                  scroll-into-view="{{scrollControl[item.hash]}}">
+                  <view id="{{'a' + item.hash}}" class="anchor"></view>
+                    <view style="width: 123vw;">
+                      <view class="left">
+                        <image
+                          class="left-choose"
+                          @tap.stop="bindSelectItem({{item.hash}})"
+                          src="{{item.selected ? '../../assets/img/cart/choose_active.png' : '../../assets/img/cart/choose.png'}}">
+                        </image>
+                        <view class="shadow-block">
+                          <view class="top-block">
+                            <image
+                              class="left-img"
+                              src="{{item.image + '?imageView2/2/w/160'}}"></image>
+                            <view class="left-text">
+                              <view class="text-title">
+                                {{item.goods_name}}
+                              </view>
+                              <view class="text-type">
+                                {{item.gtype_name}}
+                              </view>
+                              <view class="text-number">
+                                <view class="text-price">
+                                  <view class="text-price-market">
+                                    ￥{{item.market_price}}
+                                  </view>
+                                  <view class="text-price-shell">
+                                    ￥{{item.price}}
+                                  </view>
+                                </view>
+                                <view class="text-num">
+                                  <label
+                                    class="{{item.canMinus ? 'button' : 'button disabled'}}"
+                                    @tap.stop="bindOnCountChange(-1, {{item}})">
+                                    <image src="{{item.canMinus ? '../../assets/img/detail/minus.png' : '../../assets/img/detail/minus_disabled.png'}}"></image>
+                                  </label>
+                                  <label class="label" @tap.stop="bindVoid">
+                                    <input
+                                      type="number"
+                                      value="{{item.count}}"
+                                      style="z-index: 0;"
+                                      @input="bindOnCountInput({{item}})"
+                                      @confirm="bindOnCountInput({{item}})"
+                                      @blur="bindOnCountInput({{item}})"/>
+                                  </label>
+                                  <label
+                                    class="{{item.canAdd ? 'button' : 'button disabled'}}"
+                                    @tap.stop="bindOnCountChange(1, {{item}})">
+                                    <image src="{{item.canAdd ? '../../assets/img/detail/add.png' : '../../assets/img/detail/add_disabled.png'}}"></image>
+                                  </label>
+                                </view>
+                              </view>
+                            </view>
+                          </view>
+                          <view
+                            wx:if="{{item.customizedData && item.customizedData.length}}"
+                            class="bottom-block"
+                          >
+                            <view
+                              wx:key="{{field.name}}"
+                              wx:for="{{item.customizedData}}"
+                              wx:for-item="field"
+                              class="item"
+                            >
+                              <view>{{field.name}}</view>
+                              <view>{{field.formatedValue || field.value}}</view>
+                            </view>
+                          </view>
+                        </view>
+                      </view>
+                      <view
+                        class="{{isIOS ? 'right ios' : 'right'}}"
+                        style="color: #fff !important;"
+                        @tap.stop="bindDelete({{item.hash}})">
+                        删除
+                      </view>
+                    </view>
+                    <view style="height: 1px"></view>
+                  </scroll-view>
+              </view>
+            </block>
+          </view>
+        </block>
+        <view class="cart-count">
+          共{{totalItemCount}}件商品
+        </view>
+      </view>
+      <view class="bottom">
+        <view>
+          <view class="left">
+            <view class="check-all" @tap="bindSelectAll">
+              <image src="{{selected.length !== cart.length ? '../../assets/img/cart/choose.png' : '../../assets/img/cart/choose_active.png'}}"></image>
+              <view class="check-text">全选</view>
+            </view>
+            <view class="check-all" @tap="bindDelete">
+              <image src="../../assets/img/cart/delete.png"></image>
+              <view class="check-text">删除</view>
+            </view>
+          </view>
+          <view class="calculate">
+            <view class="calculate-text">合计</view>
+            <view class="calculate-price">￥{{totalMoney}}</view>
+            <view
+              class="calculate-btn"
+              @tap="bindCheckout"
+              style="{{!selected.length && 'background: #ccc'}}">结算</view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="cart-none">
+        <image
+          mode="widthFix"
+          src="../../assets/img/cart/empty.png"></image>
+        <view class="none-text">
+          购物车暂无商品，空空如也
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <deleteMask :showDelete.sync="showDelete"></deleteMask>
+  <unavailableMask :show.sync="showUnavailable"></unavailableMask>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import PersistenceMixin from '../../mixins/persistence';
+  import {actions as OrderActions} from '../../store/order';
+  import {calculateEstimateDeliveryTime} from '../../store/order/helper';
+  import {actions as ProductActions} from '../../store/product';
+  import {actions as OthersActions} from '../../store/others';
+  import {actions as TimerActions} from '../../store/timer';
+  import DeleteMask from '../../components/cart/deleteMask';
+  import UnavailableMask from '../../components/cart/unavailableMask';
+
+
+  @connect({
+    cart(state) { return state.order.cart },
+    userAddress(state) { return state.address.list },
+    userAddressCurrent(state) { return state.address.current },
+    cartInfo(state) { return state.order.cartInfo },
+    storeID(state) { return state.store.id },
+    userID(state) { return state.user.id },
+    user(state) { return state.user },
+  }, {
+    ...OrderActions,
+    ...ProductActions,
+    ...OthersActions,
+    ...TimerActions,
+  })
+
+
+  export default class Cart extends wepy.page {
+    // 购物车 主页面
+
+    data = {
+      isIOS: false,
+      selected: [],
+      totalItemCount: 0,
+      showDelete: false,
+      showUnavailable: false,
+      toBeDeleted: null,
+      scrollControl: {},
+    };
+
+    components = {
+      deleteMask: DeleteMask,
+      unavailableMask: UnavailableMask,
+    };
+
+    mixins = [UtilsMixin, PersistenceMixin];
+
+    computed = {
+      cartData: () => {
+        let cartData = [];
+        let _cart = {};
+        let totalItemCount = 0;
+
+        // 'Hash Map' the local Cart
+        if (this.cart)
+          this.cart.map(
+            (item) => {
+              const {product, type} = item;
+              if (product && type)
+                _cart[`${product}${type}`] = item;
+            }
+          );
+
+        // Update the Cart for views
+        if (this.cartInfo)
+          this.cartInfo.map(
+            (item) => {
+              const {goodid, gtypeid, stock, shop} = item;
+              const {count} = _cart[`${goodid}${gtypeid}`] || {};
+
+              if (count) totalItemCount += count;
+
+              // Merge Cart Info
+              if (
+                goodid
+                && gtypeid
+                && _cart[`${goodid}${gtypeid}`]
+              )
+                cartData.push({
+                  ...item,
+                  ..._cart[`${goodid}${gtypeid}`],
+                  canAdd: count < stock && shop === this.storeID,
+                  canMinus: count > 1 && shop === this.storeID,
+                  selected: this.selected.includes(`${goodid}${gtypeid}`),
+                });
+            }
+          );
+
+        // Update the TAB Badge
+        this.updateTabBadge(totalItemCount);
+        this.totalItemCount = totalItemCount;
+
+        return cartData;
+      },
+
+      cartForView: () => {
+        let final = {};
+        let _ = [];
+
+        if (this.cartData)
+        // Transform all with Store ID
+          this.cartData.map((item) => {
+            const {shop, shop_name} = item;
+
+            if (!final[shop]) final[shop] = {};
+
+            const list = final[shop].list || [];
+
+            final[shop] = {
+              id: shop,
+              name: shop_name,
+              list: [...list, item],
+            };
+          });
+
+        // Get The Current Store To The First Place
+        _ = Object.values(final)
+          .filter((x) => (x))
+          .sort((a, b) => (a.id !== this.storeID ? 1 : 0));
+
+        return _;
+      },
+
+      totalMoney: () => {
+        let _ = 0;
+        if (this.cartData)
+          this.cartData.map(
+            ({postage, count, price, selected}) => {
+              if (selected)
+                _ += count * (price * 1000) + (postage * 1000);
+            }
+          );
+        return _ / 1000;
+      },
+    };
+
+    /* eslint-disable camelcase */
+    methods = {
+      // Change the number of how much you wanna get
+      bindOnCountChange: (num, item) => {
+        const _num = parseInt(num);
+        const {
+          canAdd,
+          canMinus,
+          product,
+          type,
+          count,
+          buy_limit,
+          url,
+          customizedData,
+          attach,
+        } = item;
+
+        if (
+          (_num > 0 && canAdd)
+          || (_num < 0 && canMinus)
+        ) {
+          const value = count + parseInt(num);
+          if (buy_limit && value > buy_limit) {
+            this.showModal({
+              title: '抱歉',
+              content: `该商品最多限购${buy_limit}件`,
+              showCancel: false,
+            });
+            if (buy_limit < count)
+              this.methods.updateCartItem({
+                product,
+                type,
+                count: buy_limit - count,
+                url,
+                customizedData,
+                attach,
+              });
+          } else {
+            this.methods.updateCartItem({
+              product,
+              type,
+              count: parseInt(num),
+              url,
+              customizedData,
+              attach,
+            });
+          }
+        }
+      },
+
+      // Check if the input number is valid
+      bindOnCountInput: (item, e) => {
+        let {value} = e.detail;
+        value = parseInt(value);
+        const {
+          stock,
+          product,
+          type,
+          count,
+          buy_limit,
+          shop,
+          url,
+          customizedData,
+          attach,
+        } = item;
+
+        if (shop !== this.storeID)
+          return count;
+
+        if (value <= 0)
+          return this.showToast('请输入有效的商品数量');
+
+        if (buy_limit && value > buy_limit) {
+          // 如果这里不延时的话返回的数量将不能更新到输入框的显示中
+          setTimeout(() => {
+            this.showModal({
+              title: '抱歉',
+              content: `该商品最多限购${buy_limit}件`,
+              showCancel: false,
+            });
+          }, 100);
+          return count;
+        }
+
+        if (value <= stock) {
+          this.methods.updateCartItem({
+            product,
+            type,
+            count: parseInt(value) - count,
+            url,
+            customizedData,
+            attach,
+          });
+        } else if (value > stock) {
+          this.methods.updateCartItem({
+            product,
+            type,
+            count: stock - count,
+            url,
+            customizedData,
+            attach,
+          });
+          return stock;
+        }
+      },
+
+      // Select Item
+      bindSelectItem: (hash) => {
+        this.selected = this.selected.includes(hash)
+          ? this.selected.filter(item => item !== hash)
+          : [...this.selected, hash];
+      },
+
+      // Select All
+      bindSelectAll: () => {
+        if (this.selected.length < this.cart.length)
+          this.selected = this.cart.map(x => x.hash);
+        else
+          this.selected = [];
+      },
+
+      bindDelete: (hash) => {
+        if (typeof hash === 'string') {
+          this.toBeDeleted = hash;
+          this.showDelete = true;
+        } else {
+          if (this.selected && !this.selected.length)
+            return this.showToast('请选择需要删除商品');
+          this.showDelete = true;
+        }
+        this.scrollBack();
+      },
+
+      bindCheckout: () => {
+        if (!this.checkUserInfo(this.methods.bindCheckout))
+          return;
+
+        if (this.selected && !this.selected.length)
+          return;
+
+        let _ = [];
+        let canCheckOut = true;
+        this.cartData.map(
+          ({
+             selected,
+             product,
+             type,
+             count,
+             hash,
+             shop,
+             estimate_time,
+             customizedData,
+             attach,
+             _shipping,
+           }) => {
+            if (selected && shop !== this.storeID)
+              canCheckOut = false;
+            if (selected) {
+              let sendTime = '';
+
+              if (estimate_time)
+                sendTime = calculateEstimateDeliveryTime({
+                  estimate_time,        // 后台配置的时间
+                  add_time: new Date(), // 订单添加时间
+                });
+
+              let _shippingMethod = '';
+              if (_shipping && _shipping.length)
+                _shippingMethod = _shipping[0];
+
+              _.push({
+                product,
+                type,
+                count,
+                hash,
+                sendTime,
+                customizedData,
+                attach,
+                _shippingMethod,
+              });
+            }
+          }
+        );
+
+        if (!canCheckOut) {
+          this.showUnavailable = true;
+          return;
+        }
+
+        this.methods.setOrderContent({
+          orderContent: _,
+          orderType: 'regular',
+        });
+        this.go2page().navigate('/pages/cart/confirmOrder');
+      },
+
+      // Get the certain product detail
+      bindGetDetail: (item) => {
+        const {url} = item;
+        if (!url || url === undefined) return;
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+
+      // Resolve bubbling
+      bindVoid: () => {},
+    };
+
+    events = {
+      // Reciving events from children components
+      toggleDelete: () => {
+        this.showDelete = !this.showDelete;
+        if (!this.showDelete)
+          this.toBeDeleted = null;
+      },
+
+      toggleUnavailableMask: () => {
+        this.showUnavailable = !this.showUnavailable;
+      },
+
+      deleteItems: () => {
+        if (this.toBeDeleted) {
+          this.removeItem(this.toBeDeleted);
+        } else {
+          this.selected.map(this.removeItem);
+        }
+      },
+    };
+
+    onShow() {
+      // Clear Timer Task
+      this.methods.clearTicking();
+
+      // Clear Ordering temp data(eg. order notes)
+      this.methods.setOrderNotes('');
+      this.methods.setOrderGroup('');
+
+      let address = null;
+
+      if (this.userAddressCurrent) {
+        const addr = this.userAddress
+          .find((x) => (x.id === this.userAddressCurrent));
+        if (addr)
+          address = addr.region + addr.location_detail;
+      }
+
+      this.selected = [];
+
+      this.methods.updateCartInfoService({
+        orderType: 'regular',
+        cart: this.cart,
+        address,
+      });
+
+      const self = this;
+      if (this.getStorageSync('hideTabBar'))
+        wepy.showTabBar({
+          animation: true,
+          success: () => self.setStorageSync('hideTabBar', false),
+        });
+    }
+
+    onLoad() {
+      this.setTitle('购物车');
+
+      wepy.getSystemInfo({
+        success: (res) => {
+          if (res && res.platform)
+            this.isIOS = res.platform === 'ios';
+          this.$apply();
+        },
+      });
+
+      setTimeout(() => {
+        this.methods.purgeUnavailableCartItemService({
+          cart: this.cart,
+        });
+      }, 1000);
+    }
+
+    scrollBack = () => {
+      const self = this;
+      this.cartData && this.cartData.map(
+        ({hash}) => {
+          self.scrollControl[hash] = 't';
+        }
+      );
+      setTimeout(() => {
+        self.cartData && self.cartData.map(
+          ({hash}) => {
+            self.scrollControl[hash] = 'a' + hash;
+            this.$apply();
+          }
+        );
+      }, 30);
+    };
+
+    removeItem = (item) => {
+      const {
+        product,
+        type,
+        count,
+      } = this.cartData.find(x => x.hash === item) || {};
+      if (product && type)
+        this.methods.updateCartItem({
+          product,
+          type,
+          count: -count,
+        });
+      this.selected = this.selected.filter(x => x !== item);
+    };
+
+    updateTabBadge = (num) => {
+      if (num > 0)
+        wepy.setTabBarBadge({
+          index: 3,
+          text: String(num),
+        });
+      else
+        wepy.removeTabBarBadge({index: 3});
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

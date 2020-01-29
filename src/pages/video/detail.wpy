@@ -1,0 +1,515 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  page {
+    background: #000;
+  }
+
+  .opacity {
+    opacity: 0.5;
+  }
+  view.page-video {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+
+    .back {
+      position: absolute;
+      z-index: 1;
+      padding: 60rpx 60rpx 20rpx 30rpx;
+
+      image {
+        width: 17rpx;
+        height: 29rpx;
+      }
+    }
+
+    .video_body {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      .video {
+        width: 100vw;
+        height: 100vh;
+      }
+    }
+
+    .bottom {
+      position: absolute;
+      bottom: 36rpx;
+      left: 23rpx;
+
+      .goods {
+        margin-bottom: 32rpx;
+        display: inline-flex;
+        background: #fff;
+        border-radius: 4rpx;
+        width: 450rpx;
+        height: 150rpx;
+        font-size: 24rpx;
+        image {
+          width: 150rpx;
+          height: 150rpx;
+          flex-shrink: 0;
+        }
+        .text {
+          margin-right: 20rpx;
+          margin-left: 10rpx;
+          flex-grow: 1;
+
+          .name {
+            color: #222;
+            height: 70rpx;
+            line-height: 36rpx;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-top: 10rpx;
+          }
+          .price {
+            color: @primaryColor;
+            margin-top: 30rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            image {
+              width: 30rpx;
+              height: 30rpx;
+              margin-left: 22rpx;
+            }
+          }
+        }
+
+      }
+
+      .btn_list {
+        display: flex;
+        .btn {
+          width: 250rpx;
+          height: 80rpx;
+          background: rgba(0,0,0,0.3);
+          border-radius: 4rpx;
+          color: #fff;
+          text-align: center;
+          line-height: 80rpx;
+          margin-right: 10rpx;
+        }
+      }
+
+    }
+
+    .right_list {
+      position: absolute;
+      right: 14rpx;
+      bottom: 170rpx;
+      text-align: center;
+      color: #fff;
+
+      image {
+        width: 82rpx;
+        height: 82rpx;
+      }
+
+      .name {
+        width: 100rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .user, .home, .share {
+        margin-bottom: 30rpx;
+        margin-top: 14rpx;
+      }
+
+      .user {
+        &>image {
+          border-radius: 3em;
+          border: 2rpx solid #fff;
+          box-shadow: 0 0 10rpx 1rpx #000;
+        }
+      }
+
+      .share {
+        position: relative;
+        button {
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          width: 100rpx;
+          height: 140rpx;
+        }
+      }
+    }
+
+    .none_tip {
+      color: #eee;
+      width: 100vw;
+      padding-top: 100rpx;
+      text-align: center;
+    }
+
+    .unable {
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+
+      image {
+        width: 445rpx;
+        height: 273rpx;
+      }
+      .big {
+        margin-top: 54rpx;
+        margin-bottom: 34rpx;
+        font-size: 46rpx;
+        color: #444;
+      }
+      .small {
+        font-size: 28rpx;
+        color: #ccc;
+        line-height: 42rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-video">
+    <block wx:if="{{currentVideoSource.length}}">
+    <swiper
+      class="video_body"
+      circular="{{control}}"
+      vertical="{{!control}}"
+      current="{{videoCurrent}}"
+      @change="bindSwiperCurrent"
+      @transition="bindTransition"
+    >
+      <block wx:for="{{currentVideoSource}}" wx:key="{{index}}">
+        <swiper-item>
+          <video
+            class="video"
+            loop
+            id="video{{index}}"
+            controls="{{control}}"
+            show-fullscreen-btn="{{control}}"
+            show-play-btn="{{control}}"
+            show-center-play-btn="{{control}}"
+            enable-progress-gesture="{{control}}"
+            custom-cache="{{control}}"
+            @error="bindError({{item.video}})"
+            poster="{{item.video + '?vframe/jpg/offset/1'}}"
+            src="{{item.video}}"></video>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <view class="bottom" wx:if="{{currentVideoGoods.id}}">
+      <view class="goods" @tap.stop="bindToGoods">
+        <image src="{{currentVideoGoods.cover}}"></image>
+        <view class="text">
+          <view class="name">{{currentVideoGoods.name}}</view>
+          <view class="price">
+            <view>￥{{currentVideoGoods.price_range}}</view>
+            <image src="../../assets/img/video/cart.png"></image>
+          </view>
+        </view>
+      </view>
+      <view class="btn_list">
+        <view class="btn {{currentGood > 0 ? '' : 'opacity'}}" @tap.stop="bindSwitchPre">上一个商品</view>
+        <view class="btn {{currentVideo.goods.length > (currentGood + 1) ? '' : 'opacity'}}" @tap.stop="bindSwitchNext">下一个商品</view>
+      </view>
+    </view>
+
+    </block>
+    <block wx:else>
+      <view class="none_tip">暂无短视频！</view>
+    </block>
+
+    <view class="right_list">
+      <view wx:if="{{currentVideo.user_info}}" class="user" @tap="bindToUser({{currentVideo.user_info}})">
+        <image src="{{currentVideo.user_info.avatar_url || '../../assets/img/me/avatar.png'}}"></image>
+        <view class="name">{{currentVideo.user_info.nickname || ''}}</view>
+      </view>
+      <view wx:if="{{currentVideo.user_info}}" class="share">
+        <image src="../../assets/img/video/share1.png" @tap.stop="bindToPermission"></image>
+        <view>转发</view>
+        <block wx:if="{{isShare}}">
+        <button
+          open-type='share'
+          hover-class='none'>
+        </button>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <videoMask :showMask.sync="showVideoTip"></videoMask>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import {actions as VideoActions} from '../../store/video';
+  import {actions as ProductActions} from '../../store/product';
+  import VideoMask from '../../components/video/videoMask';
+  import UtilsMixin from '../../mixins/utils';
+  import PersistenceMixin from '../../mixins/persistence';
+
+
+  let _dy = 0;
+  @connect({
+    videoList(state) { return state.video.videoList },
+    userVideoList(state) { return state.video.userVideoList },
+    isUser(state) { return state.video.isUser },
+    user(state) { return state.user },
+    nextURL(state) { return state.others.nextURL },
+    enableVideo(state) { return state.config.enableVideo },
+  }, {
+    ...VideoActions,
+    ...ProductActions,
+  })
+
+
+  export default class Video extends wepy.page {
+    // 写页面用的模板
+
+    mixins = [UtilsMixin, PersistenceMixin];
+
+    data = {
+      videoCurrent: 0,
+      current: 0,
+      currentGood: 0,
+      control: false,
+      showVideoTip: false,
+      direction: 'down',
+      screenHeight: 0,
+      isShare: true,
+    };
+
+    components = {
+      videoMask: VideoMask,
+    };
+
+    computed = {
+      currentVideoSource: () => {
+        if (!this.userVideoList && !this.videoList)
+          return [];
+        return this.isUser ? this.userVideoList : this.videoList;
+      },
+
+      currentVideo: () => {
+        if (!this.currentVideoSource || !this.currentVideoSource.length)
+          return {};
+        return this.currentVideoSource[this.videoCurrent];
+      },
+
+      currentVideoGoods: () => {
+        if (!this.currentVideo)
+          return {};
+        if (!this.currentVideo.goods || !this.currentVideo.goods.length)
+          return {};
+        return {...this.currentVideo.goods[this.currentGood]} || {};
+      },
+    };
+
+    onShow() {
+      if (!this.hasUserInfo())
+        this.isShare = false;
+    };
+
+    onLoad({index}) {
+      if (!this.getStorageSync('videoTip')) {
+        this.showVideoTip = true;
+      }
+      if (!isNaN(index)) {
+        this.videoCurrent = index;
+        this.currentGood = 0;
+        setTimeout(() => {
+          const videoContext = wepy.createVideoContext('video' + index);
+          videoContext.play();
+        }, 500);
+      }
+
+      if (this.videoList && this.videoList.length)
+        return;
+
+      const self = this;
+      this.loading().show();
+      this.methods.getShortVideoService({
+        callback: () => {
+          self.loading().hide();
+          setTimeout(() => {
+            if (!self.showVideoTip) {
+              self.playVideo();
+            }
+          }, 500);
+        },
+      });
+    };
+
+    onHide() {
+      const videoContextPrev = wepy.createVideoContext('video' + this.current);
+      videoContextPrev.pause();
+      videoContextPrev.stop();
+    };
+
+    methods = {
+      bindToUser: (userInfo) => {
+        this.stopVideo();
+        const self = this;
+        _dy = 0;
+        this.methods.setUser({
+          isUser: null,
+        });
+        setTimeout(() => {
+          this.videoCurrent = 0;
+          this.current = 0;
+          this.currentGood = 0;
+          this.methods.setUserInfo({payload: userInfo});
+          this.methods.getShortVideoUserService({
+            user: userInfo.id,
+            callback: () => {
+              self.direction = 'close';
+              self.go2page().navigate('/pages/video/user');
+            },
+          });
+        }, 200);
+      },
+
+      bindSwiperCurrent: (e) => {
+        const {current} = e.detail;
+        this.currentGood = 0;
+        const count = this.currentVideoSource.length;
+
+        if (current === this.videoCurrent)
+          return;
+
+        // 加载更多
+        if ((count - 2) < current)
+          this.getNextPageData();
+
+        const videoContextPrev = wepy.createVideoContext('video' + this.videoCurrent);
+        const videoContextNow = wepy.createVideoContext('video' + current);
+        const videoContextNext = wepy.createVideoContext('video' + (current + 1));
+        videoContextPrev.pause();
+        videoContextNow.pause();
+        videoContextNext.pause();
+        videoContextPrev.stop();
+        this.videoCurrent = current;
+        setTimeout(() => this.playVideo(), 500);
+      },
+
+      bindError: (video) => {
+        console.warn(video + '视频播放出错！');
+      },
+
+      bindTransition: (e) => {
+        const {dy} = e.detail;
+
+        if (dy > _dy) {
+          if (this.direction === 'down')
+            return;
+          this.direction = 'down';
+        } else {
+          if (this.direction === 'up')
+            return;
+          this.direction = 'up';
+        }
+        _dy = dy;
+      },
+
+      bindSwitchPre: () => {
+        if (!this.currentGood)
+          return;
+        this.currentGood --;
+      },
+
+      bindSwitchNext: () => {
+        if (this.currentVideo.goods.length <= (this.currentGood + 1))
+          return;
+        this.currentGood ++;
+      },
+
+      bindToGoods: () => {
+        const {url} = this.currentVideoGoods;
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.stopVideo();
+            setTimeout(() => this.go2page().navigate('/pages/all/detail'), 500);
+          },
+        });
+      },
+
+      bindToBack: () => {
+        this.stopVideo();
+        setTimeout(() => {
+          this.videoCurrent = 0;
+          this.current = 0;
+          this.currentGood = 0;
+          this.go2page().navigate('/pages/video/user');
+        }, 300);
+      },
+
+      bindToPermission: () => {
+        const callback = () => {
+          this.isShare = true;
+        };
+        this.checkUserInfo(callback);
+      },
+    };
+
+    events = {
+      toggleVideoTip: () => {
+        this.showVideoTip = false;
+      },
+    };
+
+    playVideo = () => {
+      const videoContext = wepy.createVideoContext('video' + this.videoCurrent);
+      videoContext.play();
+    };
+
+    stopVideo = () => {
+      const videoContext = wepy.createVideoContext('video' + this.videoCurrent);
+      videoContext.pause();
+      videoContext.stop();
+    };
+
+    getNextPageData = () => {
+      let next = this.nextURL.videoList;
+      let userNext = this.nextURL.videoUserList;
+      if (this.isUser) {
+        if (userNext !== null)
+          this.methods.getShortVideoUserService({
+            next: userNext,
+          });
+      } else {
+        if (next !== null)
+          this.methods.getShortVideoService({
+            next,
+          });
+      }
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const {title, video, id, user} = this.currentVideo;
+      const {wx_app_openid} = this.user;
+      const pid = this.currentVideoGoods.id;
+      return {
+        title,
+        path: `/pages/util/index?vid=${id}&scene=${wx_app_openid}&pid=${pid}&sid=${user}`,
+        imageUrl: video + '?vframe/jpg/offset/1',
+      };
+    };
+  }
+</script>

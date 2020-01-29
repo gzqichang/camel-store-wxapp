@@ -1,0 +1,67 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .all-card-view {
+    .card {
+      image {
+        width: 720rpx;
+        height: 364rpx;
+        margin: 0 auto 2px;
+        border-radius: 20rpx;
+        display: block;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="all-card-view">
+    <view
+      class="card"
+      wx:key="url"
+      wx:for="{{category}}">
+      <image
+        @tap="bindRedirect({{item.id}})"
+        src="{{item.image + '?imageView2/2/w/720'}}">
+      </image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+
+
+  @connect({
+    category(state) { return state.product.category },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class CardView extends wepy.component {
+    // 全部页 - 卡片视图组件
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      bindRedirect: (id) => {
+        // Fetch Product List
+        this.methods.getProductListService({
+          storeID: this.store,
+          category: id,
+          callback: () => {
+            this
+              .go2page()
+              .navigate('/pages/all/category?id=' + id);
+          },
+        });
+      },
+    };
+  };
+</script>

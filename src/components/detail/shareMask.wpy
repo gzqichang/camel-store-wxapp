@@ -1,0 +1,227 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .detail-share-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .close {
+      width: 56rpx;
+      height: 56rpx;
+      margin-bottom: 50rpx;
+      background: transparent;
+      display: block;
+      position: absolute;
+      bottom: 510rpx;
+      left: 0;
+      right: 0;
+
+      image {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    .panel {
+      width: 100%;
+      height: 510rpx;
+      background-color: @solidWhite;
+      position: absolute;
+      bottom: 0;
+
+      .head {
+        width: 660rpx;
+        height: 114rpx;
+        margin: auto;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .price {
+          color: @primaryColor;
+          font-size: 30rpx;
+          font-weight: normal;
+          display: block;
+
+          view {
+            font-size: 48rpx;
+            display: inline-block;
+          }
+        }
+      }
+
+      .mid {
+        width: 650rpx;
+        height: 94rpx;
+        margin: auto;
+        padding: 10rpx 0;
+        background-color: @faintWhite;
+        border-radius: 57rpx;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: space-around;
+
+        view {
+          color: @textColor3;
+          font-size: 26rpx;
+          line-height: 24rpx;
+        }
+      }
+
+      .foot {
+        height: 282rpx;
+        display: flex;
+        justify-content: space-evenly;
+
+        button {
+          width: 50%;
+          height: 100%;
+          margin: auto;
+          background-color: transparent;
+          border: none;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          &::after {
+            border: none;
+          }
+
+          image {
+            width: 100rpx;
+            height: 100rpx;
+            margin: 20rpx auto 0;
+            display: flex;
+          }
+
+          view {
+            height: auto;
+            margin-top: 0;
+            color: @textColor0;
+            font-size: 26rpx;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showShare"></mask>
+
+  <view class="{{showShare ? 'detail-share-mask' : 'detail-share-mask hide'}}">
+    <button
+      class="close"
+      @tap="bindToggleMask"
+      hover-class="none"
+      style="{{(!productDetail._product.max_rebate || !enableSharingProfit) && 'bottom: 282rpx'}}">
+      <image
+        mode="scaleToFill"
+        src="../../assets/img/detail/close.png"></image>
+    </button>
+
+    <view class="panel" style="{{(!productDetail._product.max_rebate || !enableSharingProfit) && 'height: 282rpx'}}">
+      <block wx:if="{{productDetail._product.max_rebate && enableSharingProfit}}">
+        <view class="head">
+          <view class="price">
+            最高赚
+            <view>
+              {{productDetail._product.max_rebate}}
+            </view>
+            积分
+          </view>
+        </view>
+        <view class="mid">
+          <view>
+            让更多的好友享受到商品优惠，还能赚取积分，
+          </view>
+          <view>
+            换购积分商品！快快分享吧~
+          </view>
+        </view>
+      </block>
+      <view class="foot">
+        <button
+          open-type='share'
+          hover-class='none'>
+          <image src="../../assets/img/detail/share2friend.png"></image>
+          <view>
+            分享给好友
+          </view>
+        </button>
+        <button
+          @tap='bindShareMoment'
+          hover-class='none'>
+          <image src="../../assets/img/detail/share2moment.png"></image>
+          <view>
+            生成海报
+          </view>
+        </button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import {actions as ProductActions} from '../../store/product';
+  import {actions as OrderActions} from '../../store/order';
+  import Mask from '../utils/mask';
+
+
+  @connect({
+    productDetail(state) { return state.product.detail },
+    userAddress(state) { return state.user.address },
+    enableSharingProfit(state) { return state.config.enableSharingProfit },
+  }, {
+    ...ProductActions,
+    ...OrderActions,
+  })
+
+
+  export default class ShareMask extends wepy.component {
+    // 详情页 - 分享遮罩组件
+
+    props = {
+      showShare: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleShareMask');
+      },
+
+      // Share to Moment
+      bindShareMoment: () => {
+        this.$emit('toggleSharePoster');
+        this.$emit('toggleShareMask');
+      },
+    };
+  };
+</script>

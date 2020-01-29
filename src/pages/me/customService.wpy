@@ -1,0 +1,111 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-custom-service {
+    image {
+      height: 453rpx;
+      width: 100%;
+      margin-bottom: 50rpx;
+      display: block;
+    }
+
+    .item {
+      width: 644rpx;
+      margin: 0 auto;
+      border-bottom: 1rpx solid @dimWhite;
+
+      .name {
+        padding: 36rpx 0 24rpx 30rpx;
+        color: @textColor1;
+        font-size: 32rpx;
+        font-weight: bold;
+        text-align: left;
+        display: block;
+        position: relative;
+
+        &::before {
+          width: 10rpx;
+          height: 10rpx;
+          content: ' ';
+          border-radius: 50%;
+          background-color: @primaryColor;
+          display: inline-block;
+          position: absolute;
+          left: 10rpx;
+          top: 50rpx;
+        }
+      }
+
+      .text {
+        margin: 0 0 44rpx 0;
+        padding: 0;
+        color: @textColor2;
+        font-size: 28rpx;
+        line-height: 38rpx;
+        display: block;
+      }
+    }
+
+    button {
+      width: 558rpx;
+      height: 100rpx;
+      margin: 44rpx auto 44rpx;
+      color: @solidWhite;
+      font-size: 30rpx;
+      line-height: 100rpx;
+      background-color: @primaryColor;
+      border-radius: 10rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-custom-service">
+    <image src="../../assets/img/me/faqCover.png"></image>
+    <view class="item" wx:key="index" wx:for="{{faq}}">
+      <text class="name">{{item.title}}</text>
+      <text class="text">{{item.content}}</text>
+    </view>
+    <button open-type="contact">联系在线客服</button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as OthersActions} from '../../store/others';
+
+
+  @connect({
+    faq(state) { return state.others.faq },
+    userID(state) { return state.user.id },
+    user(state) { return state.user },
+  }, {
+    ...OthersActions,
+  })
+
+
+  export default class CustomService extends wepy.page {
+    // 客服 页面
+
+    mixins = [UtilsMixin];
+
+    onLoad() {
+      // Get FAQ
+      this.methods.getFAQService();
+    }
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const title = this.$parent.globalData.appName || '';
+      const uri = this.getCurrentPath();
+      const {wx_app_openid} = this.user;
+      return {
+        title,
+        path: `/pages/util/index?scene=${wx_app_openid}&uri=/${uri}`,
+      };
+    };
+  }
+</script>

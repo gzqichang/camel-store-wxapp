@@ -1,0 +1,236 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.explore-message {
+    height: 100vh;
+    transition: all .3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .plane {
+      width: 450rpx;
+      padding: 68rpx 50rpx 56rpx;
+      background: @solidWhite;
+      border-radius: 10rpx;
+
+      .plane-list {
+        height: 50vh;
+
+        .item-title {
+          margin-bottom: 40rpx;
+          font-size: 36rpx;
+          text-align: center;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+        }
+
+        .item-content {
+          height: 100%;
+          color: @textColor3;
+          font-size: 26rpx;
+          display: flex;
+          overflow-y: auto;
+
+          text {
+            position: relative;
+            top: -1rem;
+
+            .ios {
+              top: -2rem;
+            }
+          }
+        }
+      }
+    }
+
+    .dots {
+      margin-top: 40rpx;
+      display: flex;
+      justify-content: center;
+
+      .dot {
+        width: 14rpx;
+        height: 14rpx;
+        margin: 0 10rpx;
+        background: @textColor5;
+        border-radius: 14rpx;
+
+        &.active {
+          background: @primaryColor;
+        }
+      }
+    }
+
+    .bottom {
+      margin-top: 60rpx;
+      display: inline-flex;
+      justify-content: center;
+
+      image {
+        width: 56rpx;
+        height: 56rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="show"></mask>
+
+  <view class="{{show ? 'explore-message' : 'explore-message hide'}}">
+    <view class="plane">
+      <swiper
+        current="{{swiperCurrent}}"
+        duration="{{500}}"
+        class="plane-list"
+        @change="bindSwiperChange">
+        <block wx:for="{{messageList}}" wx:key="{{id}}">
+          <swiper-item>
+            <view class="item-title">{{item.title}}</view>
+            <view class="item-content" style="height: calc(100% - 2rem);">
+              <text class="{{isIOS ? 'ios' : ''}}" space="nbsp">
+                {{'\n' + item.content}}
+              </text>
+            </view>
+          </swiper-item>
+        </block>
+      </swiper>
+    </view>
+    <view class="dots">
+      <block wx:for="{{messageList}}" wx:key="{{id}}">
+        <view class="{{index === swiperCurrent ? 'dot active' : 'dot'}}"></view>
+      </block>
+    </view>
+    <view class="bottom">
+      <image
+        src="../../assets/img/detail/close.png"
+        @tap="bindHandleClose"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import PersistenceMixin from '../../mixins/persistence';
+  import Mask from '../utils/mask';
+
+
+  @connect({
+    messages(state) { return state.others.messages },
+  }, {})
+
+
+  export default class Message extends wepy.component {
+    // 首页 - 消息组件
+
+    data = {
+      hasRead: [],
+      swiperCurrent: 0,
+      firstTime: true,
+      showModal: true,
+      isIOS: false,
+    };
+
+    props = {
+      showMessage: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    computed = {
+      /* eslint-disable camelcase */
+      messageList: () => {
+        let list = [];
+        if (this.messages && this.messages.length) {
+          list = this.messages.filter(
+            ({id, update_time}) => {
+              const obj = this.hasRead.find(
+                (x) => (id === x.id && update_time === x.time)
+              );
+              return !obj;
+            }
+          );
+        }
+        if (
+          this.showMessage
+          && this.firstTime
+          && list[0]
+          && list[0].id
+        ) {
+          this.firstTime = false;
+          setTimeout(() => {
+            const {id, update_time} = list[0];
+            const hasRead = this.getStorageSync('hasRead') || [];
+            this.setStorageSync(
+              'hasRead',
+              [...hasRead, {id, time: update_time}],
+            );
+          }, 1000);
+        }
+        return list;
+      },
+
+      show: () => {
+        return !!this.messageList.length
+          && this.showModal
+          && this.showMessage;
+      },
+    };
+
+    mixins = [PersistenceMixin];
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      bindSwiperChange: (e) => {
+        this.swiperCurrent = e.detail.current;
+        const {id, update_time} = this.messageList[this.swiperCurrent];
+        const hasRead = this.getStorageSync('hasRead') || [];
+        this.setStorageSync(
+          'hasRead',
+          [...hasRead, {id, time: update_time}],
+        );
+      },
+
+      bindHandleClose: () => {
+        this.showModal = false;
+      },
+    };
+
+    onLoad() {
+      const hasRead = this.getStorageSync('hasRead');
+      // 兼容以前代码
+      if (hasRead && hasRead[0] && hasRead[0].time) {
+        this.hasRead = hasRead || [];
+        this.$apply();
+      } else {
+        this.setStorageSync('hasRead', []);
+      }
+
+      wepy.getSystemInfo({
+        success: (res) => {
+          if (res && res.platform)
+            this.isIOS = res.platform === 'ios';
+          this.$apply();
+        },
+      });
+    }
+  }
+</script>

@@ -1,0 +1,103 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-note {
+    textarea {
+      width: 624rpx;
+      height: 398rpx;
+      margin: 20rpx auto 0;
+      padding: 28rpx 15rpx 70rpx;
+      border: 1rpx solid @dimWhite;
+      border-radius: 8rpx;
+      color: @textColor3;
+      font-size: 30rpx;
+      background-color: @faintWhite;
+      position: relative;
+      overflow: hidden;
+
+      & view {
+        position: absolute;
+        bottom: 28rpx;
+        right: 24rpx;
+      }
+    }
+
+    button {
+      width: 100%;
+      height: 95rpx;
+      color: @solidWhite;
+      font-size: 34rpx;
+      border-radius: 0;
+      background-color: @primaryColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      bottom: 0;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-note">
+    <view>
+      <label>
+        <textarea
+          value="{{orderNotes}}"
+          placeholder="请输入备注内容要求"
+          maxlength="30"
+          @input="bindOnChange"
+          @confirm="bindOnChange">
+          <view>{{value.length}}/30</view>
+        </textarea>
+      </label>
+    </view>
+    <button @tap="bindSave">
+      确定
+    </button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as OthersActions} from '../../store/others';
+
+
+  @connect({
+    orderNotes(state) { return state.others.orderNotes },
+  }, {
+    ...OthersActions,
+  })
+
+
+  export default class Note extends wepy.page {
+    // 订单备注 页面
+
+    data = {
+      value: '',
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      // Handle the value changes
+      bindOnChange: ({detail: {value}}) => {
+        this.value = value;
+      },
+
+      // Save note and redirect back
+      bindSave: () => {
+        this.methods.setOrderNotes(this.value);
+        this.go2page().back();
+      },
+    };
+
+    onShow() {
+      this.value = this.orderNotes;
+      this.setTitle('订单备注');
+    };
+  }
+</script>

@@ -1,0 +1,241 @@
+<style lang="less">
+</style>
+
+<template>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import PersistenceMixin from '../../mixins/persistence';
+  import {actions as UserActions} from '../../store/user';
+  import {actions as OrderActions} from '../../store/order';
+  import {actions as OthersActions} from '../../store/others';
+  import {actions as ProductActions} from '../../store/product';
+  import {actions as StoreActions} from '../../store/store';
+  import {actions as ConfigActions} from '../../store/config';
+  import {actions as SearchActions} from '../../store/search';
+  import {actions as VideoActions} from '../../store/video';
+  import {PERMISSION_SCOPE} from '../../store/properties';
+  import {baseUrl} from '../../service';
+
+
+  @connect({
+    cart(state) { return state.order.cart },
+  }, {
+    ...UserActions,
+    ...ProductActions,
+    ...OrderActions,
+    ...OthersActions,
+    ...SearchActions,
+    ...StoreActions,
+    ...ConfigActions,
+    ...VideoActions,
+  })
+
+
+  export default class Util extends wepy.page {
+    // 空白 页面 - 用以控制进入时行为
+
+    mixins = [UtilsMixin, PersistenceMixin];
+
+    /* eslint-disable no-unused-vars */
+    onLoad(option) {
+      console.info('Options: ', option);
+      let {
+        pid,   // 分享的商品，用于跳转
+        sid,   // 分享商品的用户，用于返利
+        gid,   // 分享商品的拼团
+        cid,   // 分类，用于跳转
+        vid,   // 视频
+        scene, // 场景值，可能是分销也可能是返利
+        uri,   // 任意页面uri，直接跳转用
+        code,  // 本地用 / 机器码
+        store = null, // 本地用 / 店铺ID
+      } = option;
+      let self = this;
+      let _shareUser = null;
+
+      // Update History
+      const history = self.getStorageSync('history');
+      self.methods.setSearchHistory(history);
+
+      // Update Location Settings
+      const disabledLocating = self.getStorageSync('disabledLocating') || null;
+      if (disabledLocating !== null)
+        this.methods.toggleDisabledLocating(disabledLocating);
+
+      // Update Grouping ID
+      if (gid) {
+        this.methods.setOrderGroup(gid);
+        this.methods.setSharedGroup({group: gid});
+      }
+
+      // Get App Info
+      this.methods.getStoreInfoService();
+
+      // Share from Moment
+      if (scene) {
+        const _scene = self.parseScene(scene);
+        console.info({scene: _scene});
+
+        if (/goodId(\S)*shareUserId(\S)*/.test(scene)) {
+          // 返利
+          pid = _scene.goodId;
+          sid = _scene.shareUserId;
+          if (_scene.subgoodId)
+            pid = _scene.subgoodId;
+        } if (/shop(\S)*machine_code(\S)*/.test(scene)) {
+          // 线下扫码
+          code = _scene.machine_code;
+          store = _scene.shop;
+          uri = '/pages/util/qrPay';
+        } else {
+          // 分销
+          _shareUser = scene;
+        }
+      }
+
+      // Set Store ID
+      if (store) {
+        this.setStorageSync('store', store);
+        this.methods.setCurrentStoreID(store);
+      }
+
+      // Set Relations
+      if (sid) {
+        self.methods.setShared({
+          userID: sid ? parseInt(sid) : null,
+          productID: pid ? parseInt(pid) : null,
+        });
+      }
+
+      // Set Machine Code
+      if (code) {
+        self.methods.setConfig({
+          payload: {
+            machineCode: code,
+          },
+        });
+      }
+
+      const callback = () => {
+        // self.loading().hide();
+        if (!vid)
+          wepy.switchTab({
+            url: '/pages/explore/index',
+            complete: () => {
+              // If it's from a shared link do redirect
+              if (pid) {
+                const url = `${baseUrl}/api/goods/goods/${pid}/`;
+                self.methods.getDetailService({
+                  url,
+                  callback: () => {
+                    self.go2page().navigate('/pages/all/detail');
+                  },
+                });
+              }
+
+              // Categories
+              if (cid)
+                uri = '/pages/all/category?id=' + cid;
+
+              setTimeout(() => {
+                if (uri) {
+                  if (/index/g.test(uri))
+                    self.go2page().switch(uri);
+                  else
+                    self.go2page().navigate(uri);
+                }
+              }, 1000);
+            },
+          });
+        else {
+          const url = `${baseUrl}/api/video/video/${vid}/`;
+          self.methods.getVideoDetailService({
+            url,
+            callback: () => {
+              setTimeout(() => {
+                wepy.switchTab({
+                  url: '/pages/video/index',
+                  complete: () => {
+                    self.go2page().navigate('/pages/video/detail?index=0');
+                  },
+                });
+              }, 1000);
+            },
+          });
+        }
+      };
+
+      const getSetting = () => {
+        wepy.getSetting({
+          success: (res) => {
+            self.methods.getAppConfigService({
+              callback: () => {
+                if (res.authSetting[PERMISSION_SCOPE.userInfo]) {
+                  self.methods.authService({
+                    scene: _shareUser,
+                    callback,
+                  });
+                } else {
+                  self.methods.setScene(_shareUser);
+                  callback();
+                  // wepy.redirectTo({url: `/pages/util/auth?${self.serializer(option)}`});
+                }
+              },
+            });
+          },
+          fail: (res) => {
+            console.error('ERR: wepy.getSetting with error: ', res);
+            self.showModal({
+              title: '发生未知错误',
+              content: '小程序加载失败，请稍后重试',
+              showCancel: false,
+            });
+          },
+          complete: (res) => {
+            console.info('INFO: wepy.getSetting complete', res);
+          },
+        });
+      };
+
+      getSetting();
+    };
+
+    parseScene = (scene) => {
+      let _count = 3;
+      let _scene = scene;
+
+      while (_scene.includes('%') && _count > 0) {
+        _count -= 1;
+        _scene = decodeURIComponent(_scene);
+      }
+
+      if (!/[;|:]/.test(_scene))
+        return _scene;
+
+      const _ = _scene.split(';');
+      let obj = {};
+
+      _.map((item) => {
+        const [key, value] = item.split(':');
+        obj[key] = value;
+      });
+
+      return obj;
+    };
+
+    serializer = (data = {}) => (
+      Object.keys(data).map(
+        (item) => (
+          item !== undefined
+            ? `${item}=${encodeURIComponent(data[item])}`
+            : ''
+        )
+      ).join('&')
+    );
+  }
+</script>

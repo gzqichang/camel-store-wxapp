@@ -1,0 +1,267 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+  page {
+    background: #eee;
+  }
+
+  view.page-recommend {
+    .shop {
+      background: #fff;
+      padding: 0 28rpx 0 40rpx;
+      height: 100rpx;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 2rpx solid #eee;
+      border-bottom: 2rpx solid #eee;
+
+      .left {
+        display: inline-flex;
+        align-items: center;
+        color: #363636;
+        font-size: 30rpx;
+
+        image {
+          width: 50rpx;
+          height: 50rpx;
+          margin-right: 6rpx;
+          flex-shrink: 0;
+        }
+
+        .name {
+          width: 500rpx;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .right {
+        width: 28rpx;
+        height: 16rpx;
+        transition: all ease 0.5s;
+        &.rotate {
+          transform: rotateZ(180deg);
+        }
+      }
+    }
+
+    .content {
+      background: #fff;
+      display: flex;
+      height: 930rpx;
+
+      .slider {
+        width: 176rpx;
+        height: 100%;
+        overflow-y: auto;
+        padding-right: 2rpx;
+        border-right: 2rpx solid #eee;
+      }
+
+      .container {
+        width: 564rpx;
+        height: 100%;
+        padding-left: 18rpx;
+        overflow-y: auto;
+      }
+    }
+
+    .bottom {
+      position: fixed;
+      bottom: 0;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80rpx;
+      line-height: 80rpx;
+      text-align: center;
+      font-size: 32rpx;
+      color: #fff;
+      padding: 36rpx 0 50rpx 0;
+      .btn {
+        width: 270rpx;
+        background: @primaryColor;
+        border-radius: 4rpx;
+
+        &.select {
+          background: #fff;
+          border: 2rpx solid @secondaryColor;
+          color: @secondaryColor;
+          margin-right: 20rpx;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-recommend">
+    <view class="shop">
+      <view class="left">
+        <image src="../../assets/img/cart/store_black.png"></image>
+        <view class="name">{{storeData.name}}</view>
+      </view>
+      <image class="right {{showSelectShop ? 'rotate' : ''}}" @tap.stop="bindToggleSelectShop" src="../../assets/img/video/arrow.png"></image>
+    </view>
+
+    <view class="content">
+      <view class="slider">
+        <slider :activeTab.sync="activeTab"></slider>
+      </view>
+      <view class="container">
+        <cardProduct :list.sync="_productList"></cardProduct>
+      </view>
+    </view>
+
+    <view class="bottom">
+      <view class="btn select" @tap="bindToggleSelect">已选商品（{{connectGoods.length}}）</view>
+      <view class="btn" @tap="bindBack">确定</view>
+    </view>
+
+    <selectMask :showSelect.sync="showSelect"></selectMask>
+    <selectShop :showSelectShop.sync="showSelectShop"></selectShop>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import Slider from '../../components/video/slider';
+  import CardProduct from '../../components/video/cardProduct';
+  import SelectMask from '../../components/video/selectMask';
+  import SelectShop from '../../components/video/selectshop';
+  import {actions as VideoActions} from '../../store/video';
+  import {actions as StoreActions} from '../../store/store';
+
+
+  @connect({
+    productList(state) { return state.video.productList },
+    connectGoods(state) { return state.video.detail.connectGoods || [] },
+    store(state) { return state.store.id },
+    storeCurrent(state) { return state.store.current },
+    isTest(state) { return state.user.testers },
+    category(state) { return state.video.category },
+  }, {
+    ...VideoActions,
+    ...StoreActions,
+  })
+
+
+  export default class Recommend extends wepy.page {
+    // 写页面用的模板
+    config = {
+      disableScroll: true,
+    };
+
+    mixins = [UtilsMixin];
+
+    data = {
+      showSelect: false,
+      showSelectShop: false,
+      activeTab: 0,
+      sure: false,
+      storeData: {},
+    };
+
+    components = {
+      slider: Slider,
+      cardProduct: CardProduct,
+      selectMask: SelectMask,
+      selectShop: SelectShop,
+    };
+
+    computed = {
+      // just the current category ones
+      _productList () {
+        if (!this.productList || !this.connectGoods)
+          return [];
+
+        let list = this.productList;
+
+        if (this.activeTab)
+          list = this.productList.filter(
+            (item) => (
+              item.category
+              && item.category.id === this.activeTab
+            )
+          );
+
+        const connectGoods = this.connectGoods || [];
+        const ID = connectGoods.map(x => x.id);
+        list = list.map(x => {
+          x.check = !!ID.includes(x.id);
+          return {...x};
+        });
+        return list;
+      },
+    };
+
+    onShow() {
+      this.activeTab = (this.category[0] && this.category[0].id * 1) || 0;
+      this.storeData = this.storeCurrent;
+    };
+
+    onLoad() {
+      this.setTitle('推荐商品');
+      this.methods.getStoreListService();
+    };
+
+    methods = {
+      bindToggleSelect: () => {
+        this.showSelect = true;
+      },
+
+      bindToggleSelectShop: () => {
+        this.showSelectShop = !this.showSelectShop;
+      },
+
+      bindBack: () => {
+        this.go2page().back();
+      },
+    };
+
+    events = {
+      toggleSelectMask: () => {
+        this.showSelect = false;
+      },
+
+      toggleSelectShop: () => {
+        this.showSelectShop = false;
+      },
+
+      switchSelectShop: (store) => {
+        this.storeData = store;
+        this.showSelectShop = false;
+        this.methods.changeVideoStore({
+          store,
+        });
+        this.methods.getVideoCategoryService({
+          store: store.id,
+          callback: (res) => {
+            this.activeTab = (res[0] && res[0].id * 1) || 0;
+          },
+        });
+        this.methods.getVideoProductListService({
+          storeID: store.id,
+          // category: parseInt(this.activeTab) || '',
+        });
+      },
+
+      changeCategory: (id) => {
+        this.activeTab = id;
+      },
+
+      toggleDeleteGoods: (id) => {
+        const connectGoods = this.connectGoods || [];
+        const list = connectGoods.filter(x => x.id !== id);
+        this.methods.saveShortVideoData({
+          data: {connectGoods: [...list]},
+        });
+      },
+    };
+  }
+</script>

@@ -1,0 +1,1040 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-detail {
+    height: 100vh;
+
+    scroll-view.detail {
+      height: 100vh;
+
+      .hint {
+        padding: 0 10rpx;
+        height: 44rpx;
+        color: @solidWhite;
+        font-size: 28rpx;
+        background-color: @secondaryColor;
+        border-radius: 0 6rpx 6rpx 0;
+        line-height: 28rpx;
+        transform: translate(0, 26rpx);
+        display: flex;
+        align-items: center;
+        position: absolute;
+        z-index: @indexBasic;
+      }
+
+      swiper {
+        height: 720rpx;
+        margin-bottom: 36rpx;
+
+        image {
+          height: 720rpx;
+          width: 100%;
+          display: block;
+        }
+
+        video {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .name,
+      .brief,
+      .market,
+      .price {
+        text-align: center;
+        display: block;
+      }
+
+      .name {
+        max-width: 80%;
+        margin: 0 auto 30rpx;
+        color: @textColor1;
+        font-size: 30rpx;
+        font-weight: bold;
+      }
+
+      .brief {
+        margin: 0 66rpx 10rpx;
+        color: @textColor3;
+        font-size: 24rpx;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .price {
+        margin: 0 auto 10rpx;
+        color: @primaryColor;
+        font-size: 34rpx;
+      }
+
+      .market {
+        margin: 0 auto 30rpx;
+        color: @textColor5;
+        font-size: 26rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .guide {
+        height: 85rpx;
+        background: #fff6f0;
+        display: flex;
+        align-items: center;
+
+        image {
+          width: 40rpx;
+          height: 40rpx;
+          margin: 0 10rpx;
+        }
+
+        .red {
+          color: #fc0420;
+          font-size: 30rpx;
+          display: inline;
+        }
+
+        .link {
+          padding: 0 16rpx;
+          color: @textColor3;
+          font-size: 24rpx;
+          font-weight: normal;
+          flex-grow: 0;
+          display: inline;
+        }
+
+        view {
+          color: @textColor1;
+          font-size: 28rpx;
+          flex-grow: 1;
+        }
+      }
+
+      .group-purchasing {
+        width: 100vw;
+        border-top: 15rpx solid @faintWhite;
+        border-bottom: 15rpx solid @faintWhite;
+        display: flex;
+        flex-direction: column;
+
+        .banner {
+          height: 70rpx;
+          background-color: @primaryColor;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+
+          image {
+            width: 40rpx;
+            height: 40rpx;
+            padding: 0 14rpx;
+          }
+
+          view {
+            color: @solidWhite;
+            font-size: 26rpx;
+
+            &:last-of-type {
+              padding-left: 20rpx;
+              font-size: 24rpx;
+              opacity: .7;
+            }
+          }
+        }
+
+        .description {
+          padding: 44rpx 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          image {
+            width: 12rpx;
+            height: 21rpx;
+            padding: 0 30rpx 0 2rpx;
+          }
+
+          & > view {
+            padding-left: 30rpx;
+          }
+
+          view {
+            color: @textColor0;
+            font-size: 28rpx;
+
+            &:last-of-type {
+              padding-left: 20rpx;
+              font-size: 24rpx;
+              opacity: .7;
+            }
+          }
+        }
+
+        .shared-groups {
+          height: 116rpx;
+          border-bottom: 7px solid @faintWhite;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          view:first-of-type {
+            flex-grow: 1;
+          }
+
+          image {
+            width: 74rpx;
+            height: 74rpx;
+            border-radius: 50%;
+          }
+
+          view {
+            padding: 0 30rpx;
+            color: @textColor0;
+            font-size: 28rpx;
+          }
+        }
+
+        .groups {
+          .red {
+            color: @primaryColor;
+            border-color: @primaryColor;
+          }
+
+          .solid-hr {
+            width: 720rpx;
+            height: 2rpx;
+            margin-left: 26rpx;
+            background-color: @dimWhite;
+          }
+
+          .items {
+            height: 116rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            view {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              &:first-of-type {
+                image {
+                  width: 74rpx;
+                  height: 74rpx;
+                  margin: 0 18rpx 0 26rpx;
+                  border-radius: 50%;
+                }
+
+                .info {
+                  color: @textColor4;
+                  font-size: 23rpx;
+                  flex-direction: column;
+                  align-items: flex-start;
+
+                  .nickname {
+                    padding-right: 12rpx;
+                    color: @textColor1;
+                    font-size: 24rpx;
+                  }
+
+                  & > view:first-of-type {
+                    padding-bottom: 12rpx;
+                  }
+                }
+              }
+            }
+
+            .button {
+              width: 120rpx;
+              height: 60rpx;
+              margin-right: 30rpx;
+              font-size: 24rpx;
+              border: 2rpx solid;
+              border-radius: 8rpx;
+            }
+          }
+        }
+
+        .groups-none {
+          height: 90rpx;
+          color: @textColor4;
+          font-size: 26rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .introduction {
+          height: 90rpx;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          image {
+            width: 12rpx;
+            height: 21rpx;
+            padding: 0 30rpx 0 2rpx;
+          }
+
+          & > view:first-of-type {
+            padding-left: 30rpx;
+          }
+
+          view {
+            color: @textColor1;
+            font-size: 24rpx;
+
+            &:last-of-type {
+              padding-left: 20rpx;
+              color: @textColor3;
+            }
+          }
+        }
+      }
+
+      .label {
+        height: 1rem;
+        margin: 36rpx auto;
+        color: @textColor1;
+        font-size: 24rpx;
+        line-height: 1rem;
+        text-align: center;
+      }
+
+      .picture {
+        width: 100%;
+        padding-bottom: 150rpx;
+        display: flex;
+        flex-direction: column;
+
+        image {
+          width: 100%;
+        }
+      }
+    }
+
+    .hr {
+      position: relative;
+
+      &.short::before {
+        width: 64rpx;
+        top: .5rem;
+        left: 249rpx;
+      }
+
+      &.short::after {
+        width: 64rpx;
+        top: .5rem;
+        right: 249rpx;
+      }
+
+      &::before,
+      &::after {
+        width: 300rpx;
+        height: 2rpx;
+        content: ' ';
+        background: @dimWhite;
+        display: block;
+        position: absolute;
+      }
+
+      &::before {
+        left: 50%;
+      }
+
+      &::after {
+        right: 50%;
+      }
+    }
+
+    .buying-button {
+      height: 136rpx;
+      padding: 0 10rpx;
+      background-color: @solidWhite;
+      border-top: 2rpx solid @faintWhite;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .grey {
+        width: 100vw;
+        height: 80rpx;
+        font-size: 30rpx;
+        text-align: center;
+        color: #fff;
+        background: rgba(104, 104, 104, .9);
+        line-height: 80rpx;
+        position: absolute;
+        bottom: 136rpx;
+        left: 0;
+      }
+
+      .buttons {
+        height: 92rpx;
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .buy.group,
+      .cart.group {
+        font-size: 28rpx;
+        flex-direction: column;
+
+        view {
+          font-size: 24rpx;
+          line-height: 24rpx;
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+
+          view {
+            padding-left: 4rpx;
+            font-size: 18rpx;
+            display: inline;
+          }
+        }
+      }
+
+      .services,
+      .cart,
+      .buy,
+      .share {
+        height: 88rpx;
+        color: @solidWhite;
+        font-size: 30rpx;
+        border-radius: 10rpx;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .services {
+        margin: 0;
+        border: 0;
+        background: @solidWhite;
+        flex-direction: column;
+
+        &::before,
+        &::after {
+          border: 0;
+        }
+
+        image {
+          width: 40rpx;
+          height: 40rpx;
+        }
+
+        view {
+          color: @textColor1;
+          font-size: 26rpx;
+          line-height: 40rpx;
+        }
+      }
+
+      .cart {
+        margin: 0 5rpx;
+        background: @secondaryColor;
+        flex-grow: 1;
+        flex-basis: 5rem;
+
+        &.disabled {
+          color: rgba(255, 255, 255, .2);
+        }
+      }
+
+      .buy {
+        margin: 0 5rpx;
+        background: @primaryColor;
+        flex-grow: 1;
+        flex-basis: 5rem;
+
+        &.disabled {
+          color: rgba(255, 255, 255, .2);
+        }
+      }
+
+      .share {
+        margin-left: 5rpx;
+        color: @primaryColor;
+        background: @solidWhite;
+        border: 2rpx solid @primaryColor;
+        flex-grow: 1;
+        flex-basis: 5rem;
+
+        view {
+          font-size: 24rpx;
+        }
+
+        &.disabled {
+          color: @textColor3;
+          border: 2rpx solid @textColor3;
+        }
+      }
+    }
+
+    navigator.fab {
+      width: 120rpx;
+      height: 120rpx;
+      position: fixed;
+      bottom: 160rpx;
+      right: 26rpx;
+
+      image {
+        width: 120rpx;
+        height: 120rpx;
+      }
+
+      view {
+        height: 35rpx;
+        color: @solidWhite;
+        background: @primaryColor;
+        font-size: 26rpx;
+        text-align: center;
+        line-height: 35rpx;
+        border-radius: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 3rpx;
+        right: 15rpx;
+        z-index: 0;
+
+        &::before {
+          width: 35rpx;
+          height: 35rpx;
+          content: ' ';
+          background: @primaryColor;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -10rpx;
+          border-radius: 50%;
+          z-index: -1;
+        }
+
+        &::after {
+          width: 35rpx;
+          height: 35rpx;
+          content: ' ';
+          background: @primaryColor;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: -10rpx;
+          border-radius: 50%;
+          z-index: -1;
+        }
+      }
+    }
+
+    image.hide {
+      display: none;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-detail">
+    <!--详情-->
+    <scroll-view class="detail" scroll-y="{{!(showMask || showShare || showPoster)}}">
+      <view
+        wx:if="{{productDetail._groupType}}"
+        class="hint"
+        style="{{!(showMask || showShare || showPoster) ? '' : 'opacity: .3'}}">
+        {{productDetail._groupType}}
+      </view>
+
+      <swiper
+        indicator-dots="{{productDetail.video || productDetail.banner && productDetail.banner.length > 1}}"
+        indicator-color="#CCCCCC"
+        indicator-active-color="#F44939">
+        <block wx:if="{{productDetail.video}}">
+          <swiper-item>
+            <video
+              src="{{productDetail.video.file}}"
+              poster="{{productDetail.banner[0].image}}"
+              controls
+            ></video>
+          </swiper-item>
+        </block>
+        <block wx:key="index" wx:for="{{productDetail.banner}}">
+          <swiper-item>
+            <image src="{{item.image + '?imageView2/2/w/750'}}"></image>
+          </swiper-item>
+        </block>
+      </swiper>
+
+      <view class="name">{{productDetail.name}}</view>
+      <view class="brief">{{productDetail.goods_brief}}</view>
+
+      <block wx:if="{{productDetail._model === 'credits'}}">
+        <view class="price">{{productDetail._credit_price_range}}</view>
+      </block>
+      <block wx:else>
+        <view class="price">￥{{productDetail._product.price_range}}</view>
+        <view class="market">
+          <view style="text-decoration: line-through; display: inline;">
+            ￥{{productDetail._product.market_price_range}}
+          </view>
+          <view
+            wx:if="{{postage && postage > 0}}"
+            style="margin-left: 10rpx; font-size: 22rpx; display: inline;">
+            (邮费:￥{{postage}}{{productDetail.postage_setup && productDetail.postage_setup === 'distance' ? '起' : ''}})
+          </view>
+        </view>
+      </block>
+
+      <view wx:if="{{maxLevels}}" class="guide">
+        <image src="../../assets/img/detail/member.png"></image>
+        <view>成为会员尊享<view class="red">{{maxLevels}}折</view>优惠</view>
+        <view wx:if="{{!isIOS}}" class="link" @tap="bindGo2TopUp">去开通 ></view>
+      </view>
+
+      <block wx:if="{{productDetail._grouping}}">
+        <view class="group-purchasing">
+          <!--<view class="banner">-->
+          <!--  <image src="../../assets/img/detail/logo.png"></image>-->
+          <!--  <view>齐昌云店</view>-->
+          <!--  <view>专注生活电商小程序</view>-->
+          <!--</view>-->
+
+          <block wx:if="{{sharedGroup}}">
+            <view class="shared-groups">
+              <view>拼团邀请来自</view>
+              <image src="{{sharedGroupDetail.owner.avatar_url || '../../assets/img/me/avatar.png'}}"></image>
+              <view class="nickname">{{sharedGroupDetail.owner.nickname}}</view>
+            </view>
+          </block>
+
+          <block wx:else>
+            <block wx:if="{{productDetail._groupsInfo.length}}">
+              <view class="description" @tap="bindGo2Groups">
+                <view>{{productDetail._groupsInfo.length}}位小伙伴正在发起拼团，可直接参团</view>
+                <view>
+                  查看更多
+                  <image src="../../assets/img/detail/arrowRight.png"></image>
+                </view>
+              </view>
+              <view class="groups">
+              <block wx:key="index" wx:for="{{groupingList}}">
+                <view class="items">
+                  <view>
+                    <image src="{{item.owner.avatar_url || '../../assets/img/me/avatar.png'}}"></image>
+                    <view class="info">
+                      <view>
+                        <view class="nickname">{{item.owner.nickname}}</view>
+                        <view>发起拼团</view>
+                      </view>
+                      <view>
+                        <view class="red" style="padding-right: 4rpx;">{{item.partake_count}}</view>
+                        <view>人已买{{item.goods_count}}件，剩余</view>
+                        <view class="red" style="padding: 0 4rpx;"> {{timer[item.ptgroup_no] || '00:00:00'}} </view>
+                        <view>结束</view>
+                      </view>
+                    </view>
+                  </view>
+                  <view>
+                    <view class="red button" @tap="bindJoinGrouping({{item.id}})">
+                      去参团
+                    </view>
+                  </view>
+                </view>
+                <view class="solid-hr"></view>
+              </block>
+            </view>
+            </block>
+            <block wx:else>
+              <view class="groups-none">暂无适合你的拼团信息，去发起拼团吧~</view>
+            </block>
+          </block>
+
+          <view class="introduction" @tap="bindGo2Rules">
+            <view>开团攒积分，拼团人数越多，价格越低</view>
+            <view>
+              玩法详情
+              <image src="../../assets/img/detail/arrowRight.png"></image>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <view class="label hr short">详情</view>
+
+      <view class="picture">
+        <block wx:key="index" wx:for="{{productDetail.detail}}">
+          <image
+            mode="widthFix"
+            class="{{loaded[index] ? '': 'hide'}}"
+            src="{{item.image + '?imageView2/2/w/750'}}"
+            @load="bindImageLoad({{index}})"></image>
+          <image
+            mode="widthFix"
+            class="{{loaded[index] ? 'hide': ''}}"
+            style="margin-bottom: 16rpx;"
+            src="../../assets/img/detail/placeHolder.png"></image>
+        </block>
+      </view>
+    </scroll-view>
+
+    <!--按钮-->
+    <view wx:if="{{productDetail && productDetail.id}}" class="buying-button">
+      <view class="grey" wx:if="{{disabledBuy}}">
+        {{productDetail._status}}
+      </view>
+      <block wx:if="{{showFeedback}}">
+        <button class="services" @tap="bindGo2Feedback">
+          <image src="../../assets/img/detail/customServices.png"></image>
+          <view>客服</view>
+        </button>
+      </block>
+      <block wx:else>
+        <button open-type="contact" class="services">
+          <image src="../../assets/img/detail/customServices.png"></image>
+          <view>客服</view>
+        </button>
+      </block>
+
+      <view class="buttons">
+        <block wx:if="{{productDetail._grouping}}">
+          <block wx:if="{{!sharedGroup}}">
+            <view class="{{disabledBuy ? 'cart group disabled' : 'cart group'}}" @tap="bindToggleMask('single')">
+              单独购买
+              <view>（￥{{productDetail._priceOrg}}<view>起</view>）</view>
+            </view>
+
+            <view class="{{disabledBuy ? 'buy group disabled' : 'buy group'}}" @tap="bindToggleMask('group')">
+              拼团购买
+              <view>（￥{{productDetail._priceMin}}<view>起</view>）</view>
+            </view>
+          </block>
+
+          <block wx:else>
+            <view class="{{disabledBuy ? 'cart group disabled' : 'cart group'}}" @tap="bindToggleMask('group')">
+              加入拼团
+              <view>（￥{{productDetail._priceMin}}<view>起</view>）</view>
+            </view>
+          </block>
+        </block>
+
+        <block wx:else>
+          <block wx:if="{{productDetail._model === 'regular'}}">
+            <view
+              wx:if="{{!productDetail.fictitious}}"
+              class="{{disabledBuy ? 'cart disabled' : 'cart'}}"
+              style="max-width: 180rpx"
+              @tap="bindToggleMask('single')">
+              加入购物车
+            </view>
+
+            <view
+              class="{{disabledBuy ? 'buy disabled' : 'buy'}}"
+              style="{{productDetail.fictitious ? '' : 'max-width: 150rpx'}}"
+              @tap="bindToggleMask('single')">
+              立即购买
+            </view>
+          </block>
+
+          <block wx:if="{{productDetail._model === 'subscription'}}">
+            <view class="{{disabledBuy ? 'buy disabled' : 'buy'}}" @tap="bindToggleMask('single')">
+              立即购买
+            </view>
+          </block>
+
+          <block wx:if="{{productDetail._model === 'credits'}}">
+            <view class="{{disabledBuy ? 'buy disabled' : 'buy'}}" @tap="bindToggleMask('single')">
+              积分购买
+            </view>
+          </block>
+        </block>
+
+        <view
+          wx:if="{{enableShare && productDetail._model !== 'credits'}}"
+          class="{{disabledBuy ? 'share disabled' : 'share'}}"
+          @tap="bindToggleShare"
+          style="{{productDetail._grouping && !sharedGroup ? 'max-width: 140rpx;' : 'flex-direction: column'}}">
+          分享
+          <view wx:if="{{productDetail._product.max_rebate && enableSharingProfit && !productDetail._grouping}}" style="font-size: 20rpx">
+            {{'(最高得' + productDetail._product.max_rebate + '积分)'}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!--浮窗-->
+    <navigator
+      hover-class='none'
+      open-type="switchTab"
+      url='/pages/cart/index'
+      class="fab">
+      <image src="../../assets/img/detail/cart.png"></image>
+      <view wx:if="{{cart && cart.length}}">{{totalItemCount}}</view>
+    </navigator>
+    <buyingMask
+      :showMask.sync="showBuyingMask"
+      :isGroup.sync="isGroup">
+    </buyingMask>
+    <shareMask :showShare.sync="showShare"></shareMask>
+    <posterMask :showPoster.sync="showPoster"></posterMask>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as AddressActions} from '../../store/address';
+  import {actions as ProductActions} from '../../store/product';
+  import {actions as OrderActions} from '../../store/order';
+  import {actions as OthersActions} from '../../store/others';
+  import BuyingMask from '../../components/detail/buyingMask';
+  import ShareMask from '../../components/detail/shareMask';
+  import PosterMask from '../../components/detail/posterMask';
+
+
+  @connect({
+    user(state) { return state.user },
+    timer(state) { return state.timer.results },
+    productDetail(state) { return state.product.detail },
+    cart(state) { return state.order.cart },
+    orderGroup(state) { return state.others.orderGroup },
+    sharedUser(state) { return state.order.sharedUser },
+    sharedGroup(state) { return state.order.sharedGroup },
+    store(state) { return state.store.current },
+    enableShare(state) { return state.config.enableShare },
+    enableSharingProfit(state) { return state.config.enableSharingProfit },
+    showFeedback(state) { return state.config.showFeedback },
+    levels(state) { return state.others.membershipLevels },
+    isIOS(state) { return state.others.isIOS },
+  }, {
+    ...AddressActions,
+    ...ProductActions,
+    ...OrderActions,
+    ...OthersActions,
+  })
+
+
+  export default class Detail extends wepy.page {
+    // 详情 页面
+
+    data = {
+      showMask: false,
+      showShare: false,
+      showPoster: false,
+      isGroup: false,
+      loaded: [],
+    };
+
+    components = {
+      buyingMask: BuyingMask,
+      shareMask: ShareMask,
+      posterMask: PosterMask,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      sharedGroupDetail: () => {
+        let _ = {};
+        if (
+          this.productDetail
+          && this.productDetail
+          && this.productDetail._groupsInfo
+        )
+          _ = Array.from(this.productDetail._groupsInfo)
+            .find((x) => (parseInt(x.id) === parseInt(this.sharedGroup)));
+        return _;
+      },
+
+      groupingList: () => {
+        let _ = [];
+        if (
+          this.productDetail
+          && this.productDetail
+          && this.productDetail._groupsInfo
+        )
+          _ = Array.from(this.productDetail._groupsInfo).slice(0, 3);
+        return _;
+      },
+
+      showBuyingMask: () => {
+        let _ = Boolean(
+          this.productDetail
+          && this.productDetail.id
+          && this.showMask
+        );
+        if (_)
+          this.$broadcast('checkSelectedItem');
+        return _;
+      },
+
+      totalItemCount: () => {
+        let totalItemCount = 0;
+        if (this.cart)
+          Array.from(this.cart)
+            .map(x => (totalItemCount += x.count));
+        return totalItemCount;
+      },
+
+      postage: () => {
+        let postage = 0;
+        if (
+          this.productDetail
+          && this.productDetail.postage_setup !== 'free'
+        ) {
+          if (
+            this.productDetail.postage
+            && this.productDetail.postage[0]
+          ) {
+            const {cost} = this.productDetail.postage[0];
+            postage = this.parse2Float(cost);
+          }
+        }
+        return postage;
+      },
+
+      maxLevels: () => {
+        let _ = null;
+        if (this.levels && this.levels.length) {
+          let {discount} = this.levels.sort((a, b) => (a.discount > b.discount ? 1 : -1))[0] || {};
+          if (discount) _ = discount / 10;
+        }
+        return _;
+      },
+
+      disabledBuy: () => {
+        let _status = (this.productDetail && this.productDetail._status) || null;
+        return Boolean(_status);
+      },
+    };
+
+    methods = {
+      // Toggle Mask Visibility
+      bindToggleMask: (isGroup = 'single') => {
+        if (this.disabledBuy) return;
+
+        this.isGroup = (String(isGroup) === 'group');
+        this.showMask = !this.showMask;
+        if (this.showMask)
+          this.$broadcast('checkSelectedItem');
+        else
+          this.methods.setOrderGroup(this.sharedGroup || '');
+      },
+
+      // Toggle Share Visibility
+      bindToggleShare: () => {
+        if (!this.checkUserInfo(this.methods.bindToggleShare))
+          return;
+
+        if (this.disabledBuy) return;
+
+        this.showShare = !this.showShare;
+      },
+
+      // Toggle Share Visibility
+      bindTogglePoster: () => {
+        const {create_poster} = this.productDetail;
+        this.showPoster = !this.showPoster;
+        this.showPoster && this.methods.getPosterService(create_poster);
+      },
+
+      // After Image Load
+      bindImageLoad: (index) => {
+        this.loaded[index] = true;
+      },
+
+      bindGo2Groups: () => {
+        this.go2page().navigate('/pages/all/groupBuyingList');
+      },
+
+      bindGo2Rules: () => {
+        this.go2page().navigate('/pages/all/rules');
+      },
+
+      bindGo2Feedback: () => {
+        if (!this.checkUserInfo(this.methods.bindGo2Feedback))
+          return;
+
+        this.go2page().navigate('/pages/all/feedback');
+      },
+
+      bindGo2TopUp: () => {
+        this.go2page().navigate('/pages/me/topUp');
+      },
+
+      bindJoinGrouping: (id) => {
+        this.methods.setOrderGroup(id);
+        this.methods.bindToggleMask('group');
+      },
+    };
+
+    events = {
+      // Reciving events from children components
+      toggleBuyingMask: () => {
+        this.methods.bindToggleMask('single');
+      },
+
+      toggleShareMask: () => {
+        this.methods.bindToggleShare();
+      },
+
+      toggleSharePoster: () => {
+        this.methods.bindTogglePoster();
+      },
+    };
+
+    onShow() {
+      if (this.sharedUser === this.user.id && this.sharedGroup) {
+        this.methods.setOrderGroup('');
+        this.methods.setSharedGroup({group: ''});
+        return;
+      }
+
+      if (this.orderGroup)
+        this.methods.bindToggleMask('group');
+
+      if (this.sharedGroup)
+        this.methods.setOrderGroup(this.sharedGroup);
+    }
+
+    onLoad({gid}) {
+      // Update the address in store when first shown
+      if (this.hasUserInfo())
+        this.methods.getAddressService(this.store.id);
+
+      this.setTitle('商品详情');
+
+      if (gid)
+        this.methods.bindJoinGrouping(gid);
+    };
+
+    onUnload() {
+      this.methods.setAddressCurrent(null);
+
+      this.methods.setSharedGroup({group: null});
+    };
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const {id, banner, name, _model} = this.productDetail;
+      const {wx_app_openid} = this.user;
+      this.showShare = false;
+      return {
+        title: name,
+        path: `/pages/util/index?scene=${wx_app_openid}&pid=${id}&sid=${this.user.id}&type=${_model}`,
+        imageUrl: banner[0].image,
+      };
+    };
+  }
+</script>

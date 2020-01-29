@@ -1,0 +1,323 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .group-buying-list {
+    .good {
+      display: flex;
+      padding: 20rpx;
+      border-bottom: 15rpx solid @faintWhite;
+
+      .hint {
+        padding: 0 10rpx;
+        height: 44rpx;
+        color: @solidWhite;
+        font-size: 28rpx;
+        background-color: @secondaryColor;
+        border-radius: 0 6rpx 6rpx 0;
+        line-height: 28rpx;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      image {
+        width: 280rpx;
+        height: 280rpx;
+        background: @faintWhite;
+        border-radius: 8rpx;
+        border: 1rpx solid @faintWhite;
+        margin-right: 20rpx;
+        flex: none;
+      }
+
+      .info {
+        flex: auto;
+        display: flex;
+        flex-flow: column;
+        padding: 8rpx 0;
+
+        .name {
+          font-size: 28rpx;
+          color: @textColor1;
+          flex: none;
+        }
+
+        .intro, .group-info, .original-prices {
+          font-size: 24rpx;
+          color: @textColor4;
+          flex: none;
+        }
+
+        .intro {
+          margin-bottom: 30rpx;
+        }
+
+        .group-info {
+          flex: auto;
+        }
+
+        .price {
+          font-size: 24rpx;
+          color: @primaryColor;
+          margin-bottom: 20rpx;
+          flex: none;
+
+          text {
+            font-size: 36rpx;
+          }
+        }
+      }
+    }
+
+    .group {
+      padding-top: 108rpx;
+      display: flex;
+      flex-flow: column;
+      align-items: center;
+
+      .items {
+        display: flex;
+        margin-bottom: 30rpx;
+        align-items: center;
+
+        .captain, .item {
+          display: flex;
+          flex-flow: column;
+          align-items: center;
+          margin: 0 14rpx;
+
+          image {
+            width: 74rpx;
+            height: 74rpx;
+            border-radius: 50%;
+            background: @faintWhite;
+          }
+
+          .name {
+            width: 56rpx;
+            height: 28rpx;
+            line-height: 28rpx;
+            background: @primaryColor;
+            border-radius: 6rpx;
+            text-align: center;
+            font-size: 20rpx;
+            color: @solidWhite;
+            margin-top: -10rpx;
+          }
+        }
+
+        .item .name {
+          background: @dimWhite;
+        }
+
+        .dot, .dot-big {
+          width: 8rpx;
+          height: 8rpx;
+          border-radius: 50%;
+          background: @dimWhite;
+          margin-bottom: 20rpx;
+        }
+
+        .dot-big {
+          width: 12rpx;
+          height: 12rpx;
+          margin-left: 6rpx;
+          margin-right: 6rpx;
+        }
+      }
+
+      .title {
+        font-size: 36rpx;
+        color: @textColor0;
+        margin-bottom: 30rpx;
+
+        text {
+          color: @primaryColor;
+        }
+      }
+
+      .time {
+        font-size: 24rpx;
+        color: @textColor4;
+        margin-bottom: 50rpx;
+
+        text {
+          color: @primaryColor;
+        }
+      }
+
+      .button {
+        width: 424rpx;
+        height: 80rpx;
+        line-height: 80rpx;
+        margin-bottom: 24rpx;
+        text-align: center;
+        color: @solidWhite;
+        font-size: 34rpx;
+        background: @primaryColor;
+        border-radius: 8rpx;
+
+        &::after {
+          border: none;
+        }
+
+        view {
+          font-size: 30rpx;
+        }
+      }
+
+      .hint {
+        color: @textColor4;
+        font-size: 24rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="group-buying-list">
+    <view class="good">
+      <view wx:if="{{detail._groupInfo._groupType}}" class="hint">
+        {{detail._groupInfo._groupType}}
+      </view>
+      <image src="{{detail.goods_backup[0].image + '?imageView2/2/w/280'}}"></image>
+      <view class="info">
+        <view class="name">
+          {{detail.goods_backup[0].goods_name}}
+        </view>
+        <view class="intro">
+          {{detail.goods_backup[0].gtype_name}}
+        </view>
+        <view class="group-info">
+          {{detail._groupInfo._groupType}}
+        </view>
+        <view class="price">
+          拼团价：￥<text>{{detail.goods_backup[0].price}}</text>
+        </view>
+        <view class="original-prices">
+          单买价：￥{{detail.goods_backup[0].original_price}}
+        </view>
+      </view>
+    </view>
+
+    <view class="group">
+      <view class="items">
+        <view class="captain">
+          <image src="{{groupInfo.owner.avatar_url || '../../assets/img/me/avatar.png'}}"></image>
+          <view class="name">团长</view>
+        </view>
+        <view class="item">
+          <image src="../../assets/img/detail/itemAvatar.png"></image>
+          <view class="name">团员</view>
+        </view>
+        <view class="dot"></view>
+        <view class="dot-big"></view>
+        <view class="dot"></view>
+      </view>
+      <view class="title">
+        还差<text> {{groupInfo._leastCount}} </text>人，快来一起拼团吧
+      </view>
+      <view class="time">
+        剩余<text> {{timer[groupInfo.ptgroup_no]}} </text>结束
+      </view>
+      <button
+        class="button"
+        open-type='share'
+        hover-class='none'>
+        拉好友加入拼团
+      </button>
+      <block wx:if="{{detail.groupbuy.length <= 1 && !groupInfo.is_owner}}">
+        <view
+          class="button"
+          style="margin-bottom: 30rpx"
+          @tap="bindToggleShow">
+          发起拼团
+          <view wx:if="{{groupInfo.integral}}">
+            (额外赚{{groupInfo.integral}}积分)
+          </view>
+        </view>
+        <view class="hint">
+          自己发起拼团做团长，成团后更有积分奖励！
+        </view>
+      </block>
+    </view>
+
+    <groupMask :show.sync="showGroup"></groupMask>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as OrderActions} from '../../store/order';
+  import GroupMask from '../../components/all/groupMask';
+
+
+  @connect({
+    user(state) { return state.user },
+    detail(state) { return state.order.detail },
+    groupInfo(state) { return state.order.detail._groupInfo },
+    timer(state) { return state.timer.results },
+  }, {
+    ...OrderActions,
+  })
+
+
+  export default class GroupBuyingList extends wepy.page {
+    data = {
+      showGroup: false,
+      back: 1,
+    };
+
+    mixins = [UtilsMixin];
+
+    components = {
+      groupMask: GroupMask,
+    };
+
+    methods = {
+      bindToggleShow: () => {
+        this.showGroup = !this.showGroup;
+      },
+    };
+
+    events = {
+      toggleGroup: () => {
+        this.methods.bindToggleShow();
+      },
+
+      createGroup: () => {
+        this.methods.newGroupingByOrderService({
+          order: this.detail.id,
+          back: this.back,
+        });
+      },
+    };
+
+    onLoad({back, isGroupOwner, uri}) {
+      this.setTitle('已加入拼团');
+
+      if (uri)
+        this.methods.getOrderDetailService({uri, isGroupOwner: isGroupOwner === 'true'});
+
+      if (back)
+        this.back = parseInt(back);
+    }
+
+    /* eslint-disable camelcase */
+    onShareAppMessage() {
+      const {goods_backup, _model} = this.detail;
+      const {wx_app_openid, id} = this.user;
+      const {goods, image, goods_name} = goods_backup[0];
+      return {
+        title: goods_name,
+        path: `/pages/util/index?scene=${wx_app_openid}&pid=${goods}&sid=${id}&type=${_model}&gid=${this.groupInfo.id}`,
+        imageUrl: image,
+      };
+    };
+  }
+</script>

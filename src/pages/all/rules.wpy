@@ -1,0 +1,152 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-rules {
+    padding: 60rpx 30rpx 0;
+
+    .items {
+      .title {
+        padding-bottom: 18rpx;
+        color: @textColor0;
+        font-size: 30rpx;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+
+        .doc {
+          width: 10rpx;
+          height: 10rpx;
+          margin-right: 14rpx;
+          background-color: @primaryColor;
+          border-radius: 50%;
+        }
+      }
+
+      .content {
+        padding-bottom: 80rpx;
+        color: @textColor1;
+        font-size: 28rpx;
+        line-height: 48rpx;
+
+        .item {
+          padding-bottom: 30rpx;
+
+          &:last-of-type {
+            padding-bottom: 0;
+          }
+
+          view {
+            padding: 0 5rpx;
+            color: @primaryColor;
+            font-weight: bold;
+            display: inline;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-rules">
+    <view class="items">
+      <view class="title">
+        <view class="doc"></view>拼团
+      </view>
+      <view class="content">拼团指的是多人一起购买团购活动，达到一定的人数或购买件数条件以获得更优惠的购买价格的活动。</view>
+    </view>
+
+    <view class="items">
+      <view class="title">
+        <view class="doc"></view>拼团流程
+      </view>
+      <view class="content">
+        <view class="item">1、选择“拼团购买”发起拼团；或选择“去参团”加入别人发起的拼团。也可以通过朋友分享的拼团邀请加入拼团。</view>
+        <view class="item">2、购买拼团商品，自动生成拼团单。</view>
+        <view class="item">3、在拼团倒计时完成之前，可点击“拉好友拼团”分享给好友加入拼团。加入人数越多，成团价格越优惠！</view>
+      </view>
+    </view>
+
+    <view class="items">
+      <view class="title">
+        <view class="doc"></view>本商品拼团规则
+      </view>
+      <view class="content">
+        <view class="item">1、拼团{{unit}}数达到<view>{{rules[0].count}}</view>{{unit}}即可成团，享受拼团优惠！</view>
+        <view class="item">2、拼团人数越多，优惠越给力！</view>
+        <block wx:key="index" wx:for="{{steps}}">
+          <view class="item">{{index + 3}}、拼团{{unit}}数达到<view>{{item.count}}</view>{{unit}}，最高单件商品返还<view>{{item.refunds}}</view>元！</view>
+        </block>
+      </view>
+    </view>
+
+    <view class="items">
+      <view class="title">
+        <view class="doc"></view>拼团接龙
+      </view>
+      <view class="content">
+        <view class="item">1、参加别人发起的拼团后，买家可以接龙发起自己的拼团且不需要另外再购买一份商品。</view>
+        <block wx:if="{{groupsInfo.integral > 0}}">
+          <view class="item">2、发起的拼团成团的话将获得<view>{{groupsInfo.integral}}</view>积分奖励。</view>
+          <view class="item">3、如果自己发起的接龙拼团成团优惠更高，将按照更高优惠进行返利！</view>
+        </block>
+        <block wx:else>
+          <view class="item">2、如果自己发起的接龙拼团成团优惠更高，将按照更高优惠进行返利！</view>
+        </block>
+      </view>
+    </view>
+
+    <view class="items">
+      <view class="title">
+        <view class="doc"></view>拼团失败退款
+      </view>
+      <view class="content">
+        <view class="item">若无法达到成团条件，将原路退回货款。</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+
+
+  @connect({
+    rules(state) { return state.product.detail._groupsRules },
+    groupsInfo(state) { return state.product.detail.groupbuy_info },
+  }, {})
+
+
+  export default class Rules extends wepy.page {
+    // 商品详情 - 玩法详情
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      unit: () => {
+        let _ = '';
+        const _map = {
+          people: '人',
+          goods: '件',
+        };
+        if (this.groupsInfo)
+          _ = _map[this.groupsInfo.mode] || '';
+        return _;
+      },
+
+      steps: () => {
+        let _ = [];
+        if (this.rules)
+          _ = this.rules.slice(1);
+        return _;
+      },
+    };
+
+    onLoad() {
+      this.setTitle('拼团玩法');
+    }
+  }
+</script>

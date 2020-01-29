@@ -1,0 +1,323 @@
+<style lang="less">
+  @import (reference) "../../../config/variables";
+
+  view.landingPage-groupingBlock {
+    width: 100vw;
+    border-bottom: 15rpx solid @faintWhite;
+
+    & > .title {
+      padding: 50rpx 0 40rpx;
+      text-align: right;
+
+      .more {
+        color: @textColor1;
+        font-size: 28rpx;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        view {
+          padding-right: 6rpx;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .arrow {
+          width: 15rpx;
+          height: 23rpx;
+          padding-right: 30rpx;
+        }
+      }
+    }
+
+    .hint {
+      padding: 0 10rpx;
+      height: 44rpx;
+      color: @solidWhite;
+      font-size: 28rpx;
+      background-color: @secondaryColor;
+      border-radius: 0 6rpx 6rpx 0;
+      line-height: 28rpx;
+      transform: translate(0, -50%);
+      display: flex;
+      align-items: center;
+      position: absolute;
+    }
+
+    .pill {
+      width: 80rpx;
+      height: 30rpx;
+      margin: 0;
+      padding: 0;
+      color: @primaryColor;
+      font-size: 20rpx;
+      line-height: 20rpx;
+      border: 2rpx solid @primaryColor;
+      border-radius: 4rpx;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ellipsis {
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .first {
+      width: 690rpx;
+      height: 280rpx;
+      margin: 0 auto 20rpx;
+      border: 2rpx solid @dimWhite;
+      border-radius: 8rpx;
+      display: flex;
+
+      .left {
+        width: 280rpx;
+        height: 280rpx;
+        display: inline-flex;
+        flex-shrink: 0;
+        position: relative;
+
+        image {
+          width: 280rpx;
+          height: 280rpx;
+          border-top-left-radius: 8rpx;
+          border-bottom-left-radius: 8rpx;
+        }
+
+        view {
+          top: 0;
+        }
+      }
+
+      .right {
+        width: calc(~"690rpx - 60rpx - 280rpx");
+        padding: 0 30rpx;
+        display: inline-flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: center;
+
+        .title {
+          /*padding-top: 60rpx;*/
+          font-size: 28rpx;
+          color: @textColor1;
+        }
+
+        .desp {
+          padding-top: 20rpx;
+          padding-bottom: 28rpx;
+          font-size: 24rpx;
+          font-weight: lighter;
+          color: @textColor3;
+        }
+
+        .price {
+          padding-top: 14rpx;
+          display: flex;
+          align-items: baseline;
+
+          view:first-of-type {
+            font-size: 28rpx;
+            color: @primaryColor;
+          }
+
+          view:last-of-type {
+            padding-left: 6rpx;
+            font-size: 22rpx;
+            color: @textColor5;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+
+    .rest {
+      width: 690rpx;
+      margin: 0 auto 50rpx;
+      display: flex;
+      justify-content: flex-start;
+
+      .item {
+        margin-right: 22rpx;
+        display: flex;
+        flex-direction: column;
+
+        .top {
+          width: 216rpx;
+          height: 216rpx;
+          display: flex;
+          position: relative;
+
+          image {
+            width: 216rpx;
+            height: 216rpx;
+            border-radius: 8rpx;
+          }
+
+          view {
+            top: 0;
+            transform: translate(0);
+          }
+        }
+
+        .bottom {
+          display: flex;
+          flex-direction: column;
+
+          .title {
+            max-width: 216rpx;
+            padding-top: 18rpx;
+            padding-bottom: 12rpx;
+            font-size: 24rpx;
+            color: @textColor1;
+          }
+
+          .price {
+            padding-top: 12rpx;
+            display: flex;
+            align-items: baseline;
+
+            view:first-of-type {
+              font-size: 24rpx;
+              color: @primaryColor;
+            }
+
+            view:last-of-type {
+              padding-left: 6rpx;
+              font-size: 22rpx;
+              color: @textColor5;
+              text-decoration: line-through;
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view
+    wx:if="{{product && product.length}}"
+    class="landingPage-groupingBlock">
+    <!--标题-->
+    <view class="title">
+      <title
+        title="火热拼团"
+        icon="../../assets/img/explore/hot.png"></title>
+      <view class="more">
+        <view @tap="bindMore">更多</view>
+        <image
+          class="arrow"
+          src="../../../assets/img/explore/arrow3.png"></image>
+      </view>
+    </view>
+
+    <!--内容-->
+    <block wx:if="{{first && first.id}}">
+      <view class="first" @tap="bindGetDetail({{first.url}})">
+        <view class="left">
+          <view class="hint">{{first._groupType}}</view>
+          <image src="{{first._image + '?imageView2/2/w/280'}}"></image>
+        </view>
+        <view class="right">
+          <view class="title ellipsis">{{first.name}}</view>
+          <view class="desp ellipsis">{{first.goods_brief}}</view>
+          <view class="pill">拼团价</view>
+          <view class="price">
+            <view>￥{{first._sellPrice}}</view>
+            <view>￥{{first._marketPrice}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <block wx:if="{{rest && rest.length}}">
+      <view class="rest">
+        <view
+          class="item"
+          wx:key="id"
+          wx:for="{{rest}}"
+          @tap="bindGetDetail({{item.url}})">
+          <view class="top">
+            <view class="hint">{{item._groupType}}</view>
+            <image src="{{item._image + '?imageView2/2/w/216'}}"></image>
+          </view>
+          <view class="bottom">
+            <view class="title ellipsis">{{item.name}}</view>
+            <view class="pill">拼团价</view>
+            <view class="price">
+              <view>￥{{item._sellPrice}}</view>
+              <view>￥{{item._marketPrice}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../../mixins/utils';
+  import Title from './title';
+  import {actions as ProductActions} from '../../../store/product';
+
+
+  @connect({
+    product(state) { return state.home.grouping },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class GroupingBlock extends wepy.component {
+    // 首页拼团模块
+
+    components = {
+      title: Title,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      first: () => {
+        if (this.product && this.product.length)
+          return this.product[0];
+        else
+          return {};
+      },
+      rest: () => {
+        if (this.product && this.product.length)
+          return this.product.slice(1, 4);
+        else
+          return [];
+      },
+    };
+
+    methods = {
+      bindMore: () => {
+        this.methods.getGroupingProductListService({
+          store: this.store,
+          callback: () => {
+            this.go2page().navigate('/pages/all/list?view=grouping');
+          },
+        });
+      },
+
+      bindGetDetail: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+    };
+  }
+</script>

@@ -1,0 +1,73 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.video-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .move {
+      margin: 316rpx auto 108rpx auto;
+      width: 521rpx;
+      height: 461rpx;
+    }
+
+    .know {
+      margin: 0 auto;
+      width: 235rpx;
+      height: 88rpx;
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showMask"></mask>
+
+  <view class="{{showMask ? 'video-mask' : 'video-mask hide'}}">
+    <image class="move" src="../../assets/img/video/tip1.png"></image>
+    <image class="know" src="../../assets/img/video/tip2.png" @tap="bindToggleMask"></image>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import Mask from '../utils/mask';
+  import PersistenceMixin from '../../mixins/persistence';
+
+  @connect({}, {})
+
+
+  export default class VideoMask extends wepy.component {
+    // 写组件用的模板
+
+    props = {
+      showMask: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    mixins = [PersistenceMixin];
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      bindToggleMask: () => {
+        this.setStorageSync('videoTip', true);
+        this.$emit('toggleVideoTip');
+      },
+    };
+  }
+</script>

@@ -1,0 +1,76 @@
+<style lang="less">
+  @height: 83vh;
+
+  swiper.explore-banner {
+    height: @height;
+
+    image {
+      width: 584rpx;
+      height: @height;
+      margin: 0 auto 2px;
+      border-radius: 20rpx;
+      display: block;
+    }
+  }
+</style>
+
+<template>
+  <block wx:if="{{banner && banner.length}}">
+    <swiper
+      class="explore-banner"
+      previous-margin="62rpx"
+      next-margin="62rpx">
+      <block wx:key="url" wx:for="{{banner}}">
+        <swiper-item>
+          <image
+            mode="aspectFill"
+            @tap="bindGetDetail({{item.goods.url}})"
+            src="{{item.image + '?imageView2/2/w/584'}}">
+          </image>
+        </swiper-item>
+      </block>
+    </swiper>
+  </block>
+  <block wx:else>
+    <empty></empty>
+  </block>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import Empty from '../../components/utils/empty';
+
+
+  @connect({
+    banner(state) { return state.product.banner },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class Banner extends wepy.component {
+    // 发现页 - 轮播组件
+
+    mixins = [UtilsMixin];
+
+    components = {
+      empty: Empty,
+    };
+
+    methods = {
+      // Get the certain product detail
+      bindGetDetail: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+    };
+  };
+</script>

@@ -1,0 +1,128 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .cart-delete-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .panel {
+      width: 560rpx;
+      height: 320rpx;
+      margin: 0 auto;
+      background-color: @solidWhite;
+      border-radius: 8rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 368rpx;
+      left: 0;
+      right: 0;
+
+      .title {
+        height: 220rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .text {
+          margin-bottom: 16rpx;
+          color: @textColor0;
+          font-size: 36rpx;
+        }
+      }
+
+      .action {
+        height: 100rpx;
+        width: 100%;
+        border-top: 2rpx solid @faintWhite;
+        display: flex;
+
+        .button {
+          width: 50%;
+          height: 100%;
+          text-align: center;
+          color: @textColor4;
+          font-size: 36rpx;
+          border-right: 2rpx solid @faintWhite;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:last-of-type {
+            border-right: none;
+          }
+
+          &.red {
+            color: @primaryColor;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showDelete"></mask>
+
+  <view class="{{showDelete ? 'cart-delete-mask' : 'cart-delete-mask hide'}}">
+    <view class="panel">
+      <view class="title">
+        <view class="text">
+          确定要删除商品？
+        </view>
+      </view>
+      <view class="action">
+        <view class="button" @tap="bindToggleMask">
+          取消
+        </view>
+        <view class="button red" @tap="bindDeleteItems">
+          确定
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import Mask from '../utils/mask';
+
+
+  export default class DeleteMask extends wepy.component {
+    // 购物车 - 确认删除组件
+
+    props = {
+      showDelete: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleDelete');
+      },
+
+      bindDeleteItems: () => {
+        this.$emit('deleteItems');
+        this.$emit('toggleDelete');
+      },
+    };
+  };
+</script>

@@ -1,0 +1,252 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.me-express-message {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .plane {
+      width: 680rpx;
+      height: 80vh;
+      margin: 80rpx auto 0;
+      background: @solidWhite;
+      border-radius: 16rpx;
+
+      .plane-top {
+        height: 200rpx;
+        background: @faintWhite;
+        border-radius: 16rpx 16rpx 0 0;
+        display: flex;
+        align-items: center;
+
+        .top-img {
+          margin-left: 34rpx;
+
+          image {
+            width: 86rpx;
+            height: 86rpx;
+          }
+        }
+
+        .top-express {
+          margin-left: 20rpx;
+          color: @textColor0;
+          display: inline-flex;
+          flex-direction: column;
+
+          .express-company {
+            font-size: 36rpx;
+          }
+
+          .express-num {
+            margin-top: 20rpx;
+            font-size: 26rpx;
+          }
+        }
+      }
+
+      .content {
+        max-height: 53vh;
+        margin-top: 60rpx;
+        overflow-y: auto;
+
+        .content-item {
+          margin-left: 28rpx;
+          margin-right: 50rpx;
+          padding: 20rpx 0;
+          display: inline-flex;
+          align-items: center;
+          position: relative;
+
+          .item-time {
+            width: 120rpx;
+            color: @textColor3;
+            font-size: 20rpx;
+            text-align: center;
+            flex: none;
+
+            .item-time-max {
+              margin-bottom: 10rpx;
+              font-size: 28rpx;
+            }
+
+            image {
+              width: 30rpx;
+              height: 40rpx;
+              position: relative;
+              left: 82rpx;
+              z-index: 1;
+            }
+          }
+
+          .item-context {
+            width: 100%;
+            min-height: 100rpx;
+            margin-left: 60rpx;
+            color: @textColor3;
+            font-size: 28rpx;
+            display: inline-flex;
+            align-items: center;
+          }
+
+          &::after, &::before {
+            content: ' ';
+            background: @textColor5;
+            display: block;
+            position: absolute;
+            left: 140rpx;
+          }
+
+          &::after {
+            width: 2rpx;
+            height: 100%;
+            background: @faintWhite;
+          }
+
+          &::before {
+            width: 14rpx;
+            height: 14rpx;
+            background: @textColor5;
+            border-radius: 50%;
+            left: 134rpx;
+            z-index: 1;
+          }
+
+          &:first-child::after {
+            height: 50%;
+            top: 50%;
+          }
+
+          &:last-child::after {
+            height: 50%;
+            top: 0;
+          }
+
+          &:nth-child(1) > .item-context,
+          &:nth-child(2) > .item-context {
+            color: @textColor0;
+          }
+        }
+      }
+    }
+
+    .plane-bottom {
+      margin-top: 42rpx;
+      display: flex;
+      justify-content: center;
+
+      image {
+        width: 56rpx;
+        height: 56rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showExpress"></mask>
+
+  <view class="{{showExpress ? 'me-express-message' : 'me-express-message hide'}}">
+    <view class="plane">
+      <view class="plane-top">
+        <view class="top-img">
+          <image src="../../assets/img/me/express.png"></image>
+        </view>
+        <view class="top-express">
+          <view class="express-company">{{expressInfo.express}}</view>
+          <view class="express-num">快递单号：{{expressInfo.nu}}</view>
+        </view>
+      </view>
+      <view class="content">
+        <view>
+          <view class="content-item">
+            <view class="item-time">
+              <image src="../../assets/img/me/addr.png"></image>
+            </view>
+            <view class="item-context">
+              <view>「收件地址」{{expressInfo.address}}</view>
+            </view>
+          </view>
+          <block wx:for="{{express}}" wx:key="index">
+            <view class="content-item">
+              <view class="item-time">
+                <view class="item-time-max">
+                  {{item.date}}
+                </view>
+                <view>{{item.time}}</view>
+              </view>
+              <view class="item-context">
+                <view>{{item.context}}</view>
+              </view>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+    <view class="plane-bottom">
+      <image
+        src="../../assets/img/detail/close.png"
+        @tap="bindToggleExpress"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import Mask from '../utils/mask';
+
+
+  @connect({
+    expressInfo(state) { return state.order.expressInfo },
+  }, {})
+
+
+  export default class ExpressMessage extends wepy.component {
+    // 我的订单 - 物流信息组件
+
+    props = {
+      showExpress: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    computed = {
+      express: () => {
+        let _ = [];
+        if (this.expressInfo && this.expressInfo.data)
+          _ = this.expressInfo.data.map(
+            ({time, context}) => ({
+              context,
+              time: time.slice(0, 10),
+              date: time.slice(-8, -3),
+            })
+          );
+        return _;
+      },
+    };
+
+    methods = {
+      bindToggleExpress: () => {
+        this.$emit('toggleExpress');
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    onLoad() {
+    }
+  }
+</script>

@@ -1,0 +1,152 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.video-select-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .select {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      background: #fff;
+      padding: 30rpx 26rpx 0 26rpx;
+
+      .title {
+        font-size: 32rpx;
+        color: #222;
+        font-weight: bold;
+      }
+
+      .sub_title {
+        font-size: 28rpx;
+        color: #ccc;
+        padding: 16rpx 0 30rpx 0;
+      }
+
+      .list {
+        min-height: 300rpx;
+        max-height: 500rpx;
+        overflow-y: auto;
+
+        .item {
+          height: 154rpx;
+          border-top: 2rpx solid #eee;
+          display: flex;
+          padding: 30rpx 0 0 0;
+
+          .num {
+            width: 38rpx;
+            height: 38rpx;
+            background: @primaryColor;
+            color: #fff;
+            font-size: 30rpx;
+            line-height: 38rpx;
+            border-radius: 4rpx;
+            margin-right: 12rpx;
+            flex-shrink: 0;
+            text-align: center;
+          }
+
+          .right_text {
+            font-size: 30rpx;
+            color: #222;
+            margin-bottom: 20rpx;
+            .goods_name {
+              margin-top: 20rpx;
+              color: #444;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              line-height: 36rpx;
+              height: 70rpx;
+              width: 570rpx;
+            }
+          }
+
+          .delete {
+            width: 48rpx;
+            height: 48rpx;
+            margin-left: 30rpx;
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showSelect"></mask>
+
+  <view class="{{showSelect ? 'video-select-mask' : 'video-select-mask hide'}}"
+        @tap.stop="bindClose">
+    <view class="select">
+      <view class="title">已选商品（{{connectGoods.length}}）</view>
+      <view class="sub_title">最多可以绑定5个商品</view>
+      <view class="list">
+        <block wx:for="{{connectGoods}}" wx:key="index">
+          <view class="item"  @tap.stop="stopTap">
+            <view class="num">{{index+1}}</view>
+            <view class="right_text">
+              <view class="shop_name">{{item.store_name}}</view>
+              <view class="goods_name">{{item.name}}</view>
+            </view>
+            <image class="delete" src="../../assets/img/explore/close.png" @tap.stop="bindDelete({{item.id}})"></image>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import Mask from '../utils/mask';
+
+  @connect({
+    connectGoods(state) { return state.video.detail.connectGoods || [] },
+  }, {})
+
+
+  export default class SelectMask extends wepy.component {
+    // 写组件用的模板
+    props = {
+      showSelect: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    onLoad() {
+    };
+
+    methods = {
+      bindClose: () => {
+        this.$emit('toggleSelectMask');
+      },
+
+      stopTap: () => {},
+
+      bindDelete: (id) => {
+        this.$emit('toggleDeleteGoods', id);
+      },
+    };
+  }
+</script>

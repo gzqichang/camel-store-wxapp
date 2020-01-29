@@ -1,0 +1,147 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.video-select-shop {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 100rpx;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+
+    &.hide {
+      top: -100vh;
+    }
+
+    .list {
+      position: absolute;
+      background: #ffffff;
+      .item {
+        width: 100vw;
+        height: 140rpx;
+        border-bottom: 2rpx solid @dimWhite;
+        display: flex;
+        align-items: center;
+
+        .check {
+          width: 74rpx;
+          display: flex;
+          flex-grow: 0;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: flex-start;
+
+          image {
+            width: 40rpx;
+            height: 40rpx;
+            padding-left: 22rpx;
+          }
+        }
+
+        .left {
+          max-width: calc(~"100vw - 136rpx - 74rpx");
+          /*padding-left: 40rpx;*/
+          font-size: 28rpx;
+          line-height: 28rpx;
+          flex-grow: 1;
+
+          .title {
+            width: 100%;
+            padding-bottom: 16rpx;
+            color: @textColor1;
+            display: inline-block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+
+          .address {
+            width: 100%;
+            color: @textColor3;
+            display: inline-block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
+
+        .right {
+          width: 136rpx;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+
+          image {
+            width: 26rpx;
+            height: 32rpx;
+            padding-bottom: 16rpx;
+          }
+
+          .distance {
+            color: @textColor3;
+            font-size: 22rpx;
+          }
+        }
+      }
+    }
+
+  }
+</style>
+
+<template>
+  <view class="{{showSelectShop ? 'video-select-shop' : 'video-select-shop hide'}}"
+        @tap.stop="bindClose">
+    <view class="list">
+      <block wx:key="id" wx:for="{{storeList}}">
+        <view class="item" @tap="bindSwitchStore({{item}})">
+          <view class="check">
+            <image
+              wx:if="{{current && current.id && current.id === item.id}}"
+              src="../../assets/img/explore/check.png"
+            ></image>
+          </view>
+          <view class="left">
+            <view class="title">{{item.name}}</view>
+            <view class="address">{{item.address}}</view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  @connect({
+    storeList(state) { return state.store.list },
+  }, {})
+
+
+  export default class SelectShop extends wepy.component {
+    // 写组件用的模板
+    props = {
+      showSelectShop: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    onLoad() {
+    };
+
+    methods = {
+      bindClose: () => {
+        this.$emit('toggleSelectShop');
+      },
+
+      bindSwitchStore: (store) => {
+        this.$emit('switchSelectShop', store);
+      },
+    };
+  }
+</script>

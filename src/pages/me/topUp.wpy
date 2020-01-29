@@ -1,0 +1,249 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-top-up {
+    .top-bar-bg {
+      width: 100vw;
+      height: 108rpx;
+
+      image {
+        width: 100vw;
+        height: 108rpx;
+      }
+    }
+
+    .top-bar {
+      width: 100vw;
+      height: 108rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      .top-bar-img {
+        margin-right: 20rpx;
+
+        image {
+          width: 38rpx;
+          height: 38rpx;
+        }
+      }
+
+      .top-bar-text {
+        color: #ffb3a6;
+        font-size: 28rpx;
+        line-height: 108rpx;
+      }
+    }
+
+    .mid-list {
+      margin: 46rpx 80rpx;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .list-item {
+        width: 273rpx;
+        height: 254rpx;
+        margin-bottom: 26rpx;
+        background: @solidWhite;
+        border: 2rpx solid @faintWhite;
+        border-radius: 10rpx;
+        box-shadow: 0 0 20rpx @dimWhite;
+        display: inherit;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+
+        .list-item-recommend {
+          position: absolute;
+          left: 0;
+
+          image {
+            width: 80rpx;
+            height: 40rpx;
+          }
+        }
+
+        .list-item-real {
+          margin-top: 40rpx;
+          margin-bottom: 14rpx;
+          color: @primaryColor;
+          font-size: 30rpx;
+
+          text {
+            font-size: 42rpx;
+          }
+        }
+
+        .list-item-amount {
+          color: @textColor1;
+          font-size: 26rpx;
+        }
+
+        .list-item-save {
+          width: 176rpx;
+          height: 40rpx;
+          margin-top: 36rpx;
+          color: @textColor4;
+          font-size: 22rpx;
+          background: @faintWhite;
+          border-radius: 20rpx;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      .list-item-active {
+        background: #FFF5F4;
+        border: 2rpx solid #ffbcb2;
+      }
+    }
+
+    .bottom {
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .bottom-btn {
+        width: 600rpx;
+        height: 80rpx;
+        background: @primaryColor;
+        border-radius: 8rpx;
+        color: @solidWhite;
+        font-size: 36rpx;
+        text-align: center;
+        line-height: 80rpx;
+      }
+
+      .desp {
+        width: 600rpx;
+        padding: 22rpx 0 60rpx;
+        color: @textColor2;
+        text-align: justify;
+        font-size: 24rpx;
+        line-height: 40rpx;
+
+        view {
+          color: @primaryColor;
+          display: inline;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="page-top-up">
+    <view class="top-bar-bg">
+      <image src="../../assets/img/me/topupBackground.png"></image>
+    </view>
+    <view class="top-bar">
+      <view class="top-bar-img">
+        <image src="../../assets/img/me/wallet.png"></image>
+      </view>
+      <view class="top-bar-text">
+        充值多多，优惠多多~ 会员升级，尽享优惠~
+      </view>
+    </view>
+
+    <view class="mid-list">
+      <block wx:for="{{types}}" wx:key="url">
+        <view
+          class="{{item.id === selected ? 'list-item list-item-active' : 'list-item'}}"
+          @tap="bindSelectItem({{item.id}})">
+            <view class="list-item-recommend" hidden="{{!item.proposal}}">
+              <image src="../../assets/img/me/recommend.png"></image>
+            </view>
+          <view class="list-item-real">￥<text>{{item.amount}}</text></view>
+          <view class="list-item-amount">实付￥{{item.real_pay}}</view>
+          <view class="list-item-save" style="{{item.id === selected ? 'background:linear-gradient(to right,#ff9584,#f44939);color: #fff;' : '' }}">
+            立省{{item.saved}}元
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="bottom">
+      <view class="bottom-btn" @tap="bindNewTopUp">
+        充值
+      </view>
+      <view class="desp">
+        <view>会员特权：</view>
+        <block wx:key="id" wx:for="{{levels || []}}">
+          会员钱包累计充值满{{item.threshold}}元，即可成为{{item.title}}，全场尊享{{item.discount / 10}}折优惠！
+        </block>
+        （拼团商品除外）
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as UserActions} from '../../store/user';
+
+
+  @connect({
+    topUpTypes(state) { return state.user.topUpTypes },
+    levels(state) { return state.others.membershipLevels },
+  }, {
+    ...UserActions,
+  })
+
+
+  export default class TopUp extends wepy.page {
+    // 充值页
+
+    mixins = [UtilsMixin];
+
+    data = {
+      selected: 0,
+    };
+
+    computed = {
+      types: () => {
+        let _ = [];
+        if (this.topUpTypes && this.topUpTypes.length)
+          _ = this.topUpTypes.map(
+              (item) => ({
+                ...item,
+                saved: parseFloat(item.amount) - parseFloat(item.real_pay),
+              })
+            );
+        return _;
+      },
+    };
+
+    onShow() {
+      this.methods.getTopUpTypesService();
+    };
+
+    onLoad() {
+      this.setTitle('优惠充值');
+    };
+
+    methods = {
+      bindSelectItem: (id) => {
+        this.selected = id;
+      },
+
+      bindNewTopUp: () => {
+        const obj = this.topUpTypes.find(
+          (item) => (item.id === this.selected)
+        );
+        if (obj && obj.amount)
+          this.methods.newTopUpService(obj.amount);
+        else
+          this.showToast('请选择充值金额');
+      },
+    };
+  }
+</script>

@@ -1,0 +1,320 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  @panelHeight: 996rpx;
+
+  .detail-date-selecter {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .close {
+      width: 56rpx;
+      height: 56rpx;
+      margin-bottom: 35rpx;
+      margin-right: 26rpx;
+      background: transparent;
+      display: block;
+      position: absolute;
+      bottom: @panelHeight;
+      right: 0;
+
+      image {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    .panel {
+      width: 100%;
+      height: @panelHeight;
+      background-color: @solidWhite;
+      position: absolute;
+      bottom: 0;
+
+      .header {
+        height: 170rpx;
+        border-bottom: 10rpx solid @faintWhite;
+        display: flex;
+        flex-direction: column;
+
+        .title {
+          padding-top: 28rpx;
+          color: @textColor1;
+          font-size: 32rpx;
+          display: flex;
+          justify-content: center;
+        }
+
+        .action {
+          display: flex;
+          flex-grow: 1;
+          justify-content: space-evenly;
+
+          .title {
+            padding-top: 0;
+          }
+
+          view {
+            min-width: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          image {
+            width: 16rpx;
+            height: 28rpx;
+            display: block;
+          }
+        }
+      }
+
+      .day-type {
+        width: 100vw;
+        height: 90rpx;
+        color: @textColor2;
+        font-size: 28rpx;
+        border-bottom: 2rpx solid @faintWhite;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        view:first-of-type,
+        view:last-of-type {
+          color: @primaryColor;
+        }
+      }
+
+      .day {
+        display: flex;
+        flex-wrap: wrap;
+
+        .item {
+          width: 14.28571429vw; // (100 / 7)vw;
+          padding-top: 18rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          view {
+            width: 80rpx;
+            height: 80rpx;
+            color: @textColor1;
+            font-size: 28rpx;
+            border: 2rpx solid @solidWhite;
+            border-radius: 4rpx;
+            background-color: @solidWhite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.red {
+              color: @primaryColor;
+              border-color: @primaryColor;
+            }
+
+            &.red.selected {
+              color: @solidWhite;
+              background-color: @primaryColor;
+            }
+          }
+        }
+      }
+
+      .save {
+        width: 100%;
+        height: 95rpx;
+        color: @solidWhite;
+        font-size: 34rpx;
+        border-radius: 0;
+        background-color: @primaryColor;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        bottom: 0;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="{{show ? 'detail-date-selecter' : 'detail-date-selecter hide'}}">
+    <button
+      class="close"
+      @tap="bindToggleMask"
+      hover-class="none">
+      <image
+        mode="scaleToFill"
+        src="../../assets/img/detail/close.png">
+      </image>
+    </button>
+
+    <view class="panel">
+      <view class="header">
+        <view class="title">日期选择</view>
+        <view class="action">
+          <view @tap="bindPrev">
+            <image src="../../assets/img/detail/arrowLeft.png"></image>
+          </view>
+          <view>
+            <view class="title">{{date.year}}年{{date.month}}月</view>
+          </view>
+          <view @tap="bindNext">
+            <image src="../../assets/img/detail/arrowRight.png"></image>
+          </view>
+        </view>
+      </view>
+      <view class="day-type">
+        <view wx:key="index" wx:for="日一二三四五六">{{item}}</view>
+      </view>
+      <view class="day">
+        <view
+          class="item"
+          wx:key="index"
+          wx:for="{{date.dayList}}"
+          hidden="{{!item.day}}">
+          <view
+            class="{{item.marked ? (item.date === currentDate ? 'red selected' : 'red') : ''}}"
+            @tap="bindDateChange({{item}})">
+            {{item.day || ''}}
+          </view>
+        </view>
+      </view>
+      <button class="save" @tap="bindOnSave">
+        确定
+      </button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import {Calendar} from '../../utils';
+
+
+  export default class DateSelecter extends wepy.component {
+    // 日期组件
+
+    data = {
+      selectedItem: {},
+      currentDate: '',
+    };
+
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+      },
+      selectedDate: {
+        type: String,
+        default: '',
+      },
+      selectedStart: {
+        type: String,
+        default: '',
+      },
+      selectedEnd: {
+        type: String,
+        default: '',
+      },
+      availableDays: {
+        type: Array,
+        default: [],
+      },
+      availableType: {
+        type: String,
+        default: '',
+      },
+    };
+
+    calendar = null;
+
+    /* eslint-disable camelcase */
+    computed = {
+      date: () => {
+        if (!this.calendar)
+          this.calendar = new Calendar();
+
+        // Set SUN as first day of a week
+        this.calendar.firstDayOfAWeek = 0;
+
+        if (
+          this.selectedStart
+          && this.selectedEnd
+          && this.availableType
+          && this.availableDays
+        ) {
+          if (this.availableType === 'range') {
+            this.calendar.disableDocsBasedRange();
+            this.calendar.setAvailableDays(this.availableDays);
+            this.calendar.setAvailableRange(
+              new Date(this.selectedStart) || undefined,
+              new Date(this.selectedEnd) || undefined,
+            );
+          }
+          if (this.availableType === 'docs') {
+            this.calendar.enableDocsBasedRange();
+            this.calendar.setAvailableDays([]);
+            this.calendar.setAvailableRange(this.availableDays);
+          }
+        }
+
+        return this.calendar.serialize();
+      },
+    };
+
+    methods = {
+      bindToggleMask: () => {
+        this.$emit('toggleDateMask');
+      },
+
+      bindDateChange: ({date, marked}) => {
+        if (marked)
+          this.currentDate = date;
+      },
+
+      bindOnSave: () => {
+        if (this.calendar)
+          this.$emit('handleDateChange', this.currentDate);
+        this.methods.bindToggleMask();
+      },
+
+      bindNext: () => {
+        if (this.calendar)
+          this.calendar.getNextMonth();
+      },
+
+      bindPrev: () => {
+        if (this.calendar)
+          this.calendar.getPrevMonth();
+      },
+    };
+
+    events = {
+      onSelectItem: (item) => {
+        this.selectedItem = item;
+      },
+
+      onDateChange: (date) => {
+        if (this.calendar)
+          this.calendar.currentDate = date;
+        this.currentDate = date;
+      },
+    };
+  }
+</script>

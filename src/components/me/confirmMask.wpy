@@ -1,0 +1,135 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .me-confirm-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .panel {
+      width: 560rpx;
+      height: 320rpx;
+      margin: 0 auto;
+      background-color: @solidWhite;
+      border-radius: 8rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 368rpx;
+      left: 0;
+      right: 0;
+
+      .title {
+        height: 220rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .text {
+          margin-bottom: 16rpx;
+          color: @textColor0;
+          font-size: 36rpx;
+        }
+
+        .sub {
+          color: @textColor3;
+          font-size: 28rpx;
+        }
+      }
+
+      .action {
+        height: 100rpx;
+        width: 100%;
+        border-top: 2rpx solid @faintWhite;
+        display: flex;
+
+        .button {
+          width: 50%;
+          height: 100%;
+          text-align: center;
+          color: @textColor4;
+          font-size: 36rpx;
+          border-right: 2rpx solid @faintWhite;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:last-of-type {
+            border-right: none;
+          }
+
+          &.red {
+            color: @primaryColor;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showConfirm"></mask>
+
+  <view class="{{showConfirm ? 'me-confirm-mask' : 'me-confirm-mask hide'}}">
+    <view class="panel">
+      <view class="title">
+        <view class="text">
+          您确定要确认收货吗？
+        </view>
+        <view class="sub">
+          （注意：点击“确认收货”后不可退款）
+        </view>
+      </view>
+      <view class="action">
+        <view class="button" @tap="bindToggleMask">
+          取消
+        </view>
+        <view class="button red" @tap="bindConfirmOrder">
+          确定
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import Mask from '../utils/mask';
+
+
+  export default class ConfirmMask extends wepy.component {
+    // 订单页 - 确认收货组件
+
+    props = {
+      showConfirm: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleConfirm');
+      },
+
+      bindConfirmOrder: () => {
+        this.$emit('confirmOrder');
+      },
+    };
+  };
+</script>

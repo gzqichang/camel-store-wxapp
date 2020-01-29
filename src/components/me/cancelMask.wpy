@@ -1,0 +1,120 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .me-cancel-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .panel {
+      width: 560rpx;
+      height: 290rpx;
+      margin: 0 auto;
+      background-color: @solidWhite;
+      border-radius: 8rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 368rpx;
+      left: 0;
+      right: 0;
+
+      .title {
+        height: 190rpx;
+        color: @textColor0;
+        font-size: 36rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .action {
+        height: 100rpx;
+        width: 100%;
+        border-top: 2rpx solid @faintWhite;
+        display: flex;
+
+        .button {
+          width: 50%;
+          height: 100%;
+          text-align: center;
+          color: @textColor3;
+          font-size: 36rpx;
+          border-right: 2rpx solid @faintWhite;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:last-of-type {
+            border-right: none;
+          }
+
+          &.red {
+            color: @primaryColor;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showCancel"></mask>
+
+  <view class="{{showCancel ? 'me-cancel-mask' : 'me-cancel-mask hide'}}">
+    <view class="panel">
+      <view class="title">
+        您确定要取消订单吗？
+      </view>
+      <view class="action">
+        <view class="button" @tap="bindToggleMask">
+          取消
+        </view>
+        <view class="button red" @tap="bindCancelOrder">
+          确定
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import Mask from '../utils/mask';
+
+
+  export default class CancelMask extends wepy.component {
+    // 订单页 - 取消订单组件
+
+    props = {
+      showCancel: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleCancel');
+      },
+
+      bindCancelOrder: () => {
+        this.$emit('cancelOrder');
+      },
+    };
+  };
+</script>

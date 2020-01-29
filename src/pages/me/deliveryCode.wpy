@@ -1,0 +1,132 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  page {
+    background: @primaryColor;
+  }
+
+  view.page-delivery-code {
+    text-align: center;
+
+    .title {
+      height: 16vh;
+      color: @solidWhite;
+      font-size: 42rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .background {
+      width: 630rpx;
+      height: 946rpx;
+      position: absolute;
+      left: calc(~"(100vw - 630rpx) / 2");
+      z-index: -1;
+    }
+
+    .middle {
+      .name {
+        padding: 40rpx 0 18rpx;
+        color: @textColor1;
+        font-size: 30rpx;
+        line-height: 40rpx;
+      }
+
+      .code {
+        padding-bottom: 32rpx;
+        color: @primaryColor;
+        font-size: 72rpx;
+        font-weight: bold;
+        line-height: 94rpx;
+
+        &.black {
+          color: @textColor0;
+          font-size: 36rpx;
+          font-weight: normal;
+        }
+      }
+    }
+
+    .hint {
+      width: 100%;
+      color: @solidWhite;
+      font-size: 26rpx;
+      text-align: center;
+      opacity: .8;
+      z-index: 1;
+      position: fixed;
+      bottom: 150rpx;
+    }
+
+    .bottom {
+      width: 100vw;
+      height: 404rpx;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-delivery-code">
+    <view class="title">自提信息</view>
+    <image class="background" src="../../assets/img/deliveryCode/card.png"></image>
+    <view class="middle">
+      <view>
+        <view class="name">您的自提号</view>
+        <view class="code">{{info.delivery_info.buyer_no}}</view>
+      </view>
+      <view>
+        <view class="name">您的自提码</view>
+        <view class="code">{{info.delivery_info.buyer_code}}</view>
+      </view>
+      <view>
+        <view class="name">订单号</view>
+        <view class="code black">{{info.order_sn}}</view>
+      </view>
+    </view>
+    <view class="hint">向店家展示您的自提码，即可提取商品</view>
+    <image class="bottom" src="../../assets/img/deliveryCode/background.png"></image>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+
+
+  @connect({
+    detail(state) { return state.order.detail },
+  }, {})
+
+
+  export default class DeliveryCode extends wepy.page {
+    // 自提码页面
+    data = {
+      id: '',
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      info: () => {
+        let _ = {};
+        if (this.id && this.detail) {
+          if (this.detail._items && this.detail._items.length)
+            _ = this.detail._items.find(({id}) => (id === this.id)) || {};
+        }
+        return _;
+      },
+    };
+
+    onLoad({id}) {
+      this.setTitle('自提详情');
+
+      if (id) this.id = +id;
+    };
+  }
+</script>

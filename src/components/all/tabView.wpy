@@ -1,0 +1,339 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .all-tab-view {
+    .clear-fix {
+      width: 100%;
+      height: 100rpx;
+    }
+
+    .border {
+      width: 100vw;
+      border-bottom: 16rpx solid @faintWhite;
+    }
+
+    .pill {
+      width: 80rpx;
+      height: 30rpx;
+      margin: 0 0 10rpx;
+      padding: 0;
+      color: @primaryColor;
+      font-size: 20rpx;
+      line-height: 20rpx;
+      border: 2rpx solid @primaryColor;
+      border-radius: 4rpx;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tab {
+      height: 100rpx;
+      background: @solidWhite;
+      position: fixed;
+      top: 0;
+      overflow: hidden;
+      z-index: @indexDrawer;
+
+      view {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .label {
+          height: auto;
+          color: @textColor1;
+          font-size: 30rpx;
+          text-align: center;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          position: relative;
+          display: block;
+        }
+
+        .active {
+          color: @primaryColor;
+
+          &::before,
+          &::after {
+            content: ' ';
+            width: 60rpx;
+            height: 6rpx;
+            background: @primaryColor;
+            position: absolute;
+            bottom: -16rpx;
+          }
+
+          &::before {
+            right: 50%;
+            border-top-left-radius: 30rpx;
+            border-bottom-left-radius: 30rpx;
+          }
+
+          &::after {
+            left: 50%;
+            border-top-right-radius: 30rpx;
+            border-bottom-right-radius: 30rpx;
+          }
+        }
+      }
+    }
+
+    .card {
+      padding-top: 20rpx;
+
+      & > view {
+        width: 338rpx;
+        margin: 0 14rpx;
+        display: inline-flex;
+
+        &:nth-of-type(odd) {
+          margin-left: calc(~"50vw - 338rpx - 14rpx");
+        }
+
+        &:nth-of-type(even) {
+          margin-right: calc(~"50vw - 338rpx - 14rpx");
+        }
+
+        .hint {
+          padding: 0 10rpx;
+          height: 44rpx;
+          color: @solidWhite;
+          font-size: 28rpx;
+          background-color: @secondaryColor;
+          border-radius: 0 6rpx 6rpx 0;
+          line-height: 28rpx;
+          display: flex;
+          align-items: center;
+          position: absolute;
+        }
+
+        .item {
+          padding-bottom: 38rpx;
+          display: flex;
+          flex-direction: column;
+
+          image {
+            width: 338rpx;
+            height: 338rpx;
+            border-radius: 10rpx;
+            display: block;
+          }
+
+          .title {
+            margin: 20rpx 0 12rpx;
+            color: @textColor1;
+            font-size: 30rpx;
+
+            .preview {
+              color: @secondaryColor;
+              display: inline-flex;
+            }
+          }
+
+          .price {
+            color: @primaryColor;
+            font-size: 26rpx;
+            display: flex;
+            align-items: baseline;
+
+            view:first-of-type {
+              font-size: 24rpx;
+              color: @primaryColor;
+            }
+
+            view:last-of-type {
+              padding-left: 14rpx;
+              font-size: 22rpx;
+              color: @textColor5;
+              text-decoration: line-through;
+            }
+          }
+        }
+      }
+    }
+
+    .bottom {
+      width: 100vw;
+      padding: 18rpx 0 38rpx;
+      text-align: center;
+      color: @textColor4;
+      font-size: 24rpx;
+      display: block;
+    }
+  }
+</style>
+
+<template>
+  <view class="all-tab-view">
+    <block wx:if="{{tab !== 'hide'}}">
+      <scroll-view
+        class="tab"
+        scroll-x="true"
+        scroll-into-view="{{scrollIntoView}}">
+        <view style="width: {{category.length < 3 ? 100 : 100 / 3.5 * (category.length + 1)}}vw">
+          <!--全部-->
+          <view @tap="bindSwitchTab(0)">
+            <view
+              id="t0"
+              class="{{activeTab === 0 ? 'active label' : 'label'}}"
+              style="width: {{category.length < 3 ? 100 / (category.length + 1) : 100 / 3.5}}vw">
+              全部
+            </view>
+          </view>
+
+          <!--分类-->
+          <block wx:key="url" wx:for="{{category}}">
+            <view @tap="bindSwitchTab({{item.id}})">
+              <view
+                id="{{'t' + (index + 1)}}"
+                class="{{activeTab == item.id ? 'active label' : 'label'}}"
+                style="width: {{category.length < 3 ? 100 / (category.length + 1) : 100 / 3.5}}vw">
+                {{item.name}}
+              </view>
+            </view>
+          </block>
+        </view>
+      </scroll-view>
+      <view class="clear-fix"></view>
+    </block>
+
+    <view class="border"></view>
+
+    <!--内容卡片-->
+    <block wx:if="{{productList && productList.length}}">
+      <view class="card" style="{{view === 'search' ? 'padding-top: 0' : ''}}">
+        <view
+          wx:key="url"
+          wx:for="{{productList}}"
+          @tap="bindDetail({{item.url}})">
+          <view wx:if="{{item._groupType}}" class="hint">
+            {{item._groupType}}
+          </view>
+          <view class="item">
+            <image src="{{item._image + '?imageView2/2/w/338'}}"></image>
+            <view class="title">
+              <view class="preview" wx:if="{{isTest && item.status === 'preview'}}">
+                (预览)
+              </view>
+              {{item.name}}
+            </view>
+            <block wx:if="{{pillTag === 'show'}}">
+              <view class="pill">拼团价</view>
+            </block>
+            <block wx:if="{{item._model === 'credits'}}">
+              <view class="price">
+                <view>{{item._credit}}积分 + ¥{{item._sellPrice}}</view>
+                <view></view>
+              </view>
+            </block>
+            <block wx:else>
+              <view class="price">
+                <view>￥{{item._sellPrice}}</view>
+                <view>￥{{item._marketPrice}}</view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+      <view class="bottom" style="margin: 0">已经到底咯~</view>
+    </block>
+    <block wx:else>
+      <empty></empty>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as ProductActions} from '../../store/product';
+  import Empty from '../../components/utils/empty';
+
+
+  @connect({
+    category(state) { return state.product.category },
+    product(state) { return state.product.list },
+    store(state) { return state.store.id },
+    result(state) { return state.search.list },
+    isTest(state) { return state.user.testers },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class TabView extends wepy.component {
+    // 全部页 - TAB视图组件
+
+    props = {
+      activeTab: {
+        type: Number,
+        default: 0,
+        twoWay: true,
+      },
+      scrollIntoView: {
+        type: String,
+        default: 't0',
+        twoWay: true,
+      },
+      pillTag: {
+        type: String,
+        default: '',
+        twoWay: true,
+      },
+      tab: String,
+    };
+
+    components = {
+      empty: Empty,
+    };
+
+    mixins = [UtilsMixin];
+
+    computed = {
+      // Return All products or just the current category ones
+      productList () {
+        if (this.view === 'search')
+          return this.result;
+
+        let list = this.product;
+
+        if (this.activeTab)
+          list = this.product.filter(
+            (item) => (
+              item.category
+              && item.category.id === this.activeTab
+            )
+          );
+
+        return list;
+      },
+    };
+
+    methods = {
+      // Switch the Top tabs
+      bindSwitchTab: (item) => {
+        this.activeTab = parseInt(item);
+        this.methods.getProductListService({
+          storeID: this.store,
+          category: parseInt(item) || '',
+        });
+        this.$emit('changeCategory', parseInt(item));
+      },
+
+      // Get detail info & redirect to page
+      bindDetail: (url) => {
+        this.methods.getDetailService({
+          url,
+          callback: () => {
+            this.go2page().navigate('/pages/all/detail');
+          },
+        });
+      },
+    };
+  };
+</script>

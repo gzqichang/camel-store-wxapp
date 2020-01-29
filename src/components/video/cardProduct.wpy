@@ -1,0 +1,192 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .red {
+    color: @primaryColor;
+  }
+
+  view.video-card-product {
+    .tab {
+      border-bottom: 2rpx solid #eee;
+      display: flex;
+      align-items: center;
+      padding: 30rpx 0 40rpx 0;
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .image {
+        position: relative;
+        width: 150rpx;
+        height: 150rpx;
+        border-radius: 4rpx;
+        overflow: hidden;
+        flex-shrink: 0;
+
+        .check {
+          position: absolute;
+          top: 0;
+          left: 0;
+          border-radius: 4rpx 0 0 0;
+          width: 36rpx;
+          height: 36rpx;
+          background: rgba(255, 255, 255, 0.8);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+
+          &.active {
+            background: @primaryColor;
+          }
+          image {
+            width: 30rpx;
+            height: 22rpx;
+            margin-left: 2rpx;
+            margin-top: -4rpx;
+          }
+        }
+
+        .good {
+          width: 150rpx;
+          height: 150rpx;
+        }
+      }
+
+      .text {
+        font-size: 30rpx;
+        margin-left: 14rpx;
+        margin-right: 20rpx;
+
+        .name {
+          color: @textColor1;
+          line-height: 36rpx;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          height: 70rpx;
+        }
+
+        .price {
+          color: @primaryColor;
+          margin: 6rpx 0;
+        }
+
+        .credit {
+          display: inline-flex;
+          align-items: center;
+          font-size: 24rpx;
+          color: @textColor5;
+          image {
+            width: 28rpx;
+            height: 22rpx;
+            margin-right: 2rpx;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="video-card-product">
+    <block wx:for="{{list}}" wx:key="url">
+      <view class="tab" @tap.stop="bindSelect({{item}})">
+        <view class="image">
+          <image class="good" src="{{item._image + '?imageView2/2/w/150/h/150'}}"></image>
+          <block wx:if="{{isSelect}}">
+          <view class="check {{item.check ? 'active' : ''}}">
+            <image wx:if="{{item.check}}" src="../../assets/img/video/check.png"></image>
+          </view>
+          </block>
+        </view>
+        <view class="text">
+          <view class="name">{{item.name}}</view>
+          <view class="price">￥{{item._product.price_range}}</view>
+          <view class="credit">
+            <image src="../../assets/img/video/share.png"></image>
+            <view>分享可得<text class="red">{{item._minCredit}}积分</text>起，分成<text class="red">{{item._minMoney}}元</text>起</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as VideoActions} from '../../store/video';
+
+  @connect({
+    connectGoods(state) { return state.video.detail.connectGoods },
+    storeCurrent(state) { return state.store.current },
+    storeVideo(state) { return state.video.store },
+    store(state) { return state.store.current },
+  }, {
+    ...VideoActions,
+  })
+
+
+  export default class CardProduct extends wepy.component {
+    // 写组件用的模板
+    props = {
+      isSelect: {
+        type: Boolean,
+        default: true,
+      },
+      list: {
+        type: Array,
+        default: [],
+      },
+    };
+
+    mixins = [UtilsMixin];
+
+    data = {};
+
+    onLoad() {
+    };
+
+    methods = {
+      bindSelect: (item) => {
+        if (!this.isSelect)
+          return;
+
+        const {id} = item;
+        const connectGoods = this.connectGoods || [];
+
+        const ID = connectGoods.map(x => x.id);
+        const list = [...connectGoods];
+        const index = ID.indexOf(id);
+        const store = {...this.store, ...this.storeVideo};
+        if (index > -1)
+          list.splice(index, 1);
+        else
+          list.push({...item, store_name: store.name});
+
+        if (list.length > 5) {
+          this.showToast('最多可以绑定5个商品');
+          return;
+        }
+
+        this.methods.saveShortVideoData({
+          data: {connectGoods: [...list]},
+        });
+      },
+    };
+
+    getNextPageData = () => {
+      let next = this.nextURL.videoProductList;
+      if (next !== null)
+        this.methods.getVideoProductListService({
+          storeID: this.store,
+          next,
+        });
+    };
+  }
+</script>

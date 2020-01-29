@@ -1,0 +1,20 @@
+<style lang="less">
+</style>
+
+<template>
+  <web-view src="{{url}}"></web-view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class WebView extends wepy.page {
+    data = {
+      url: '',
+    };
+
+    onLoad({url = ''}) {
+      this.url = url;
+    }
+  }
+</script>

@@ -1,0 +1,208 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  .me-withdraw-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .close {
+      width: 56rpx;
+      height: 56rpx;
+      background: transparent;
+      display: block;
+      position: absolute;
+      top: calc(~"20vh + 494rpx + 70rpx");
+      left: 0;
+      right: 0;
+
+      image {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    .panel {
+      width: 600rpx;
+      height: 494rpx;
+      margin: 0 auto;
+      background-color: @solidWhite;
+      border-radius: 10rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 20vh;
+      left: 0;
+      right: 0;
+
+      .input {
+        margin: 55rpx auto 25rpx;
+
+        input {
+          width: 514rpx;
+          height: 80rpx;
+          margin-bottom: 16rpx;
+          color: @textColor1;
+          background-color: @faintWhite;
+          border-radius: 8rpx;
+          font-size: 30rpx;
+          padding-left: 26rpx;
+
+          &:last-of-type {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .sub {
+        padding: 0 50rpx;
+        color: @textColor3;
+        font-size: 24rpx;
+        line-height: 34rpx;
+      }
+
+      button {
+        width: 424rpx;
+        height: 80rpx;
+        margin: 45rpx auto 0;
+        color: @solidWhite;
+        font-size: 32rpx;
+        background-color: @primaryColor;
+        border-radius: 8rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="showWithdraw"></mask>
+
+  <view class="{{showWithdraw ? 'me-withdraw-mask' : 'me-withdraw-mask hide'}}">
+    <button
+      class="close"
+      @tap="bindToggleMask"
+      hover-class="none">
+      <image
+        mode="scaleToFill"
+        src="../../assets/img/detail/close.png"></image>
+    </button>
+
+    <view class="panel">
+      <view class="input">
+        <input
+          type="text"
+          placeholder="请填写您的微信号"
+          confirm-type="done"
+          @input="bindOnInput('wechatID')"
+          @confirm="bindOnInput('wechatID')"
+          value="{{wechatID}}"/>
+        <input
+          type="digit"
+          placeholder="请填写您的提现金额"
+          confirm-type="done"
+          @input="bindOnInput('amount')"
+          @confirm="bindOnInput('amount')"
+          value="{{amount}}"/>
+      </view>
+      <view class="sub">
+        注意：请填写您的微信号（非微信昵称），客服人员将在3天内加您好友并转账。
+      </view>
+      <button
+        class="submit"
+        @tap="bindOnSubmit">
+        提交
+      </button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import {actions as UserActions} from '../../store/user';
+  import Mask from '../utils/mask';
+
+
+  @connect({
+    userAsset(state) { return state.user.asset },
+  }, {
+    ...UserActions,
+  })
+
+
+  export default class WithdrawMask extends wepy.component {
+    // 收益页 - 提现组件
+
+    data = {
+      wechatID: '',
+      amount: null,
+    };
+
+    props = {
+      showWithdraw: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      // Fire The parent event to close the Modal Mask
+      bindToggleMask: () => {
+        this.$emit('toggleWithdraw');
+      },
+
+      // Handle Inputs
+      bindOnInput: (name, e) => {
+        const {value} = e.detail;
+        this[name] = value;
+      },
+
+      // Submit
+      bindOnSubmit: () => {
+        if (!this.wechatID)
+          return this.showToast('请输入微信号');
+        if (!this.amount)
+          return this.showToast('请输入提现金额');
+        if (
+          this.amount <= 0
+          || (
+            this.amount > 0
+            && /^\d*\.?\d{3,}$/.test(String(this.amount))
+          )
+        )
+          return this.showToast('请输入有效的提现金额');
+        if (this.amount > this.userAsset)
+          return this.showToast('可提现金额不足');
+
+        this.methods.newWithdrawService({
+          amount: this.amount,
+          wx_code: this.wechatID,
+        });
+        this.amount = null;
+        this.wechatID = '';
+        this.methods.bindToggleMask();
+      },
+    };
+  };
+</script>

@@ -1,0 +1,316 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.page-switch-store {
+    .top {
+      height: 94rpx;
+      border-bottom: 15rpx solid @faintWhite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .locating {
+        width: 30rpx;
+        height: 38rpx;
+        padding-right: 10rpx;
+      }
+
+      .text {
+        max-width: 80vw;
+        color: @textColor1;
+        font-size: 30rpx;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        display: inline;
+      }
+    }
+
+    .list {
+      .item {
+        width: 100vw;
+        height: 140rpx;
+        border-bottom: 2rpx solid @dimWhite;
+        display: flex;
+        align-items: center;
+
+        .check {
+          width: 74rpx;
+          display: flex;
+          flex-grow: 0;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: flex-start;
+
+          image {
+            width: 40rpx;
+            height: 40rpx;
+            padding-left: 22rpx;
+          }
+        }
+
+        .left {
+          max-width: calc(~"100vw - 136rpx - 74rpx");
+          /*padding-left: 40rpx;*/
+          font-size: 28rpx;
+          line-height: 28rpx;
+          flex-grow: 1;
+
+          .title {
+            width: 100%;
+            padding-bottom: 16rpx;
+            color: @textColor1;
+            display: inline-block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+
+          .address {
+            width: 100%;
+            color: @textColor3;
+            display: inline-block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
+
+        .right {
+          width: 136rpx;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+
+          image {
+            width: 26rpx;
+            height: 32rpx;
+            padding-bottom: 16rpx;
+          }
+
+          .distance {
+            color: @textColor3;
+            font-size: 22rpx;
+          }
+        }
+      }
+    }
+
+    .bottom {
+      padding-top: 25vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-content: center;
+
+      image {
+        width: 125rpx;
+        height: 194rpx;
+      }
+
+      view {
+        margin: 30rpx auto 40rpx;
+        color: @textColor3;
+
+        &.text {
+          font-size: 28rpx;
+        }
+
+        &.button {
+          width: 230rpx;
+          height: 70rpx;
+          margin: 0;
+          color: @solidWhite;
+          background: @primaryColor;
+          border: 2rpx solid @primaryColor;
+          border-radius: 8rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        &.outline {
+          margin-left: 20rpx;
+          color: @primaryColor;
+          background: @solidWhite;
+        }
+      }
+    }
+
+    .grey {
+      view {
+        color: @textColor5 !important;
+      }
+    }
+
+    .hr {
+      width: 100vw;
+      height: 12rpx;
+      background: @faintWhite;
+      display: block;
+    }
+  }
+</style>
+
+<template>
+  <view class="page-switch-store">
+    <block wx:if="{{storeStatus !== 'error' || disabledLocating}}">
+      <block wx:if="{{!disabledLocating}}">
+        <view class="top">
+          <image
+            class="locating"
+            src="../../assets/img/explore/location.png"></image>
+          <block wx:if="{{recommendation && recommendation.name}}">
+            <view class="text" @tap="bindSwitchStore({{recommendation.id}})">
+              {{'当前定位推荐：' + recommendation.name}}
+            </view>
+          </block>
+          <block wx:else>
+            <view class="text">当前位置暂无门店</view>
+          </block>
+        </view>
+      </block>
+      <view class="list">
+        <block wx:key="id" wx:for="{{storeList}}">
+          <view class="item" @tap="bindSwitchStore({{item.id}})">
+            <view class="check">
+              <image
+                wx:if="{{current && current.id && current.id === item.id}}"
+                src="../../assets/img/explore/check.png"
+              ></image>
+            </view>
+            <view class="left">
+              <view class="title">{{item.name}}</view>
+              <view class="address">{{item.address}}</view>
+            </view>
+            <view class="right" style="{{item.distance === null ? 'opacity: 0' : ''}}">
+              <image src="../../assets/img/location/spot_black.png"></image>
+              <view class="distance">{{item.distance}}km</view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="bottom">
+        <image src="../../assets/img/explore/unavailable.png"></image>
+        <view class="text">获取定位信息失败，请授权</view>
+        <view style="display: flex">
+          <view
+            class="text button"
+            @tap="bindGetPermission">
+            重新授权
+          </view>
+          <view
+            class="text button outline"
+            @tap="bindToggleDisabledLocating">
+            手动选择门店
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../mixins/utils';
+  import PersistenceMixin from '../../mixins/persistence';
+  import {actions as StoreActions} from '../../store/store';
+
+
+  @connect({
+    storeList(state) { return state.store.list },
+    storeStatus(state) { return state.store.status },
+    current(state) { return state.store.current },
+    disabledLocating(state) { return state.store.disabledLocating },
+    recommendation(state) { return state.store.recommendation },
+  }, {
+    ...StoreActions,
+  })
+
+
+  export default class SwitchStore extends wepy.page {
+    // 门店选择页面
+
+    mixins = [UtilsMixin, PersistenceMixin];
+
+    methods = {
+      bindToggleDisabledLocating: () => {
+        this.methods.toggleDisabledLocating(true);
+        this.setStorageSync('disabledLocating', true);
+        this.tryLocating();
+      },
+
+      bindSwitchStore: (storeID) => {
+        this.methods.getCurrentStoreService({
+          storeID,
+          callback: () => {
+            this.go2page().back();
+          },
+        });
+      },
+
+      bindGetPermission: () => {
+        wepy.openSetting({
+          success: () => {
+            this.tryLocating();
+          },
+        });
+      },
+    };
+
+    onShow() {
+      this.tryLocating();
+    }
+
+    onLoad() {
+      this.setTitle('门店选择');
+    };
+
+    tryLocating = () => {
+      const onFail = () => {
+        if (this.disabledLocating)
+          this.methods.getStoreListService();
+        else
+          this.showToast('无法请求定位信息');
+      };
+
+      const onSuccess = () => {
+        wepy.getLocation({
+          success: ({latitude, longitude}) => {
+            this.methods.getStoreListService([latitude, longitude].join(','));
+            this.methods.getRecommendedStoreService({
+              location: [latitude, longitude].join(','),
+            });
+            this.methods.toggleDisabledLocating(false);
+            this.setStorageSync('disabledLocating', false);
+            if (this.storeStatus === 'error')
+              this.methods.getCurrentStoreService({
+                location: [latitude, longitude].join(','),
+              });
+          },
+          fail: onFail,
+        });
+      };
+
+      wepy.getSetting({
+        success: (res) => {
+          if (!res.authSetting['scope.userLocation'])
+            wepy.authorize({
+              scope: 'scope.userLocation',
+              success: onSuccess,
+              fail: onFail,
+            });
+          else
+            onSuccess();
+        },
+        fail: onFail,
+      });
+    };
+  }
+</script>

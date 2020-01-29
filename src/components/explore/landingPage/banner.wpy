@@ -1,0 +1,187 @@
+<style lang="less">
+  @import (reference) "../../../config/variables";
+  @height: 480rpx;
+
+  .landingPage-banner {
+    position: relative;
+
+    swiper {
+      height: @height;
+
+      image {
+        width: 100vw;
+        height: @height;
+        display: block;
+      }
+    }
+
+    .dots {
+      width: 50vw;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 90rpx;
+
+      .dot {
+        width: 10rpx;
+        height: 10rpx;
+        margin: 0 7.5rpx;
+        background: @solidWhite;
+        border-radius: 50%;
+        opacity: .5;
+
+        &.active {
+          opacity: .8;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="landingPage-banner">
+    <swiper
+      circular
+      autoplay="{{autoplay}}"
+      @change="bindSwiperChange">
+      <block wx:if="{{banner && banner.length}}">
+        <block wx:key="url" wx:for="{{banner}}">
+          <swiper-item>
+            <image
+              mode="aspectFill"
+              @tap="bindGetDetail({{item}})"
+              src="{{item.image + '?imageView2/2/w/750'}}">
+            </image>
+          </swiper-item>
+        </block>
+      </block>
+      <block wx:else>
+        <swiper-item>
+          <image
+            mode="aspectFill"
+            src="../../../assets/img/explore/placeholder.png">
+          </image>
+        </swiper-item>
+      </block>
+    </swiper>
+    <view
+      class="dots"
+      wx:if="{{banner && banner.length > 1}}"
+      style="{{shortcut && shortcut.length ? '' : 'bottom: 22rpx;'}}"
+    >
+      <block wx:for="{{banner}}" wx:key="{{id}}">
+        <view class="{{index === swiperCurrent ? 'dot active' : 'dot'}}"></view>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import UtilsMixin from '../../../mixins/utils';
+  import {actions as ProductActions} from '../../../store/product';
+
+
+  @connect({
+    shortcut(state) { return state.home.shortcut },
+    banner(state) { return state.home.carousel },
+    store(state) { return state.store.id },
+  }, {
+    ...ProductActions,
+  })
+
+
+  export default class Banner extends wepy.component {
+    // 发现页 - 轮播组件
+
+    data = {
+      autoplay: false,
+      swiperCurrent: 0,
+    };
+
+    mixins = [UtilsMixin];
+
+    methods = {
+      /* eslint-disable camelcase */
+      bindGetDetail: (item) => {
+        const {
+          jump_type,
+          goods,
+          goods_type,
+          category,
+        } = item;
+
+        const fn = (callback) => ({
+          grouping: () => {
+            this.methods.getGroupingProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+          periodic: () => {
+            this.methods.getPeriodsProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+          recommendation: () => {
+            this.methods.getRecommendedProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+          credit: () => {
+            this.methods.getCreditsProductListService({
+              store: this.store,
+              callback,
+            });
+          },
+        });
+
+        switch (jump_type) {
+          case 'goods':
+            this.methods.getDetailService({
+              url: goods,
+              callback: () => {
+                this.go2page().navigate('/pages/all/detail');
+              },
+            });
+            break;
+
+          case 'goods_type':
+            fn(() => {
+              this.go2page().navigate('/pages/all/list?view=' + goods_type);
+            })[goods_type]();
+            break;
+
+          case 'category':
+            this.methods.getProductListService({
+              storeID: this.store,
+              category: category.id,
+              callback: () => {
+                this
+                  .go2page()
+                  .navigate('/pages/all/category?id=' + category.id);
+              },
+            });
+            break;
+        }
+      },
+
+      bindSwiperChange: (e) => {
+        this.swiperCurrent = e.detail.current;
+      },
+    };
+
+    events = {
+      toggleAutoplay: (autoplay) => {
+        this.autoplay = autoplay === true;
+      },
+    };
+  };
+</script>

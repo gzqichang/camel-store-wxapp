@@ -1,0 +1,158 @@
+<style lang="less">
+  @import (reference) "../../config/variables";
+
+  view.levels-mask {
+    height: 100vh;
+    transition: all .3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.hide {
+      top: 100vh;
+    }
+
+    .modal {
+      width: 560rpx;
+      height: 524rpx;
+      margin: 25vh auto 0;
+      background: @solidWhite;
+      border-radius: 8rpx;
+
+      .title {
+        padding-top: 60rpx;
+        padding-bottom: 0;
+        color: @textColor0;
+        font-size: 36rpx;
+        text-align: center;
+      }
+
+      .content {
+        width: 450rpx;
+        padding: 0 55rpx;
+        color: @textColor3;
+        font-size: 28rpx;
+        line-height: 40rpx;
+
+        view {
+          margin-top: 40rpx;
+          display: block;
+
+          &:first-of-type {
+            margin-top: 0;
+          }
+        }
+
+        .red {
+          color: @primaryColor;
+          font-weight: bold;
+          display: inline;
+        }
+
+        .gold {
+          color: @secondaryColor;
+          font-weight: bold;
+          display: inline;
+        }
+      }
+
+      .no-level {
+        image {
+          width: 80rpx;
+          height: 80rpx;
+          margin: 0 auto 36rpx;
+          padding-top: 54rpx;
+          display: block;
+        }
+
+        view {
+          width: 416rpx;
+          margin: auto;
+          color: @textColor0;
+          font-size: 32rpx;
+          text-align: center;
+          display: block;
+        }
+      }
+    }
+
+    .close-modal {
+      margin-top: 100rpx;
+      display: flex;
+      justify-content: center;
+
+      image {
+        width: 56rpx;
+        height: 56rpx;
+      }
+    }
+  }
+</style>
+
+<template>
+  <mask :show.sync="show"></mask>
+
+  <view class="{{show ? 'levels-mask' : 'levels-mask hide'}}">
+    <view class="modal" style="{{levels && levels.length ? '' : 'width: 484rpx; height: 320rpx;'}}">
+      <view wx:if="{{levels && levels.length}}" class="title">
+        会员特权
+      </view>
+      <block wx:if="{{levels && levels.length}}">
+        <scroll-view scroll-y style="height: 318rpx; margin-top: 40rpx;">
+          <view class="content">
+            <block wx:key="id" wx:for="{{levels || []}}">
+              <view>
+                会员钱包累计充值满
+                <view class="red">{{item.threshold}}元</view>，即可成为<view class="gold">{{item.title}}</view>，除拼团商品外全场尊享<view class="red">{{item.discount / 10}}折</view>优惠！
+              </view>
+            </block>
+          </view>
+        </scroll-view>
+      </block>
+      <block wx:else>
+        <view class="no-level">
+          <image src="../../assets/img/me/memberNone.png"></image>
+          <view>抱歉，小店暂时还没有设置会员等级优惠，敬请期待~</view>
+        </view>
+      </block>
+    </view>
+    <view class="close-modal" @tap="bindToggleMask" style="{{levels && levels.length ? '' : 'margin-top: 76rpx;'}}">
+      <image src="../../assets/img/detail/close.png"></image>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import {connect} from 'wepy-redux';
+
+  import Mask from '../utils/mask';
+
+
+  @connect({
+    levels(state) { return state.others.membershipLevels },
+  }, {})
+
+
+  export default class LevelsMask extends wepy.component {
+    // 会员等级弹窗组件
+
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+      },
+    };
+
+    components = {
+      mask: Mask,
+    };
+
+    methods = {
+      bindToggleMask: () => {
+        this.$emit('toggleLevelsMask');
+      },
+    };
+  }
+</script>
