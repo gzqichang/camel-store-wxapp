@@ -182,7 +182,7 @@ export const getCurrent = function* (action = {}) {
 
     const isEnabledModules = [
       indexModules.grouping,
-      indexModules.periodic,
+      // indexModules.periodic,
       indexModules.credit,
       indexModules.recommendation,
     ].some((x) => (x));
@@ -192,11 +192,11 @@ export const getCurrent = function* (action = {}) {
         type: homeTypes.GET_INDEX_GROUPING_PRODUCT_SERVICE,
         payload: {store},
       });
-    if (indexModules.periodic)
-      yield put({
-        type: homeTypes.GET_INDEX_PERIODS_PRODUCT_SERVICE,
-        payload: {store},
-      });
+    // if (indexModules.periodic)
+    //   yield put({
+    //     type: homeTypes.GET_INDEX_PERIODS_PRODUCT_SERVICE,
+    //     payload: {store},
+    //   });
     if (indexModules.credit)
       yield put({
         type: homeTypes.GET_INDEX_CREDITS_PRODUCT_SERVICE,
@@ -211,9 +211,9 @@ export const getCurrent = function* (action = {}) {
     if (isEnabledModules)
       yield race({
         1: take(homeTypes.SET_INDEX_CREDITS_PRODUCT),
-        2: take(homeTypes.SET_INDEX_PERIODS_PRODUCT),
-        3: take(homeTypes.SET_INDEX_GROUPING_PRODUCT),
-        4: take(homeTypes.SET_INDEX_RECOMMENDED_PRODUCT),
+        2: take(homeTypes.SET_INDEX_GROUPING_PRODUCT),
+        3: take(homeTypes.SET_INDEX_RECOMMENDED_PRODUCT),
+        // 2: take(homeTypes.SET_INDEX_PERIODS_PRODUCT),
       });
 
     loading().hide();
