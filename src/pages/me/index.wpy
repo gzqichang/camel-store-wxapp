@@ -424,7 +424,7 @@
           <view>客户服务</view>
         </view>
 
-        <view wx:if="{{enableVideo && user.upload_perm}}" class='navigator' @tap="bindCheckUserInfo('/pages/video/user')">
+        <view wx:if="{{enableVideo || user.upload_perm}}" class='navigator' @tap="bindCheckUserInfo('/pages/video/user')">
           <image src="../../assets/img/me/icons/comment.png"></image>
           <view>我的好评</view>
         </view>

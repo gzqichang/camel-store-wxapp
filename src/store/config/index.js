@@ -23,7 +23,7 @@ export const initState = {
   distributionPoster: '',             // 海报图片地址
   storeType: 'cloud',                 // 店铺的类型 云店 或 小店
   showCopyright: true,                // 是否显示版权信息
-  enableVideo: true,                  // 是否显示短视频
+  enableVideo: true,                  // 是否显示好评
   enableInvoice: false,                // 是否开发票
   enablePayJs: false,                  // 是否使用个人账号支付
 };

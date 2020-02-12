@@ -229,7 +229,7 @@
 
     </block>
     <block wx:else>
-      <view class="none_tip">暂无短视频！</view>
+      <view class="none_tip">暂无内容！</view>
     </block>
 
     <view class="right_list">

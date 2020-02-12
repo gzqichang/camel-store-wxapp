@@ -90,8 +90,6 @@
 
 <template>
   <view class="page-video">
-    <block wx:if="{{enableVideo}}">
-
       <block wx:if="{{videoList.length}}">
         <block wx:for="{{videoList}}" wx:key="{{index}}">
           <view class="video-item" @tap="bindToDetail({{index}})">
@@ -107,18 +105,13 @@
         </block>
       </block>
       <block wx:else>
-        <view class="none_tip">暂无短视频！</view>
+        <view class="unable">
+          <image src="../../assets/img/video/bg.png"></image>
+          <view class="big">哎呀！</view>
+          <view class="small">还没有人上传好评，</view>
+          <view class="small">客官您稍后再来看看吧！</view>
+        </view>
       </block>
-
-    </block>
-    <block wx:else>
-      <view class="unable">
-        <image src="../../assets/img/video/bg.png"></image>
-        <view class="big">哎呀！</view>
-        <view class="small">小店还没有开通短视频，</view>
-        <view class="small">客官您稍后再来看看吧！</view>
-      </view>
-    </block>
   </view>
 </template>
 

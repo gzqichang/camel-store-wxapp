@@ -249,6 +249,7 @@
     videoList(state) { return state.video.userVideoList },
     userVideoListCount(state) { return state.video.userVideoListCount },
     userVideo(state) { return state.video.userInfo },
+    enableVideo(state) { return state.config.enableVideo },
   }, {
     ...VideoActions,
   })
@@ -283,7 +284,7 @@
       isUpload: () => {
         if (!this.user || !this.userVideo)
           return false;
-        return this.user.id === this.userVideo.id && this.user.upload_perm;
+        return this.user.id === this.userVideo.id && (this.user.upload_perm || this.enableVideo);
       },
     };
 
